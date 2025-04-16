@@ -1,0 +1,4 @@
+from entities.components.position_component import PositionComponent
+from entities.components.velocity_component import VelocityComponent
+from entities.components.rect_component import RectComponent
+from entities.components.surface_component import SurfaceComponent

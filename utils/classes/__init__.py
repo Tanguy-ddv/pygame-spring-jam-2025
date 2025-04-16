@@ -1,0 +1,1 @@
+from utils.classes.singleton import Singleton
