@@ -1,1 +1,1 @@
-from resources.fonts.font_manager import FontManager
+from .font_manager import FontManager

@@ -1,2 +1,2 @@
-from utils.classes import *
-from utils.data_structures import *
+from .classes import *
+from .data_structures import *

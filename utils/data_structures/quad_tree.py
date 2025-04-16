@@ -1,3 +1,6 @@
+# Built-ins
+from typing import Any
+
 # External
 import pygame
 
@@ -7,10 +10,10 @@ class QuadTree:
         self.capacity = capacity
 
         self.subdivided = False
-        self.elements = list()
-        self.children = list()
+        self.elements = []
+        self.children = []
 
-    def insert(self, point: tuple[float, float], value: any) -> bool:
+    def insert(self, point: tuple[float, float], value: Any) -> bool:
         if not self.rect.collidepoint(point):
             return False
         
@@ -39,9 +42,9 @@ class QuadTree:
 
     def query_range(self, rect: pygame.rect.FRect) -> list:
         if not self.rect.colliderect(rect):
-            return list()
+            return []
         
-        results = list()
+        results = []
         for element in self.elements:
             if rect.collidepoint(element[0]):
                 results.append(element[1])

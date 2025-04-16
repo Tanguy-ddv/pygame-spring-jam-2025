@@ -1,1 +1,1 @@
-from resources.images.image_manager import ImageManager
+from .image_manager import ImageManager

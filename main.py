@@ -7,7 +7,6 @@ from pygame.locals import *
 
 # Internal
 from scenes import *
-from entities import *
 
 class Game:
     def __init__(self, screen_size, fps):

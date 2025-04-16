@@ -1,5 +1,4 @@
-from entities.entity import Entity
-from entities.entity_manager import EntityManager
+from .entity_manager import EntityManager, Entity
 
-from entities.components import *
-from entities.systems import *
+from .components import *
+from .systems import *

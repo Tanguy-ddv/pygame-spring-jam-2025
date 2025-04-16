@@ -1,25 +1,33 @@
 # Built-ins
 import json
+from os import PathLike
 
 # External
 import pygame
-from pygame.typing import _PathLike
+from pygame.typing import FileLike
 
 # Internal
 from utils import Singleton
 
 class ImageManager(Singleton):
     def __init__(self):
-        self.images = dict()
+        self.image_dict = {}
 
-    def load_json(self, path_to_json: _PathLike) -> None:
-        pass
+    def load_json(self, path_to_json: PathLike) -> None:
+        with open(path_to_json, "r") as json_file:
+            images = json.load(json_file)
 
-    def load_image(self, path_to_image: _PathLike, name: str) -> None:
-        pass
+        for path_to_image, name in images.items():
+            self.load_image(path_to_image, name)
 
-    def add_image(self, image: pygame.Surface, name: str) -> None:
-        pass
+    def load_image(self, path_to_image: FileLike, name: str) -> pygame.Surface:
+        image = pygame.image.load(path_to_image)
+        self.register_image(image, name)
 
-    def get_image(self, name) -> pygame.Surface:
+        return image
+
+    def register_image(self, image: pygame.Surface, name: str) -> None:
+        self.image_dict[name] = image
+
+    def get_image(self, name: str) -> pygame.Surface:
         pass

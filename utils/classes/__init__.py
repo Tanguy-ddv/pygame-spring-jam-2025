@@ -1,1 +1,1 @@
-from utils.classes.singleton import Singleton
+from .singleton import Singleton

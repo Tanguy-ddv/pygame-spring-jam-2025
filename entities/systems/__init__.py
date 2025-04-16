@@ -1,2 +1,2 @@
-from entities.systems.camera_system import CameraSystem
-from entities.systems.physics_system import PhysicsSystem
+from .camera_system import CameraSystem
+from .physics_system import PhysicsSystem
