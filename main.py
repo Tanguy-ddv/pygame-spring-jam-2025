@@ -7,10 +7,7 @@ import pygame
 from pygame.locals import *
 
 # Internal
-from scenes import *
-from entities import *
-from resources import *
-from utils import *
+from pygamelib import *
 
 class Game:
     def __init__(self, screen_size, fps):
