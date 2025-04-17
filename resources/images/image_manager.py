@@ -4,7 +4,6 @@ from os import PathLike
 
 # External
 import pygame
-from pygame.typing import FileLike
 
 # Internal
 from utils import Singleton
@@ -20,7 +19,7 @@ class ImageManager(Singleton):
         for path_to_image, image_name in images.items():
             self.load_image(path_to_image, image_name)
 
-    def load_image(self, path_to_image: FileLike, image_name: str) -> pygame.Surface:
+    def load_image(self, path_to_image: PathLike, image_name: str) -> pygame.Surface:
         image = pygame.image.load(path_to_image)
         self.register_image(image, image_name)
 

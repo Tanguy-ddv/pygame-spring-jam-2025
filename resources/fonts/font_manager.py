@@ -4,14 +4,13 @@ from os import PathLike
 
 # External
 import pygame
-from pygame.typing import FileLike
 
 # Internal
 from utils import Singleton
 
 # Font class
 class Font:
-    def __init__(self, font: pygame.font.Font):
+    def __init__(self):
         print("NOT IMPLEMENTED CUSTOM FONT USE 'pygame.font.Font' instead") # I plan on making my own custom font class for performance (WIP)
 
 # FontLike type
@@ -29,9 +28,9 @@ class FontManager(Singleton):
         for path_to_font, font_name in fonts.items():
             self.load_font(path_to_font, font_name)
 
-    def load_font(self, filefont_name: FileLike, size: int, font_name: str) -> pygame.font.Font:
-        font = pygame.font.Font(filefont_name, size)
-        self.register_font(font)
+    def load_font(self, filename: PathLike, size: int, font_name: str) -> pygame.font.Font:
+        font = pygame.font.Font(filename, size)
+        self.register_font(font, font_name)
 
         return font
     
