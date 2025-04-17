@@ -1,4 +1,4 @@
-from .entity_manager import EntityManager, Entity
+from .entity_manager import *
 
 from .components import *
 from .systems import *

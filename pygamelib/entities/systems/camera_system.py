@@ -2,7 +2,7 @@
 import pygame
 
 # Internal
-from .. import EntityManager, PositionComponent, SurfaceComponent
+from pygamelib.entities import *
 
 class CameraSystem:
     def __init__(self):

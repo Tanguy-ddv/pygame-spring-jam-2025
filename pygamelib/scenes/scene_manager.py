@@ -2,7 +2,7 @@
 import pygame
 
 # Internal
-from utils import Singleton
+from pygamelib.utils import Singleton
 
 # Scene class
 class Scene:
