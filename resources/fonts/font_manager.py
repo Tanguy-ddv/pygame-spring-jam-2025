@@ -12,7 +12,7 @@ from utils import Singleton
 # Font class
 class Font:
     def __init__(self, font: pygame.font.Font):
-        pass
+        print("NOT IMPLEMENTED CUSTOM FONT USE 'pygame.font.Font' instead") # I plan on making my own custom font class for performance (WIP)
 
 # FontLike type
 FontLike = pygame.font.Font | Font
@@ -20,23 +20,23 @@ FontLike = pygame.font.Font | Font
 # Font manager class
 class FontManager(Singleton):
     def __init__(self):
-        self.font_dict = {}
+        self.font_dict: dict[str, FontLike] = {}
 
     def load_json(self, path_to_json: PathLike) -> None:
         with open(path_to_json, "r") as json_file:
             fonts = json.load(json_file)
 
-        for path_to_font, name in fonts.items():
-            self.load_font(path_to_font, name)
+        for path_to_font, font_name in fonts.items():
+            self.load_font(path_to_font, font_name)
 
-    def load_font(self, filename: FileLike, size: int, name: str) -> Font:
-        font = Font(pygame.font.Font(filename, size))
+    def load_font(self, filefont_name: FileLike, size: int, font_name: str) -> pygame.font.Font:
+        font = pygame.font.Font(filefont_name, size)
         self.register_font(font)
 
         return font
     
-    def register_font(self, font: FontLike, name: str) -> None:
-        self.font_dict[name] = font
+    def register_font(self, font: FontLike, font_name: str) -> None:
+        self.font_dict[font_name] = font
 
-    def get_font(self, name: str) -> FontLike:
-        return self.font_dict[name]
+    def get_font(self, font_name: str) -> FontLike:
+        return self.font_dict[font_name]

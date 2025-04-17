@@ -2,13 +2,13 @@
 import pygame
 
 # Internal
-from entities import PositionComponent, SurfaceComponent
+from .. import EntityManager, PositionComponent, SurfaceComponent
 
 class CameraSystem:
     def __init__(self):
         pass
 
-    def draw(self, entity_manager, surface):
+    def draw(self, entity_manager: type[EntityManager], surface: pygame.Surface) -> None:
         entities = entity_manager.get_entities(
             PositionComponent,
             SurfaceComponent
