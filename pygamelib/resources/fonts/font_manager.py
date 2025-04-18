@@ -6,17 +6,10 @@ from os import PathLike
 import pygame
 
 # Internal
+from pygamelib.resources.fonts import Font, FontLike
 from pygamelib.utils import Singleton
 
-# Font class
-class Font:
-    def __init__(self):
-        print("NOT IMPLEMENTED CUSTOM FONT USE 'pygame.font.Font' instead") # I plan on making my own custom font class for performance (WIP)
-
-# FontLike type
-FontLike = pygame.font.Font | Font
-
-# Font manager class
+# Font Manager class
 class FontManager(Singleton):
     def __init__(self):
         self.font_dict: dict[str, FontLike] = {}

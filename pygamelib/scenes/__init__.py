@@ -1,1 +1,2 @@
-from .scene_manager import SceneManager, Scene
+from .scene import Scene
+from .scene_manager import *

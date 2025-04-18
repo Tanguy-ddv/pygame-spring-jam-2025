@@ -1,79 +1,60 @@
-# Built-ins
-from __future__ import annotations
+# Internal
+from utils import Singleton
 
-class Entity:
-    def __init__(self, entity_manager: EntityManager, entity_id: int):
-        self.entity_manager: EntityManager = entity_manager
-        self.entity_id: int = entity_id
-        self.component_dict: dict[type, object] = {}
-
-        self.entity_manager.register_entity(self.entity_id, self)
-
-    def __del__(self) -> None:
-        self.kill()
-
-    def get_id(self) -> int:
-        return self.entity_id
-    
-    def add_component(self, component: object) -> None:
-        component_type = type(component)
-
-        self.component_dict[component_type] = component
-        self.entity_manager.register_component(self.entity_id, component_type)
-
-    def remove_component(self, component_type: type) -> None:
-        self.component_dict.pop(component_type)
-        self.entity_manager.unregister_component(self.entity_id, component_type)
-    
-    def get_component(self, component_type: type) -> object:
-        return self.component_dict[component_type]
-    
-    def kill(self) -> None:
-        for component_type in self.component_dict.keys():
-            self.remove_component(component_type)
-
-        self.entity_manager.unregister_entity(self.entity_id)
-
-class EntityManager:
+# Entity Manager class
+class EntityManager(Singleton):
     def __init__(self):
-        self.entity_dict: dict[int, object] = {}
-        self.component_dict: dict[type, set] = {}
+        self.entity_ids: set[int] = set()
+        self.free_ids: set[int] = set()
+        self.next_id: int = 0
 
-        self.next_entity_id = 0
+        self.component_dict: dict[type, dict[int, object]] = {}
 
-    def create_entity(self) -> Entity:
-        entity = Entity(self, self.next_entity_id)
-        self.next_entity_id += 1
+    def create_entity(self) -> int:
+        if self.free_ids:
+            entity_id = self.free_ids.pop()
 
-        return entity
+        else:
+            entity_id = self.next_id
+            self.next_id += 1
+
+        self.entity_ids.add(entity_id)
+        return entity_id
     
-    def register_entity(self, entity_id: int, entity: Entity) -> None:
-        self.entity_dict[entity_id] = entity
+    def add_component(self, entity_id: int, component: object) -> None:
+        if entity_id not in self.entity_ids:
+            return
+        
+        component_type = type(component)
+        self.component_dict.setdefault(component_type, {})[entity_id] = component
 
-    def register_component(self, entity_id: int, component_type: type) -> None:
-        entities = self.component_dict.get(component_type, set())
-        entities.add(entity_id)
+    def has_component(self, entity_id: int, component_type: type) -> bool:
+        if entity_id not in self.entity_ids:
+            return False
+        
+        return entity_id in self.component_dict.get(component_type, {})
+    
+    def get_component(self, entity_id: int, component_type: type) -> object:
+        if not self.has_component(entity_id, component_type):
+            return
+        
+        return self.component_dict[component_type][entity_id]
 
-        self.component_dict[component_type] = entities
-
-    def unregister_entity(self, entity_id: int) -> None:
-        if entity_id not in self.entity_dict.keys():
+    def remove_component(self, entity_id: int, component_type: type) -> None:
+        components = self.component_dict.get(component_type)
+        if entity_id not in self.entity_ids or components is None:
             return
 
-        self.entity_dict.pop(entity_id)
+        components.pop(entity_id, None)
+        if not components:
+            self.component_dict.pop(component_type)
 
-    def unregister_component(self, entity_id: int, component_type: type) -> None:
-        entities = self.component_dict.get(component_type, set())
-        entities.remove(entity_id)
+    def delete_entity(self, entity_id: int) -> None:
+        if entity_id not in self.entity_ids:
+            return
+        
+        self.entity_ids.remove(entity_id)
+        self.free_ids.add(entity_id)
 
-        self.component_dict[component_type] = entities
-
-    def get_from_components(self, *component_types: type) -> set[Entity]:
-        entity_ids = []
-        for component_type in component_types:
-            entity_ids.append(self.component_dict.get(component_type, set()))
-
-        return [self.get_from_id(entity_id) for entity_id in set.intersection(*entity_ids)]
-    
-    def get_from_id(self, entity_id: int) -> Entity:
-        return self.entity_dict[entity_id]
+        for component_type in list(self.component_dict.keys()):
+            self.remove_component(entity_id, component_type)

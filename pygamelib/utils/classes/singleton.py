@@ -1,6 +1,7 @@
 # Built-ins
 import threading
 
+# Singleton class
 class Singleton:
     _instance = None
     _lock = threading.Lock()

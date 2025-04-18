@@ -1,4 +1,0 @@
-from .position_component import PositionComponent
-from .velocity_component import VelocityComponent
-from .rect_component import RectComponent
-from .surface_component import SurfaceComponent
