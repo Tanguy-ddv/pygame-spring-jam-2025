@@ -1,3 +1,9 @@
+# External
+import pygame
+
+# Internal
+from entities import *
+
 #real camera position -> camera position without rounding
 #camera position -> camera position with rounding
 class CameraSystem:
@@ -23,3 +29,12 @@ class CameraSystem:
     
     def set_position(self, position: tuple):
         self.real_camera_x, self.real_camera_y = position
+
+    def draw(self, display_surface, entity_manager):
+        entity_ids = entity_manager.get_from_components(pygame.Surface, Position)
+
+        for entity_id in entity_ids:
+            surface = entity_manager.get_component(entity_id, pygame.Surface)
+            position = entity_manager.get_component(entity_id, Position)
+
+            display_surface.blit(surface, position - (self.camera_x, self.camera_y) + self.relative_offset - pygame.Vector2(surface.get_rect().size) / 2)

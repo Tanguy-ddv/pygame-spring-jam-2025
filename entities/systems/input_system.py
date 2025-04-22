@@ -1,3 +1,6 @@
+# Built-ins
+import math
+
 # External
 import pygame
 from pygame.locals import *
@@ -5,6 +8,7 @@ from pygame.locals import *
 # Internal
 from pygamelib.entities import *
 from entities import *
+from assets import Images
 
 class InputSystem:
     def __init__(self):
@@ -27,21 +31,25 @@ class InputSystem:
         if event.key in self.held_keys:
             self.held_keys.pop(event.key)
 
-    def update(self):
+    def update(self, delta_time):
         for key, key_data in self.held_keys.items():
             entity_manager, entity_id = key_data
             force = entity_manager.get_component(entity_id, Force)
+            rotation = entity_manager.get_component(entity_id, Rotation)
 
-            if key == K_w:
-                force += Force(0, -25)
+            # Apply thruster force
+            if key == K_SPACE:
+                force.x += 25 * math.sin(rotation.angle)
+                force.y -= 25 * math.cos(rotation.angle)
 
+            # Rotate spaceship ACW
             elif key == K_a:
-                force += Force(-25, 0)
+                rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-            elif key == K_s:
-                force += Force(0, 25)
-
+            # Rotate spaceship CW
             elif key == K_d:
-                force += Force(25, 0)
+                rotation.angle = (rotation.angle - (120 * delta_time)) % 360
 
-            entity_manager.add_component(entity_id, force)
+            print(rotation.angle)
+            print(force)
+            entity_manager.add_component(entity_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))

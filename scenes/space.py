@@ -1,6 +1,5 @@
 # Built-ins
 import random
-import math
 
 # External
 import pygame
@@ -35,6 +34,10 @@ class Space(scene.Scene):
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(1))
+        self.entity_manager.add_component(self.player_id, Rotation(0))
+
+        # Player surface
+        self.entity_manager.add_component(self.player_id, Images.get_image("player"))
 
         # Background stars
         self.stars = []
@@ -50,7 +53,7 @@ class Space(scene.Scene):
         self.event_system.handle_events(self.entity_manager, events)
 
     def update(self, delta_time: float) -> None:
-        self.input_system.update()
+        self.input_system.update(delta_time)
         self.physics_system.update(self.entity_manager, delta_time)
         self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
 
@@ -86,11 +89,8 @@ class Space(scene.Scene):
             image = Images.get_image("star variant " + star["star_type"])
             surface.blit(image, image.get_rect(center = position))
 
+        self.camera.draw(surface, self.entity_manager)
         self.background_system.draw(surface, self.camera, Images)
-
-        # Render placeholder player
-        position = self.entity_manager.get_component(self.player_id, Position)
-        pygame.draw.rect(surface, (255, 0, 0), ((590, 310, 100, 100)))
 
     def stop(self) -> None:
         pass
