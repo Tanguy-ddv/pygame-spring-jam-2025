@@ -34,6 +34,13 @@ class EntityManager(Singleton):
         
         return entity_id in self.component_dict.get(component_type, {})
     
+    def get_from_components(self, *component_types: tuple[type]):
+        entities = []
+        for component_type in component_types:
+            entities.append(set(self.component_dict.get(component_type, {}).keys()))
+
+        return set.intersection(*entities)
+
     def get_component(self, entity_id: int, component_type: type) -> object:
         if not self.has_component(entity_id, component_type):
             return
