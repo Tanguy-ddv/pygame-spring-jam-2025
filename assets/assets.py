@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 from pygamelib import *
 from assets.image_caching import *
 
@@ -11,7 +12,7 @@ cache_size_variants(Images.get_image("star"), "star", Images, 50)
 cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 25)
 
 # Player image
-player_image = pygame.Surface((50, 50))
-pygame.draw.polygon(player_image, (255, 0, 0), [(0, 50), (50, 50), (25, 0)])
+player_image = pygame.Surface((50, 50), SRCALPHA)
+pygame.draw.polygon(player_image, (255, 0, 0), [(0, 0), (0, 50), (50, 25)])
 
 Images.register_image(player_image, "player")

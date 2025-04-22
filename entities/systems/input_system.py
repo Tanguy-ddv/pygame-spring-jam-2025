@@ -39,8 +39,9 @@ class InputSystem:
 
             # Apply thruster force
             if key == K_SPACE:
-                force.x += 25 * math.sin(rotation.angle)
-                force.y -= 25 * math.cos(rotation.angle)
+                angle_rad = math.radians(rotation.angle)
+                force.x += 25 * math.cos(angle_rad)
+                force.y += -25 * math.sin(angle_rad)
 
             # Rotate spaceship ACW
             elif key == K_a:
