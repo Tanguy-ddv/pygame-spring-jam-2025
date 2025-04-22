@@ -1,0 +1,59 @@
+# Built-ins
+import json
+import math
+from os import PathLike, listdir
+from copy import deepcopy
+
+# External
+import pygame
+
+# Internal
+from ...utils import Singleton
+
+"""
+
+DOCUMENTATION:
+
+to use a json:
+
+resources folder:
+ - json
+ - animation folders
+
+animation folder should contain a series of images, i.e. frame 0, frame 1, frame 2, and so forth
+
+structure the json as follows:
+{
+    path to folder: {"name": string, "duration": integer}
+}
+
+"""
+
+class AnimationManager(Singleton):
+    def __init__(self):
+        self.animation_dict: dict[str, dict] = {}
+
+    def load_json(self, path_to_json: PathLike) -> None:
+        with open(path_to_json, "r") as json_file:
+            animations = json.load(json_file)
+
+        for animation_folder, animation_data in animations.items():
+            self.load_animation(animation_folder, animation_data["name"], animation_data["duration"])
+
+    def load_animation(self, animation_folder: PathLike, animation_name: str, duration: int) -> pygame.Surface:
+        images_in_folder = listdir(animation_folder)
+
+        images_in_folder.sort()
+
+        images = [pygame.image.load(path_to_image).convert() for path_to_image in images_in_folder]
+
+        self.register_animation(images, animation_name, duration)
+
+        return images
+    
+    def register_animation(self, images: list[pygame.Surface], animation_name: str, duration: int):
+        self.animation_dict[animation_name] = {"data":(duration, math.floor(duration / len(images))), "images":deepcopy(images)}
+
+    def get_animation(self, animation_name: str, frame: int) -> pygame.Surface:
+        animation_data = self.animation_dict[animation_name]["data"]
+        return self.animation_dict[animation_name]["images"][math.floor((frame % animation_data[0]) / animation_data[1])]

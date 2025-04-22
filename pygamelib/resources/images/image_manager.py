@@ -20,7 +20,7 @@ class ImageManager(Singleton):
             self.load_image(path_to_image, image_name)
 
     def load_image(self, path_to_image: PathLike, image_name: str) -> pygame.Surface:
-        image = pygame.image.load(path_to_image)
+        image = pygame.image.load(path_to_image).convert()
         self.register_image(image, image_name)
 
         return image
