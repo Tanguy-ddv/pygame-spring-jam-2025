@@ -1,5 +1,5 @@
 # Internal
-from utils import Singleton
+from ..utils import Singleton
 
 # Entity Manager class
 class EntityManager(Singleton):

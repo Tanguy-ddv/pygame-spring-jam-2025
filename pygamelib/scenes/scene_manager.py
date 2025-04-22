@@ -5,8 +5,8 @@ from __future__ import annotations
 import pygame
 
 # Internal
-from pygamelib.scenes import Scene
-from pygamelib.utils import Singleton
+from .scene import Scene
+from ..utils import Singleton
 
 # Scene Manager class
 class SceneManager(Singleton):
