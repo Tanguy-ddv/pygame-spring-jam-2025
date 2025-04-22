@@ -25,7 +25,11 @@ class Space(scene.Scene):
 
         # Player
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Listener(self.input_system, KEYDOWN))
+        self.entity_manager.add_component(self.player_id, Listener({
+            KEYDOWN: [self.input_system],
+            KEYUP: [self.input_system]
+        }))
+
         self.entity_manager.add_component(self.player_id, Position(640, 360))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
@@ -45,6 +49,7 @@ class Space(scene.Scene):
         self.event_system.handle_events(self.entity_manager, events)
 
     def update(self, delta_time: float) -> None:
+        self.input_system.update()
         self.physics_system.update(self.entity_manager, delta_time)
         self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
 

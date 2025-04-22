@@ -12,5 +12,6 @@ class EventSystem:
             for entity_id in listeners:
                 listener: Listener = entity_manager.get_component(entity_id, Listener)
 
-                if listener.get_subject() == event.type:
-                    listener.get_observer().handle_event(entity_manager, entity_id, event)
+                if  event.type in listener.get_subjects():
+                    for observer in listener.get_observers(event.type):
+                        observer.handle_event(entity_manager, entity_id, event)
