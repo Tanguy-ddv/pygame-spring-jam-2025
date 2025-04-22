@@ -1,5 +1,9 @@
+import pygame
 from pygamelib import *
 from scripts.assets.image_caching import *
+
+pygame.init()
+temp_screen = pygame.display.set_mode((50, 50))
 
 Images = image_manager.ImageManager()
 Images.load_json("scripts/assets/jsons/images.json")
