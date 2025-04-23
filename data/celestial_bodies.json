@@ -149,7 +149,7 @@
         "kind" : "moon",
         "day" : 33
     },
-    "Rhea" : {
+    "rhea" : {
         "dist" : 527,
         "year" : 4.5, 
         "mass" : 21,
@@ -159,7 +159,7 @@
         "kind" : "moon",
         "day" : 108
     },
-    "Iapetus" : {
+    "iapetus" : {
         "dist" : 3560,
         "year" : 79, 
         "mass" : 21,
