@@ -93,11 +93,15 @@ def clip(value, lower, upper):
     return min(upper, max(value, lower))
 
 def generate_asteroid(size):
+    """
+    Generate the surface of an asteroid, returns the surface and the list of vertices.
+    """
     center = size/2, size/2,
     avg_radius = 2/6*size
-    edge = generate_polygon(center, avg_radius, 0.3, 0.3, random.randint(6, 12))
+    vertices = generate_polygon(center, avg_radius, 0.3, 0.3, random.randint(6, 12))
     surf = Surface((size, size), SRCALPHA)
-    texture = Images.get_image("asteroid1")
+    textures = ["asteroid1"]
+    texture = Images.get_image(random.choice(textures))
     texture = transform.scale(texture, (300, 300))
-    textured_polygon(surf, edge, texture, random.randint(1, texture.width - size - 2), random.randint(1, texture.height - size - 2))
-    return surf
+    textured_polygon(surf, vertices, texture, random.randint(1, texture.width - size - 2), random.randint(1, texture.height - size - 2))
+    return surf, vertices
