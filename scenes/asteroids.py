@@ -100,8 +100,7 @@ def generate_asteroid(size):
     avg_radius = 2/6*size
     vertices = generate_polygon(center, avg_radius, 0.3, 0.3, random.randint(6, 12))
     surf = Surface((size, size), SRCALPHA)
-    textures = ["asteroid1"]
-    texture = Images.get_image(random.choice(textures))
+    texture = Images.get_image("asteroid1")
     texture = transform.scale(texture, (300, 300))
     textured_polygon(surf, vertices, texture, random.randint(1, texture.width - size - 2), random.randint(1, texture.height - size - 2))
     return surf, vertices
