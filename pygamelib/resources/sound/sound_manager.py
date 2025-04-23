@@ -6,7 +6,7 @@ from os import PathLike
 import pygame
 
 # Internal
-from pygamelib.utils import Singleton
+from ...utils import Singleton
 
 class SoundManager(Singleton):
     def __init__(self):

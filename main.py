@@ -9,6 +9,8 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 
+from scenes import Space
+
 class Game:
     def __init__(self, screen_size, fps):
         self.screen_size = screen_size
@@ -16,7 +18,10 @@ class Game:
 
         self.screen = pygame.display.set_mode(screen_size)
         self.clock = pygame.time.Clock()
+
         self.scene_manager = SceneManager()
+        self.scene_manager.register_scene(Space(), "space")
+        self.scene_manager.set_scene("space")
 
     async def start(self):
         self.is_running = True
@@ -27,9 +32,12 @@ class Game:
             await asyncio.sleep(0)
 
             # Handle events
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 if event.type == QUIT:
                     self.is_running = False
+
+            self.scene_manager.handle_events(events)
 
             # Update frame
             self.scene_manager.update(delta_time)
