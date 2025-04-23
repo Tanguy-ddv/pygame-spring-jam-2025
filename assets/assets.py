@@ -12,6 +12,6 @@ cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 
 
 # Player image
 player_image = pygame.Surface((50, 50))
-pygame.draw.polygon(player_image, (255, 0, 0), [(0, 50), (50, 50), (25, 0)])
+pygame.draw.polygon(player_image, (255, 0, 0), [(0, 0), (0, 50), (50, 25)])
 
 Images.register_image(player_image, "player")
