@@ -1,0 +1,5 @@
+{
+    "resources/background/_star.png":"star",
+    "resources/background/_shooting_star.png":"shooting_star",
+    "resources/asteroids/asteroid.jpg" : "asteroid1"
+}
