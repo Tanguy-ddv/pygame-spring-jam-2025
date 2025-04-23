@@ -25,29 +25,19 @@ class Space(scene.Scene):
 
         self.camera = CameraSystem((1280, 720), (640, 360))
 
-        # Player
-        self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Listener({
-            KEYDOWN: [self.input_system],
-            KEYUP: [self.input_system]
-        }))
-
-        self.entity_manager.add_component(self.player_id, Position(640, 360))
-        self.entity_manager.add_component(self.player_id, Velocity(0, 0))
-        self.entity_manager.add_component(self.player_id, Force(0, 0))
-        self.entity_manager.add_component(self.player_id, Mass(1))
-        self.entity_manager.add_component(self.player_id, Rotation(0))
-
-        # Player surface
-        self.entity_manager.add_component(self.player_id, Images.get_image("player"))
-
         # Test planet
+        self.test_planet_id = create_planet(self.entity_manager, (320, 180), 40, Images.get_image("test"), 50, (0, 0, 75))
 
-        self.test_planet_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
-        self.entity_manager.add_component(self.test_planet_id, Planet(40, Images.get_image("test"), 50, (0, 0, 50)))
-        self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
-        self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
+        # Player
+        self.player_id = create_entity(self.entity_manager, 
+                                       Listener({KEYDOWN: [self.input_system], KEYUP: [self.input_system]}),
+                                       Position(640, 360),
+                                       Velocity(0, 0),
+                                       Force(0, 0),
+                                       Mass(1),
+                                       Rotation(0),
+                                       Images.get_image("player")
+                                       )
 
     def start(self) -> None:
         pass
