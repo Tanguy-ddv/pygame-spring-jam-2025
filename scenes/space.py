@@ -20,6 +20,8 @@ class Space(scene.Scene):
         self.event_system = EventSystem()
         self.background_system = BackgroundSystem()
         self.physics_system = PhysicsSystem()
+        self.planet_renderer = PlanetRenderer()
+        self.bloom_system = BloomSystem()
 
         self.camera = CameraSystem((1280, 720), (640, 360))
 
@@ -39,6 +41,14 @@ class Space(scene.Scene):
         # Player surface
         self.entity_manager.add_component(self.player_id, Images.get_image("player"))
 
+        # Test planet
+
+        self.test_planet_id = self.entity_manager.create_entity()
+        self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
+        self.entity_manager.add_component(self.test_planet_id, Planet(40, Images.get_image("test"), 50, (0, 0, 50)))
+        self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
+        self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
+
     def start(self) -> None:
         pass
 
@@ -53,12 +63,15 @@ class Space(scene.Scene):
         # Update stars
         self.background_system.update(self.camera, delta_time)
 
+        self.planet_renderer.update(self.entity_manager, delta_time)
+
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
 
         self.background_system.draw(surface, self.camera, Images)
         self.camera.draw(surface, self.entity_manager)
+        self.bloom_system.draw(self.camera, surface, self.entity_manager)
 
     def stop(self) -> None:
         pass
