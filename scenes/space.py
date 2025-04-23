@@ -26,7 +26,7 @@ class Space(scene.Scene):
         self.camera = CameraSystem((1280, 720), (640, 360))
 
         # Test planet
-        self.test_planet_id = create_planet(self.entity_manager, (320, 180), 40, Images.get_image("test"), 50, (0, 0, 75))
+        self.test_planet_id = create_planet(self.entity_manager, (320, 180), 40, Images.get_image("test"), 50, (0, 0, 75), 10)
 
         # Player
         self.player_id = create_entity(self.entity_manager, 
