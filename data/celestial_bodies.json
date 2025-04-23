@@ -6,7 +6,8 @@
         "radius" : 696342,
         "path" : "sun.png",
         "orbits" : null,
-        "kind" : "sun"
+        "kind" : "sun",
+        "day" : 648
     },
     "mercury" : {
         "dist" : 57909,
@@ -15,7 +16,8 @@
         "year" : 88,
         "path" : "mercury.png",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : 1407
     },
     "venus" : {
         "dist" : 108209,
@@ -24,16 +26,18 @@
         "year" : 224,
         "path" : "venus.png",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : -5832
     },
     "earth" : {
         "mass" : 24,
         "dist" : 149000,
-        "earth" : 6378,
+        "radius" : 6378,
         "year" : 365,
         "path" : "earth.png",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : 24
     },
     "moon" : {
         "mass" : 22,
@@ -42,7 +46,8 @@
         "year" : 27,
         "path" : "moon.png",
         "orbits" : "earth",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 648
     },
     "mars" : {
         "dist" : 227944,
@@ -51,25 +56,8 @@
         "year" : 780,
         "path" : "mars.png",
         "orbits" : "sun",
-        "kind" : "rocky planet"
-    },
-    "deimos" : {
-        "dist" : 23,
-        "mass" : 15,
-        "radius" : 8,
-        "year" : 1.25,
-        "path" : null,
-        "orbits" : "mars",
-        "kind" : "moon"
-    },
-    "phobos" : {
-        "dist" : 9,
-        "year" : 0.4,
-        "radius" : 10,
-        "mass" : 16,
-        "path" : null,
-        "orbits" : "mars",
-        "kind" : "moon"
+        "kind" : "rocky planet",
+        "day" : 24.6
     },
     "ceres" : {
         "dist" : 414103,
@@ -78,7 +66,8 @@
         "mass" : 20,
         "path" : "moon_like.png",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : 9
     },
     "jupiter" : {
         "dist" : 778340,
@@ -87,7 +76,8 @@
         "mass" : 27,
         "path" : "jupiter.png",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 10
     },
     "io" : {
         "dist" : 421,
@@ -96,7 +86,8 @@
         "year" : 1.7,
         "path" : "moon_like.png",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 42
     },
     "europe" : {
         "dist" : 671,
@@ -105,7 +96,8 @@
         "year" : 3.55,
         "path" : "moon_like.png",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 85
     },
     "ganymede" : {
         "dist" : 1069,
@@ -114,7 +106,8 @@
         "year" : 3.55,
         "path" : "moon_like.png",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 171
     },
     "callisto" : {
         "dist" : 1882,
@@ -123,7 +116,8 @@
         "year" : 16,
         "path" : "moon_like.png",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 400
     },
     "saturn" : {
         "dist" : 1433000,
@@ -132,7 +126,8 @@
         "mass" : 26,
         "path" : "saturn.png",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 10.5
     },
     "titan" : {
         "dist" : 1221,
@@ -141,7 +136,8 @@
         "radius" : 2570,
         "path" : "moon_like.png",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 384
     },
     "encelade" : {
         "dist" : 238,
@@ -150,7 +146,8 @@
         "radius" : 250,
         "path" : "moon_like.png",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 33
     },
     "Rhea" : {
         "dist" : 527,
@@ -159,7 +156,8 @@
         "radius" : 765,
         "path" : "moon_like.png",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 108
     },
     "Iapetus" : {
         "dist" : 3560,
@@ -168,7 +166,8 @@
         "radius" : 730,
         "path" : "moon_like.png",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 1903
     },
     "uranus" : {
         "dist" : 2870700,
@@ -177,7 +176,8 @@
         "mass" : 26,
         "path" : "uranus.png",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : -17.2
     },
     "neptun" : {
         "dist" : 4498400,
@@ -186,16 +186,18 @@
         "mass" : 26,
         "path" : "neptun.png",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 16
     },
     "triton" : {
         "dist" : 354,
         "radius" : 1350,
-        "year" : 5.8,
+        "year" : -5.8,
         "mass" : 22,
         "path" : "moon_like.png",
-        "orbits" : "neptune",
-        "kind" : "moon"
+        "orbits" : "neptun",
+        "kind" : "moon",
+        "day" : 141
     },
     "pluto" : {
         "dist" : 5900898,
@@ -204,7 +206,8 @@
         "mass" : 22,
         "path" : "moon_like.png",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : -152
     },
     "eris" : {
         "dist" : 10.152e6,
@@ -213,6 +216,7 @@
         "mass" : 22,
         "path" : "moon_like.png",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : 379.2
     }
 }
