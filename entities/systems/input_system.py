@@ -10,6 +10,9 @@ from pygamelib.entities import *
 from entities import *
 from assets import Images
 
+
+# from ..templates import create_entity
+
 class InputSystem:
     def __init__(self):
         self.held_keys: dict[int, tuple[EntityManager, int]] = {}
@@ -35,21 +38,22 @@ class InputSystem:
         for key, key_data in self.held_keys.items():
             entity_manager, entity_id = key_data
             force = entity_manager.get_component(entity_id, Force)
+            velocity = entity_manager.get_component(entity_id, Velocity)
             rotation = entity_manager.get_component(entity_id, Rotation)
 
             # Apply thruster force
             if key == K_SPACE:
                 force.x += 25 * math.cos(math.radians(rotation.angle))
                 force.y -= 25 * math.sin(math.radians(rotation.angle))
-
+            
             # Rotate spaceship ACW
-            elif key == K_a:
+            if key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
             # Rotate spaceship CW
-            elif key == K_d:
+            if key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
 
             print(rotation.angle)
-            print(force)
+            print(velocity.xy)
             entity_manager.add_component(entity_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))

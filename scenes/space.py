@@ -22,6 +22,7 @@ class Space(scene.Scene):
         self.physics_system = PhysicsSystem()
         self.planet_renderer = PlanetRenderer()
         self.bloom_system = BloomSystem()
+        self.timing_system = TimingSystem()
 
         self.camera = CameraSystem((1280, 720), (640, 360))
 
@@ -36,7 +37,7 @@ class Space(scene.Scene):
                                        Force(0, 0),
                                        Mass(1),
                                        Rotation(0),
-                                       Images.get_image("player")
+                                       Images.get_image("player"),
                                        )
 
     def start(self) -> None:
@@ -55,6 +56,7 @@ class Space(scene.Scene):
 
         self.planet_renderer.update(self.entity_manager, delta_time)
 
+        self.timing_system.update(self.entity_manager, delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))

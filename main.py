@@ -48,7 +48,7 @@ class Game:
 
             # Flip display
             pygame.display.flip()
-
+                        
         self.stop()
 
     def stop(self):

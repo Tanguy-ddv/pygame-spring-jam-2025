@@ -57,4 +57,4 @@ class AnimationManager(Singleton):
 
     def get_animation(self, animation_name: str, frame: int) -> pygame.Surface:
         animation_data = self.animation_dict[animation_name]["data"]
-        return self.animation_dict[animation_name]["images"][math.floor((frame % animation_data[0]) / animation_data[1])]
+        return self.animation_dict[animation_name]["images"][math.floor((frame % animation_data[0]) / animation_data[1])].copy()
