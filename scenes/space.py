@@ -62,14 +62,14 @@ class Space(scene.Scene):
         # Player surface
         self.entity_manager.add_component(self.player_id, Images.get_image("player"))
 
-        # Test planet
-        self.planets = open_planets()
+        # self.planets = open_planets()
         
-        # self.test_planet_id = self.entity_manager.create_entity()
-        # self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
-        # self.entity_manager.add_component(self.test_planet_id, Planet(40, Images.get_image("test"), 50, (0, 0, 50)))
-        # self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
-        # self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
+        # Test planet
+        self.test_planet_id = self.entity_manager.create_entity()
+        self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
+        self.entity_manager.add_component(self.test_planet_id, Temp_Planet(40, Images.get_image("test"), (57, 164, 218), 50, (0, 0, 50)))
+        self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
+        self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
 
     def start(self) -> None:
         pass
@@ -85,8 +85,9 @@ class Space(scene.Scene):
         # Update stars
         self.background_system.update(self.camera, delta_time)
 
-        for planet in self.planets:
-            planet.update(delta_time)
+        # for planet in self.planets:
+        #     planet.update(delta_time)
+
         self.planet_renderer.update(self.entity_manager, delta_time)
 
 
