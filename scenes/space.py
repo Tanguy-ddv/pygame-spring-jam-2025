@@ -65,11 +65,11 @@ class Space(scene.Scene):
         # Test planet
         self.planets = open_planets()
         
-        self.test_planet_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
-        self.entity_manager.add_component(self.test_planet_id, Planet(40, Images.get_image("test"), 50, (0, 0, 50)))
-        self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
-        self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
+        # self.test_planet_id = self.entity_manager.create_entity()
+        # self.entity_manager.add_component(self.test_planet_id, Position(320, 180))
+        # self.entity_manager.add_component(self.test_planet_id, Planet(40, Images.get_image("test"), 50, (0, 0, 50)))
+        # self.entity_manager.add_component(self.test_planet_id, pygame.Surface((180, 180), pygame.SRCALPHA))
+        # self.entity_manager.add_component(self.test_planet_id, Bloom((180, 180), pygame.SRCALPHA))
 
     def start(self) -> None:
         pass

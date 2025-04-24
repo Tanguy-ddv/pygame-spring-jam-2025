@@ -10,10 +10,8 @@ from entities import *
 from .bloom_system import Bloom
 from utils.constants import *
 
-
 class Planet:
-
-    def __init__(self, name: str, path: str, radius: int, day: float, year: float, dist: int, orbits: Planet | None) -> None:
+    def __init__(self, name: str, path: str, radius: int, day: float, year: float, dist: int, orbits: object | None) -> None:
         self.name = name
         self.path = path
         self.radius = radius/15
