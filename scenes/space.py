@@ -1,5 +1,6 @@
 # Built-ins
 import json
+import math
 from typing import Any
 
 # External
@@ -47,23 +48,15 @@ class Space(scene.Scene):
         self.entity_manager = EntityManager()
 
         # Systems
-        self.input_system = InputSystem()
-        self.event_system = EventSystem()
         self.background_system = BackgroundSystem()
         self.physics_system = PhysicsSystem()
         self.planet_handler = PlanetHandler()
         self.bloom_system = BloomSystem()
         self.timing_system = TimingSystem()
-
         self.camera = CameraSystem((1280, 720), (640, 360))
 
         # Player
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Listener({
-            KEYDOWN: [self.input_system],
-            KEYUP: [self.input_system]
-        }))
-
         self.entity_manager.add_component(self.player_id, Position(0, 0))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
@@ -73,22 +66,64 @@ class Space(scene.Scene):
         # Player surface
         self.entity_manager.add_component(self.player_id, Images.get_image("player"))
 
+        # Planets
         self.planet_ids = open_planets(self.entity_manager)
+
+        # Variables
+        self.held_keys = set()
 
     def start(self) -> None:
         pass
 
     def handle_events(self, events: list[pygame.Event]) -> None:
-        self.event_system.handle_events(self.entity_manager, events)
+        for event in events:
+            if event.type == KEYDOWN:
+                self.key_pressed(event)
+
+            elif event.type == KEYUP:
+                self.key_unpressed(event)
+    
+    def handle_held_keys(self, delta_time: float) -> None:
+        for key in self.held_keys:
+            # Get player attributes
+            force = self.entity_manager.get_component(self.player_id, Force)
+            rotation = self.entity_manager.get_component(self.player_id, Rotation)
+
+            # Apply thruster force
+            if key == K_SPACE:
+                force.x += 25 * math.cos(math.radians(rotation.angle))
+                force.y -= 25 * math.sin(math.radians(rotation.angle))
+            
+            # Rotate spaceship ACW
+            elif key == K_a:
+                rotation.angle = (rotation.angle + (120 * delta_time)) % 360
+                self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
+
+            # Rotate spaceship CW
+            elif key == K_d:
+                rotation.angle = (rotation.angle - (120 * delta_time)) % 360
+                self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
+
+    def key_pressed(self, event: pygame.Event) -> None:
+        self.held_keys.add(event.key)
+
+    def key_unpressed(self, event: pygame.Event) -> None:
+        self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
-        self.input_system.update(delta_time)
+        # Handle input
+        self.handle_held_keys(delta_time)
+
+        # Process physics
         self.physics_system.update(self.entity_manager, delta_time)
+
+        # Update camera position
         self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
 
         # Update stars
         self.background_system.update(self.camera, delta_time)
 
+        # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
