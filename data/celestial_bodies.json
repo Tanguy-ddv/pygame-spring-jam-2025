@@ -4,7 +4,7 @@
         "year" : 0,
         "mass" : 30,
         "radius" : 696342,
-        "path" : "sun.png",
+        "image_name" : "sun",
         "orbits" : null,
         "kind" : "sun",
         "day" : 648
@@ -14,7 +14,7 @@
         "mass" : 23,
         "radius" : 2439,
         "year" : 88,
-        "path" : "mercury.png",
+        "image_name" : "mercury",
         "orbits" : "sun",
         "kind" : "rocky planet",
         "day" : 1407
@@ -24,7 +24,7 @@
         "mass" : 24,
         "radius" : 6051,
         "year" : 224,
-        "path" : "venus.png",
+        "image_name" : "venus",
         "orbits" : "sun",
         "kind" : "rocky planet",
         "day" : -5832
@@ -34,7 +34,7 @@
         "dist" : 149000,
         "radius" : 6378,
         "year" : 365,
-        "path" : "earth.png",
+        "image_name" : "earth",
         "orbits" : "sun",
         "kind" : "rocky planet",
         "day" : 24
@@ -44,7 +44,7 @@
         "dist" : 384,
         "radius" : 1737,
         "year" : 27,
-        "path" : "moon.png",
+        "image_name" : "moon",
         "orbits" : "earth",
         "kind" : "moon",
         "day" : 648
@@ -54,7 +54,7 @@
         "mass" : 23,
         "radius" : 3396,
         "year" : 780,
-        "path" : "mars.png",
+        "image_name" : "mars",
         "orbits" : "sun",
         "kind" : "rocky planet",
         "day" : 24.6
@@ -64,7 +64,7 @@
         "year" : 1679,
         "radius" : 487,
         "mass" : 20,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
         "day" : 9
@@ -74,7 +74,7 @@
         "year" : 4332,
         "radius" : 71492,
         "mass" : 27,
-        "path" : "jupiter.png",
+        "image_name" : "jupiter",
         "orbits" : "sun",
         "kind" : "gas planet",
         "day" : 10
@@ -84,7 +84,7 @@
         "mass" : 22,
         "radius" : 1821,
         "year" : 1.7,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
         "day" : 42
@@ -94,7 +94,7 @@
         "mass" : 22,
         "radius" : 1561,
         "year" : 3.55,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
         "day" : 85
@@ -104,7 +104,7 @@
         "mass" : 23,
         "radius" : 2634,
         "year" : 3.55,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
         "day" : 171
@@ -114,7 +114,7 @@
         "mass" : 23,
         "radius" : 2410,
         "year" : 16,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
         "day" : 400
@@ -124,7 +124,7 @@
         "year" : 10754,
         "radius" : 58232,
         "mass" : 26,
-        "path" : "saturn.png",
+        "image_name" : "saturn",
         "orbits" : "sun",
         "kind" : "gas planet",
         "day" : 10.5
@@ -134,7 +134,7 @@
         "year" : 16, 
         "mass" : 23,
         "radius" : 2570,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
         "day" : 384
@@ -144,7 +144,7 @@
         "year" : 1.3, 
         "mass" : 19,
         "radius" : 250,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
         "day" : 33
@@ -154,7 +154,7 @@
         "year" : 4.5, 
         "mass" : 21,
         "radius" : 765,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
         "day" : 108
@@ -164,7 +164,7 @@
         "year" : 79, 
         "mass" : 21,
         "radius" : 730,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
         "day" : 1903
@@ -174,17 +174,17 @@
         "year" : 30688,
         "radius" : 25559,
         "mass" : 26,
-        "path" : "uranus.png",
+        "image_name" : "uranus",
         "orbits" : "sun",
         "kind" : "gas planet",
         "day" : -17.2
     },
-    "neptun" : {
+    "neptune" : {
         "dist" : 4498400,
         "year" : 60216,
         "radius" : 24764,
         "mass" : 26,
-        "path" : "neptun.png",
+        "image_name" : "neptune",
         "orbits" : "sun",
         "kind" : "gas planet",
         "day" : 16
@@ -194,8 +194,8 @@
         "radius" : 1350,
         "year" : -5.8,
         "mass" : 22,
-        "path" : "moon_like.png",
-        "orbits" : "neptun",
+        "image_name" : "moon_like",
+        "orbits" : "neptune",
         "kind" : "moon",
         "day" : 141
     },
@@ -204,7 +204,7 @@
         "year" : 90487,
         "radius" : 1185,
         "mass" : 22,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
         "day" : -152
@@ -214,7 +214,7 @@
         "year" : 203228,
         "radius" : 1161,
         "mass" : 22,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
         "day" : 379.2
