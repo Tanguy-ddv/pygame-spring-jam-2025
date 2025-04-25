@@ -48,7 +48,8 @@ class Game:
 
             # Flip display
             pygame.display.flip()
-                        
+            pygame.display.set_caption("fps: " + str(round(self.clock.get_fps())))
+
         self.stop()
 
     def stop(self):

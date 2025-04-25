@@ -1,7 +1,16 @@
 {
     "resources/background/_star.png":"star",
     "resources/background/_shooting_star.png":"shooting_star",
-    "resources/planet_textures/_example.png":"test",
     "resources/asteroids/asteroid.jpg":"asteroid1",
-    "resources/particles/_exhaust_particle.png":"ion exhaust"
+    "resources/planet_textures/_sun.png":"sun",
+    "resources/planet_textures/_mercury.png":"mercury",
+    "resources/planet_textures/_venus.png":"venus",
+    "resources/planet_textures/_earth.png":"earth",
+    "resources/planet_textures/_moon.png":"moon",
+    "resources/planet_textures/_mars.png":"mars",
+    "resources/planet_textures/_jupiter.png":"jupiter",
+    "resources/planet_textures/_saturn.png":"saturn",
+    "resources/planet_textures/_uranus.png":"uranus",
+    "resources/planet_textures/_neptune.png":"neptune",
+    "resources/planet_textures/_moon_like.png":"moon_like"
 }
