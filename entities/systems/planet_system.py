@@ -31,7 +31,6 @@ class Planet:
         self.orbits = orbits
 
         self.theta = random.randint(0, 359) # the angle on the orbit
-        self.phi = random.randint(0, 359) # the spinning angle
 
         self.x, self.y = 0, 0
 
@@ -70,8 +69,6 @@ class PlanetHandler:
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
 
-            planet.phi = (delta_time/planet.day*GAMEH_PER_REALSEC + planet.phi)%360
-
             if planet.orbits is not None:
                 planet.theta = (delta_time/planet.year*24*GAMEH_PER_REALSEC + planet.theta)%360
 
@@ -83,10 +80,12 @@ class PlanetHandler:
                 planet.surface.fill((0, 0, 0))
                 planet.surface.set_colorkey((0, 0, 0))
 
-                # for i in range(len(planet.image_offsets)):
-                    # planet.image_offsets[i].x += delta_time/planet.year*24*GAMEH_PER_REALSEC
-                    # if planet.image_offsets[i].x > planet.borders[1]:
-                        # planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter
+
+                for i in range(len(planet.image_offsets)):
+                    planet.image_offsets[i].x += dx
+                    if planet.image_offsets[i].x > planet.borders[1]:
+                        planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
 
                 for image_offset in planet.image_offsets:
                     position = (math.floor(planet.surface_center[0] + image_offset.x), math.floor(planet.surface_center[1] + image_offset.y))

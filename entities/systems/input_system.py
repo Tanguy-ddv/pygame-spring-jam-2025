@@ -50,6 +50,6 @@ class InputSystem:
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
 
-            print(rotation.angle)
-            print(force)
+            # print(rotation.angle)
+            # print(force)
             entity_manager.add_component(entity_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))

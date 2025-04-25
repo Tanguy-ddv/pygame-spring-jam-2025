@@ -90,7 +90,7 @@ class Space(scene.Scene):
 
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
 
-        # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[4], Planet).x, self.entity_manager.get_component(self.planet_ids[4], Planet).y
+        # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
