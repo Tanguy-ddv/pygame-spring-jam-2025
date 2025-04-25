@@ -40,6 +40,7 @@ class Planet:
         self.surface_image_center = (self.surface_image_size[0] / 2, self.surface_image_size[1] / 2)
 
         self.surface_center = (self.radius, self.radius)
+
         self.surface_size = (self.surface_center[0] * 2, self.surface_center[1] * 2)
 
         # self.revolution_time = revolution_time
@@ -65,6 +66,7 @@ class Planet:
 class PlanetHandler:
     def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float):
         entity_ids = entity_manager.get_from_components(Planet)
+
 
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)

@@ -30,4 +30,4 @@ class ImageManager(Singleton):
         self.image_dict[image_name] = image
 
     def get_image(self, image_name: str) -> pygame.Surface:
-        return self.image_dict[image_name]
+        return self.image_dict[image_name].copy()

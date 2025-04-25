@@ -33,8 +33,9 @@ class CameraSystem:
     def draw(self, display_surface, entity_manager):
         entity_ids = entity_manager.get_from_components(pygame.Surface, Position)
 
+        # print(entity_ids)
+
         for entity_id in entity_ids:
             surface = entity_manager.get_component(entity_id, pygame.Surface)
             position = entity_manager.get_component(entity_id, Position)
-
             display_surface.blit(surface, position - (self.camera_x, self.camera_y) + self.relative_offset - pygame.Vector2(surface.get_rect().size) / 2)
