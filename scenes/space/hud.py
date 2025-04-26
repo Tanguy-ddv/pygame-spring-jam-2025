@@ -60,23 +60,32 @@ class Map:
         self.map_surface.fill((50, 50, 50))
         offset = pygame.mouse.get_pos() - pygame.Vector2(1280, 720) / 2
 
+        def calculate_on_map_position(self, position:pygame.Vector2):
+            return self.map_surface_center[0] + (position.x / (400 * self.zoom)), self.map_surface_center[1] + (position.y / (400 * self.zoom))
+
         if self.map_mode == 1:
             #pass one to draw orbit tracks
 
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
+                if planet.orbits == None:
+                    center = self.map_surface_center - offset
+                else:
+                    orbit:Planet = entity_manager.get_component(planet.orbits, Planet)
+                    center = calculate_on_map_position(self, pygame.Vector2(orbit.x, orbit.y)) - offset
 
-                if planet.kind != "moon":
-                    pygame.draw.circle(self.map_surface, (235, 222, 52), self.map_surface_center - offset, planet.dist / (400 * self.zoom) + max(planet.radius / (50 * self.zoom), 5), 2)
+                pygame.draw.circle(self.map_surface, (235, 222, 52), center, planet.dist / (400 * self.zoom) + max(planet.radius / (50 * self.zoom), 5), 2)
             
             #pass two to draw planet positions
 
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
 
-                if planet.kind != "moon":
-                    on_map_position = (self.map_surface_center[0] + (planet.x / (400 * self.zoom)), self.map_surface_center[1] + (planet.y / (400 * self.zoom)))
+                on_map_position = calculate_on_map_position(self, pygame.Vector2(planet.x, planet.y))
 
+                if planet.kind == "moon":
+                    pygame.draw.circle(self.map_surface, (235, 52, 201), on_map_position  - offset, max(planet.radius / (50 * self.zoom), 2))
+                else:
                     pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position  - offset, max(planet.radius / (50 * self.zoom), 5))
 
             position:Position = entity_manager.get_component(player_id, Position)
