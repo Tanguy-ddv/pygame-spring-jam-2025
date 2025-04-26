@@ -12,7 +12,7 @@ class BackgroundSystem:
     def __init__(self):
         self.stars = []
         for i in range(100):
-            self.stars.append({"x":random.randint(0, 1280), "y":random.randint(0, 720), "star_type":str(random.randint(0, 49)), "released":0, "bounding_wall":0})
+            self.stars.append({"x":random.randint(0, 1280), "y":random.randint(0, 720), "star_type":str(random.randint(0, 49))})
         
         self.shooting_stars = []
     
@@ -66,37 +66,21 @@ class BackgroundSystem:
 
     def update_stars(self, camera:camera_system.CameraSystem, camera_bounding_box:tuple, delta_time:float):
         for star in self.stars:
-            if star["released"] > 0:
-                star["released"] -= 30 * delta_time
-                if star["bounding_wall"] == 0 or star["bounding_wall"] == 2:
-                    star["x"] = camera_bounding_box[star["bounding_wall"]]
-                elif star["bounding_wall"] == 1 or star["bounding_wall"] == 3:
-                    star["y"] = camera_bounding_box[star["bounding_wall"]]
-
-        for star in self.stars:
             if star["x"] < camera_bounding_box[0]:
-                star["x"] = camera_bounding_box[2]
+                star["x"] = camera_bounding_box[2] + (star["x"] - camera_bounding_box[0])
                 star["y"] = random.randint(camera.camera_y - 360, camera.camera_y + 360)
-                star["bounding_wall"] = 2
-                star["released"] = random.randint(0, round(delta_time * 1000))
 
             elif star["x"] > camera_bounding_box[2]:
-                star["x"] = camera_bounding_box[0]
+                star["x"] = camera_bounding_box[0] + (star["x"] - camera_bounding_box[2])
                 star["y"] = random.randint(camera.camera_y - 360, camera.camera_y + 360)
-                star["bounding_wall"] = 0
-                star["released"] = random.randint(0, round(delta_time * 1000))
 
             if star["y"] < camera_bounding_box[1]:
-                star["y"] = camera_bounding_box[3]
+                star["y"] = camera_bounding_box[3] + (star["y"] - camera_bounding_box[1])
                 star["x"] = random.randint(camera.camera_x - 640, camera.camera_x + 640)
-                star["bounding_wall"] = 3
-                star["released"] = random.randint(0, round(delta_time * 1000))
 
             elif star["y"] > camera_bounding_box[3]:
-                star["y"] = camera_bounding_box[1]
+                star["y"] = camera_bounding_box[1] + (star["y"] - camera_bounding_box[3])
                 star["x"] = random.randint(camera.camera_x - 640, camera.camera_x + 640)
-                star["bounding_wall"] = 1
-                star["released"] = random.randint(0, round(delta_time * 1000))
 
     def draw(self, surface:pygame.Surface, camera:camera_system.CameraSystem, Images:images.ImageManager):
         self.draw_stars(surface, camera, Images)

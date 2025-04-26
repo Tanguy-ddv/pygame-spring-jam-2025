@@ -27,6 +27,7 @@ def open_planets(entity_manager: EntityManager):
         orbits_str = values['orbits']
         kind = values["kind"]
         mass = values["mass"]
+        rotation_direction = values["rotation_direction"]
         if orbits_str is None:
             orbits = None
         else:
@@ -34,7 +35,7 @@ def open_planets(entity_manager: EntityManager):
                 if planets[i].name == orbits_str:
                     orbits = planet_ids[i]
 
-        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits)
+        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
 
         id = create_entity(entity_manager,
                            planet
@@ -65,7 +66,7 @@ class Space(scene.Scene):
         starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
 
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)), starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
+        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(20))
@@ -118,7 +119,7 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
             elif key == K_r:
-                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x - 400, self.entity_manager.get_component(self.planet_ids[3], Planet).y
+                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
             elif key == K_1:
                 self.hud.map.map_mode = 1
@@ -138,6 +139,8 @@ class Space(scene.Scene):
         # Handle input
         self.handle_held_keys(delta_time)
 
+        print(self.entity_manager.get_component(self.player_id, Force))
+
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
@@ -154,7 +157,7 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
 
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))

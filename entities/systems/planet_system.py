@@ -12,7 +12,7 @@ from .camera_system import CameraSystem
 from utils.constants import *
 
 class Planet:
-    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None) -> None:
+    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
         self.name = name
 
         self.radius = math.floor(math.sqrt(radius))
@@ -35,6 +35,8 @@ class Planet:
         self.theta = random.randint(0, 359) # the angle on the orbit
 
         self.x, self.y = 0, 0
+
+        self.rotation_direction = rotation_direction
 
         # rendering stuff
         self.surface_image = surface_image
@@ -59,16 +61,44 @@ class Planet:
             for yi in range(math.ceil((self.diameter / height)) + 1):
                 self.image_offsets.append(pygame.Vector2((-self.radius - (width / 2) - width) + xi * width, (-self.radius) + yi * height))
 
-        self.borders = (-self.radius - (width / 2), self.radius + (width / 2))
+        width = (math.ceil(self.diameter / width) + 3) * width / 2
+
+        if self.rotation_direction == "clockwise":
+            self.borders = (-width, width)
+        else:
+            self.borders = (width, -width)
 
         self.surface = pygame.Surface(self.surface_size)
 
         self.on_screen = False
 
+#this class is intended solely for flight path predictions
+class PlanetImprint:
+    def __init__(self, radius: int, day: float, year: float, kind: str, dist: int, mass: int, orbits: object | None, theta: float | int) -> None:
+        self.radius = radius
+        self.diameter = self.radius * 2
+
+        self.day = day # in hours
+        self.year = year # in day
+
+        self.kind = kind
+
+        self.dist = dist
+
+        self.mass = mass
+
+        self.orbits = orbits
+
+        self.theta = theta
+
+        self.x, self.y = 0, 0
+
+def from_planet_to_imprint(planet:Planet) -> PlanetImprint:
+    return PlanetImprint(planet.radius, planet.day, planet.year, planet.kind, planet.dist, planet.mass, planet.orbits, planet.theta)
+
 class PlanetHandler:
     def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float):
         entity_ids = entity_manager.get_from_components(Planet)
-
 
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
@@ -87,9 +117,14 @@ class PlanetHandler:
                 dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter
 
                 for i in range(len(planet.image_offsets)):
-                    planet.image_offsets[i].x += dx
-                    if planet.image_offsets[i].x > planet.borders[1]:
-                        planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                    if planet.rotation_direction == "clockwise":
+                        planet.image_offsets[i].x += dx
+                        if planet.image_offsets[i].x > planet.borders[1]:
+                            planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                    else:
+                        planet.image_offsets[i].x -= dx
+                        if planet.image_offsets[i].x < planet.borders[1]:
+                            planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
 
                 for image_offset in planet.image_offsets:
                     position = (math.floor(planet.surface_center[0] + image_offset.x), math.floor(planet.surface_center[1] + image_offset.y))
@@ -109,3 +144,26 @@ class PlanetHandler:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             if planet.on_screen:
                 display_surface.blit(planet.surface, planet.surface.get_rect(center = camera.get_relative_position((planet.x, planet.y))))
+
+    def get_planet_imprints(self, entity_manager: EntityManager) -> dict[int:PlanetImprint]:
+        planet_imprints = {}
+
+        entity_ids = entity_manager.get_from_components(Planet)
+
+        for entity_id in entity_ids:
+            planet:Planet = entity_manager.get_component(entity_id, Planet)
+            planet_imprints[entity_id] = from_planet_to_imprint(planet)
+
+        return planet_imprints
+            
+#intended to handle planet imprints
+class PlanetImprintHandler:
+    def update(self, planet_imprints:dict[int:PlanetImprint], delta_time: float):
+        for planet_id, planet_imprint in planet_imprints.items():
+            planet_imprint:PlanetImprint
+            if planet_imprint.orbits is not None:
+                planet_imprint.theta = (delta_time/planet_imprint.year*24*GAMEH_PER_REALSEC + planet_imprint.theta)%360
+
+                orbit:PlanetImprint = planet_imprints[planet_imprint.orbits]
+
+                planet_imprint.x, planet_imprint.y = orbit.x + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.cos(planet_imprint.theta*math.pi/180), orbit.y + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.sin(planet_imprint.theta*math.pi/180)

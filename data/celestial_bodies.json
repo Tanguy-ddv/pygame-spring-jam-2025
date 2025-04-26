@@ -7,7 +7,8 @@
         "image_name" : "sun",
         "orbits" : null,
         "kind" : "sun",
-        "day" : 648
+        "day" : 648 ,
+        "rotation_direction" : "clockwise"
     },
     "mercury" : {
         "dist" : 57909,
@@ -17,7 +18,8 @@
         "image_name" : "mercury",
         "orbits" : "sun",
         "kind" : "rocky planet",
-        "day" : 1407
+        "day" : 1407 ,
+        "rotation_direction" : "clockwise"
     },
     "venus" : {
         "dist" : 108209,
@@ -27,7 +29,8 @@
         "image_name" : "venus",
         "orbits" : "sun",
         "kind" : "rocky planet",
-        "day" : -5832
+        "day" : 5832 ,
+        "rotation_direction" : "clockwise"
     },
     "earth" : {
         "mass" : 24,
@@ -37,7 +40,8 @@
         "image_name" : "earth",
         "orbits" : "sun",
         "kind" : "rocky planet",
-        "day" : 24
+        "day" : 24 ,
+        "rotation_direction" : "clockwise"
     },
     "moon" : {
         "mass" : 22,
@@ -47,7 +51,8 @@
         "image_name" : "moon",
         "orbits" : "earth",
         "kind" : "moon",
-        "day" : 648
+        "day" : 648 ,
+        "rotation_direction" : "clockwise"
     },
     "mars" : {
         "dist" : 227944,
@@ -57,7 +62,8 @@
         "image_name" : "mars",
         "orbits" : "sun",
         "kind" : "rocky planet",
-        "day" : 24.6
+        "day" : 24.6 ,
+        "rotation_direction" : "clockwise"
     },
     "ceres" : {
         "dist" : 414103,
@@ -67,7 +73,8 @@
         "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
-        "day" : 9
+        "day" : 9 ,
+        "rotation_direction" : "clockwise"
     },
     "jupiter" : {
         "dist" : 778340,
@@ -77,7 +84,8 @@
         "image_name" : "jupiter",
         "orbits" : "sun",
         "kind" : "gas planet",
-        "day" : 10
+        "day" : 10 ,
+        "rotation_direction" : "clockwise"
     },
     "io" : {
         "dist" : 421,
@@ -87,7 +95,8 @@
         "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
-        "day" : 42
+        "day" : 42 ,
+        "rotation_direction" : "clockwise"
     },
     "europa" : {
         "dist" : 671,
@@ -97,7 +106,8 @@
         "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
-        "day" : 85
+        "day" : 85 ,
+        "rotation_direction" : "clockwise"
     },
     "ganymede" : {
         "dist" : 1069,
@@ -107,7 +117,8 @@
         "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
-        "day" : 171
+        "day" : 171 ,
+        "rotation_direction" : "clockwise"
     },
     "callisto" : {
         "dist" : 1882,
@@ -117,7 +128,8 @@
         "image_name" : "moon_like",
         "orbits" : "jupiter",
         "kind" : "moon",
-        "day" : 400
+        "day" : 400 ,
+        "rotation_direction" : "clockwise"
     },
     "saturn" : {
         "dist" : 1433000,
@@ -127,7 +139,8 @@
         "image_name" : "saturn",
         "orbits" : "sun",
         "kind" : "gas planet",
-        "day" : 10.5
+        "day" : 10.5 ,
+        "rotation_direction" : "clockwise"
     },
     "titan" : {
         "dist" : 1221,
@@ -137,7 +150,8 @@
         "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
-        "day" : 384
+        "day" : 384 ,
+        "rotation_direction" : "clockwise"
     },
     "encelade" : {
         "dist" : 238,
@@ -147,7 +161,8 @@
         "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
-        "day" : 33
+        "day" : 33 ,
+        "rotation_direction" : "clockwise"
     },
     "rhea" : {
         "dist" : 527,
@@ -157,7 +172,8 @@
         "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
-        "day" : 108
+        "day" : 108 ,
+        "rotation_direction" : "clockwise"
     },
     "iapetus" : {
         "dist" : 3560,
@@ -167,7 +183,8 @@
         "image_name" : "moon_like",
         "orbits" : "saturn",
         "kind" : "moon",
-        "day" : 1903
+        "day" : 1903 ,
+        "rotation_direction" : "clockwise"
     },
     "uranus" : {
         "dist" : 2870700,
@@ -177,7 +194,8 @@
         "image_name" : "uranus",
         "orbits" : "sun",
         "kind" : "gas planet",
-        "day" : -17.2
+        "day" : 17.2 ,
+        "rotation_direction" : "anticlockwise"
     },
     "neptune" : {
         "dist" : 4498400,
@@ -187,7 +205,8 @@
         "image_name" : "neptune",
         "orbits" : "sun",
         "kind" : "gas planet",
-        "day" : 16
+        "day" : 16 ,
+        "rotation_direction" : "clockwise"
     },
     "triton" : {
         "dist" : 354,
@@ -197,7 +216,8 @@
         "image_name" : "moon_like",
         "orbits" : "neptune",
         "kind" : "moon",
-        "day" : 141
+        "day" : 141 ,
+        "rotation_direction" : "clockwise"
     },
     "pluto" : {
         "dist" : 5900898,
@@ -207,7 +227,8 @@
         "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
-        "day" : -152
+        "day" : 152 ,
+        "rotation_direction" : "anticlockwise"
     },
     "eris" : {
         "dist" : 10.152e6,
@@ -217,6 +238,7 @@
         "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
-        "day" : 379.2
+        "day" : 379.2 ,
+        "rotation_direction" : "clockwise"
     }
 }
