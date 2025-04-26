@@ -19,7 +19,9 @@ class HUD:
 
         self.map_mode = 1
 
-    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int]):
+        self.planet_imprint_handler = PlanetImprintHandler()
+
+    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], planet_imprints:dict[int:PlanetImprint], delta_time: int | float):
         self.map_surface.fill((50, 50, 50))
 
         if self.map_mode == 1:
@@ -48,6 +50,9 @@ class HUD:
             pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position, 3)
 
         elif self.map_mode == 2:
+            for i in range(10):
+                self.planet_imprint_handler.update(planet_imprints, delta_time * 10)
+
             player_position:Position = entity_manager.get_component(player_id, Position)
 
             for planet_id in planet_ids:
@@ -159,7 +164,7 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
             elif key == K_r:
-                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[3], Planet).y
+                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[13], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[13], Planet).y
 
             elif key == K_1:
                 self.hud.map_mode = 1
@@ -194,7 +199,7 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
 
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))

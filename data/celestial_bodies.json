@@ -177,7 +177,7 @@
         "image_name" : "uranus",
         "orbits" : "sun",
         "kind" : "gas planet",
-        "day" : -17.2
+        "day" : 17.2
     },
     "neptune" : {
         "dist" : 4498400,
