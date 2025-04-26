@@ -12,6 +12,56 @@ from pygamelib import *
 from entities import *
 from assets import Images
 
+class HUD:
+    def __init__(self):
+        self.map_surface = pygame.Surface((526, 526), pygame.SRCALPHA)
+        self.map_surface_center = (526/2, 526/2)
+
+        self.map_mode = 1
+
+    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int]):
+        self.map_surface.fill((50, 50, 50))
+
+        if self.map_mode == 1:
+            #pass one to draw orbit tracks
+
+            for planet_id in planet_ids:
+                planet:Planet = entity_manager.get_component(planet_id, Planet)
+
+                if planet.kind != "moon":
+                    pygame.draw.circle(self.map_surface, (235, 222, 52), self.map_surface_center, planet.dist / 8000, 2)
+            
+            #pass two to draw planet positions
+
+            for planet_id in planet_ids:
+                planet:Planet = entity_manager.get_component(planet_id, Planet)
+
+                if planet.kind != "moon":
+                    on_map_position = (self.map_surface_center[0] + (planet.x / 8000), self.map_surface_center[1] + (planet.y / 8000))
+
+                    pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position, 2)
+
+            position:Position = entity_manager.get_component(player_id, Position)
+
+            on_map_position = (self.map_surface_center[0] + (position.x / 8000), self.map_surface_center[1] + (position.y / 8000))
+
+            pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position, 3)
+
+        elif self.map_mode == 2:
+            player_position:Position = entity_manager.get_component(player_id, Position)
+
+            for planet_id in planet_ids:
+                planet:Planet = entity_manager.get_component(planet_id, Planet)
+                on_map_position = (self.map_surface_center[0] + ((planet.x - player_position.x) / 16), self.map_surface_center[1] + ((planet.y - player_position.y) / 16))
+
+                pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position, planet.radius / 16)
+
+            pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, 3)
+
+    def draw(self, surface: pygame.Surface):
+        if self.map_mode != 0:
+            surface.blit(self.map_surface, self.map_surface.get_rect(center = (surface.get_width() - self.map_surface_center[0], self.map_surface_center[1])))
+
 def open_planets(entity_manager: EntityManager):
     with open("data/celestial_bodies.json") as f:
         planet_dict: dict[str, dict[str, Any]] = json.load(f)
@@ -25,6 +75,7 @@ def open_planets(entity_manager: EntityManager):
         image_name = values['image_name']
         orbits_str = values['orbits']
         kind = values["kind"]
+        mass = values["mass"]
         if orbits_str is None:
             orbits = None
         else:
@@ -32,7 +83,7 @@ def open_planets(entity_manager: EntityManager):
                 if planets[i].name == orbits_str:
                     orbits = planet_ids[i]
 
-        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, orbits)
+        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits)
 
         id = create_entity(entity_manager,
                            planet
@@ -75,6 +126,9 @@ class Space(scene.Scene):
         # Variables
         self.held_keys = set()
 
+        # HUD
+        self.hud = HUD()
+
     def start(self) -> None:
         pass
 
@@ -107,6 +161,16 @@ class Space(scene.Scene):
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
+            elif key == K_r:
+                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[3], Planet).y
+
+            elif key == K_1:
+                self.hud.map_mode = 1
+            elif key == K_2:
+                self.hud.map_mode = 2
+            elif key == K_0:
+                self.hud.map_mode = 0
+
     def key_pressed(self, event: pygame.Event) -> None:
         self.held_keys.add(event.key)
 
@@ -118,7 +182,7 @@ class Space(scene.Scene):
         self.handle_held_keys(delta_time)
 
         # Process physics
-        self.physics_system.update(self.entity_manager, delta_time)
+        self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
         # Update camera position
         self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
@@ -133,6 +197,8 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
 
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids)
+
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
 
@@ -140,6 +206,7 @@ class Space(scene.Scene):
         self.planet_handler.draw(self.entity_manager, self.camera, surface)
         self.camera.draw(surface, self.entity_manager)
         self.bloom_system.draw(self.camera, surface, self.entity_manager)
+        self.hud.draw(surface)
 
     def stop(self) -> None:
         pass
