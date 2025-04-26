@@ -109,7 +109,7 @@ class PlanetHandler:
                 planet.surface.fill((0, 0, 0))
                 planet.surface.set_colorkey((0, 0, 0))
 
-                dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter * 1000
+                dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter
 
                 for i in range(len(planet.image_offsets)):
                     planet.image_offsets[i].x += dx

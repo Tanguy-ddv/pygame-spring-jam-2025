@@ -119,7 +119,7 @@ class Space(scene.Scene):
         starting_planet = self.entity_manager.get_component(self.planet_ids[0], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
 
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)), starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
+        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(1))
@@ -185,6 +185,8 @@ class Space(scene.Scene):
     def update(self, delta_time: float) -> None:
         # Handle input
         self.handle_held_keys(delta_time)
+
+        print(self.entity_manager.get_component(self.player_id, Force))
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
