@@ -111,13 +111,13 @@ class Space(scene.Scene):
 
 
         # Player
-        starting_planet = self.entity_manager.get_component(self.planet_ids[0], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
+        starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
 
         self.player_id = self.entity_manager.create_entity()
         self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)), starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
-        self.entity_manager.add_component(self.player_id, Mass(1))
+        self.entity_manager.add_component(self.player_id, Mass(20))
         self.entity_manager.add_component(self.player_id, Rotation(0))
 
         # Player surface
@@ -148,8 +148,8 @@ class Space(scene.Scene):
 
             # Apply thruster force
             if key == K_SPACE:
-                force.x += 25 * math.cos(math.radians(rotation.angle))
-                force.y -= 25 * math.sin(math.radians(rotation.angle))
+                force.x += 1500 * math.cos(math.radians(rotation.angle))
+                force.y -= 1500 * math.sin(math.radians(rotation.angle))
             
             # Rotate spaceship ACW
             elif key == K_a:
@@ -162,7 +162,7 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
             elif key == K_r:
-                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[3], Planet).y
+                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x - 400, self.entity_manager.get_component(self.planet_ids[3], Planet).y
 
             elif key == K_1:
                 self.hud.map_mode = 1
