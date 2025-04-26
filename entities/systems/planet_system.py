@@ -28,7 +28,7 @@ class Planet:
         else:
             self.dist = math.sqrt(dist) * math.sqrt(57909) / 5
 
-        self.mass = mass * 500
+        self.mass = mass * 350
 
         self.orbits = orbits
 
