@@ -207,7 +207,7 @@
         "image_name" : "moon_like",
         "orbits" : "sun",
         "kind" : "dwarf",
-        "day" : -152
+        "day" : 152
     },
     "eris" : {
         "dist" : 10.152e6,
