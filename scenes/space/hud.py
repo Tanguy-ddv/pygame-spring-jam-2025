@@ -31,8 +31,12 @@ class Map:
         self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
         self.map_mode = 0
-        self.fullscreened = True
+        self.fullscreened = False
+        self.panning = False
+
         self.zoom = 1.0
+        self.lastpos = (0, 0)
+        self.offset = pygame.Vector2(0, 0)
 
         self.planet_imprint_handler = PlanetImprintHandler()
 
@@ -44,6 +48,15 @@ class Map:
             elif event.y == -1:
                 self.set_zoom(self.zoom + 0.1)
 
+        elif event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.panning = True
+                self.last_pos = event.pos
+
+        elif event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                self.panning = False
+
         elif event.type == KEYDOWN:
             if event.key == K_UP:
                 self.set_zoom(self.zoom - 0.1)
@@ -51,14 +64,45 @@ class Map:
             elif event.key == K_DOWN:
                 self.set_zoom(self.zoom + 0.1)
 
+            elif event.key == K_m:
+                if self.map_mode == 0:
+                    self.set_mode(1)
+
+                else:
+                    self.set_mode(0)
+
+            elif event.key == K_TAB:
+                self.fullscreened = not self.fullscreened
+                self.set_zoom(1)
+
+            elif event.key == K_v:
+                if self.map_mode == 1:
+                    self.set_mode(2)
+
+                elif self.map_mode == 2:
+                    self.set_mode(1)
+
     def set_zoom(self, new_zoom):
         self.zoom = max(new_zoom, 0.01)
         # self.map_surface = pygame.Surface((1280 * self.zoom, 720 * self.zoom))
         # self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
+    def set_mode(self, new_mode):
+        self.map_mode = new_mode
+        self.set_zoom(1)
+
     def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], planet_imprints:dict[int:PlanetImprint], delta_time: int | float):
         self.map_surface.fill((50, 50, 50))
-        offset = pygame.mouse.get_pos() - pygame.Vector2(1280, 720) / 2
+        if self.fullscreened:
+            if self.panning:
+                new_pos = pygame.Vector2(pygame.mouse.get_pos())
+                self.offset -= new_pos - self.last_pos
+                self.last_pos = new_pos
+
+            offset = self.offset
+
+        else:
+            offset = pygame.Vector2(0, 0)
 
         def calculate_on_map_position(self, position:pygame.Vector2):
             return self.map_surface_center[0] + (position.x / (400 * self.zoom)), self.map_surface_center[1] + (position.y / (400 * self.zoom))
@@ -122,7 +166,7 @@ class Map:
             self.draw_fullscreen(surface)
 
         else:
-            self.draw_orbits(surface)
+            self.draw_overlay(surface)
 
     def draw_orbits(self): # Move from update into here (maybe cache new values of planets in update and render here)
         pass
@@ -131,7 +175,8 @@ class Map:
         pass
 
     def draw_overlay(self, surface: pygame.Surface):
-        pass
+        display_surface = pygame.transform.smoothscale(self.map_surface, (400, 225))
+        surface.blit(display_surface, (0, 0))
 
     def draw_fullscreen(self, surface: pygame.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (1280, 720))
