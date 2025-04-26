@@ -81,6 +81,7 @@ def open_planets(entity_manager: EntityManager):
         orbits_str = values['orbits']
         kind = values["kind"]
         mass = values["mass"]
+        rotation_direction = values["rotation_direction"]
         if orbits_str is None:
             orbits = None
         else:
@@ -88,7 +89,7 @@ def open_planets(entity_manager: EntityManager):
                 if planets[i].name == orbits_str:
                     orbits = planet_ids[i]
 
-        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits)
+        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
 
         id = create_entity(entity_manager,
                            planet
@@ -167,7 +168,7 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
             elif key == K_r:
-                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[13], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[13], Planet).y
+                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
             elif key == K_1:
                 self.hud.map_mode = 1

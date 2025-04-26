@@ -12,7 +12,7 @@ from .camera_system import CameraSystem
 from utils.constants import *
 
 class Planet:
-    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None) -> None:
+    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
         self.name = name
 
         self.radius = math.floor(math.sqrt(radius))
@@ -35,6 +35,8 @@ class Planet:
         self.theta = random.randint(0, 359) # the angle on the orbit
 
         self.x, self.y = 0, 0
+
+        self.rotation_direction = rotation_direction
 
         # rendering stuff
         self.surface_image = surface_image
@@ -61,7 +63,10 @@ class Planet:
 
         width = (math.ceil(self.diameter / width) + 3) * width / 2
 
-        self.borders = (-width, width)
+        if self.rotation_direction == "clockwise":
+            self.borders = (-width, width)
+        else:
+            self.borders = (width, -width)
 
         self.surface = pygame.Surface(self.surface_size)
 
@@ -112,9 +117,14 @@ class PlanetHandler:
                 dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter
 
                 for i in range(len(planet.image_offsets)):
-                    planet.image_offsets[i].x += dx
-                    if planet.image_offsets[i].x > planet.borders[1]:
-                        planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                    if planet.rotation_direction == "clockwise":
+                        planet.image_offsets[i].x += dx
+                        if planet.image_offsets[i].x > planet.borders[1]:
+                            planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                    else:
+                        planet.image_offsets[i].x -= dx
+                        if planet.image_offsets[i].x < planet.borders[1]:
+                            planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
 
                 for image_offset in planet.image_offsets:
                     position = (math.floor(planet.surface_center[0] + image_offset.x), math.floor(planet.surface_center[1] + image_offset.y))
