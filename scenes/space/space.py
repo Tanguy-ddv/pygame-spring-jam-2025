@@ -63,7 +63,7 @@ class Space(scene.Scene):
 
 
         # Player
-        starting_planet = self.entity_manager.get_component(self.planet_ids[0], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
+        starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
 
         self.player_id = self.entity_manager.create_entity()
         self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
@@ -111,16 +111,16 @@ class Space(scene.Scene):
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-                if animator.current_animation != "right thrusters hold":
-                    animator.current_animation = "right thrusters hold"
+                if animator.current_animation != "spin aclockwise hold":
+                    animator.current_animation = "spin aclockwise hold"
                     animator.frame = 0
 
             # Rotate spaceship CW
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
                 
-                if animator.current_animation != "left thrusters hold":
-                    animator.current_animation = "left thrusters hold"
+                if animator.current_animation != "spin clockwise hold":
+                    animator.current_animation = "spin clockwise hold"
                     animator.frame = 0
 
             elif key == K_r:

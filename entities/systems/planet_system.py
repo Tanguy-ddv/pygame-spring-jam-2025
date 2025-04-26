@@ -57,9 +57,13 @@ class Planet:
         width, height = surface_image.get_size()
         self.image_offsets = []
 
-        for xi in range(math.ceil(self.diameter / width) + 3):
-            for yi in range(math.ceil((self.diameter / height)) + 1):
-                self.image_offsets.append(pygame.Vector2((-self.radius - (width / 2) - width) + xi * width, (-self.radius) + yi * height))
+        if self.diameter == height:
+            for xi in range(math.ceil(self.diameter / width) + 3):
+                self.image_offsets.append(pygame.Vector2((-self.radius - (width / 2) - width) + xi * width, 0))
+        else:
+            for xi in range(math.ceil(self.diameter / width) + 3):
+                for yi in range(math.ceil(math.ceil((self.diameter / height)) + 1)):
+                    self.image_offsets.append(pygame.Vector2((-self.radius - (width / 2) - width) + xi * width, (-self.radius) + yi * height))
 
         width = (math.ceil(self.diameter / width) + 3) * width / 2
 
