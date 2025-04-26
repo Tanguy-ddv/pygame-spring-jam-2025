@@ -157,7 +157,7 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
 
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))

@@ -19,8 +19,8 @@ class HUD:
     def handle_event(self, event):
         self.map.handle_event(event)
 
-    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int]) -> None:
-        self.map.update(entity_manager, player_id, planet_ids)
+    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], planet_imprints, delta_time) -> None:
+        self.map.update(entity_manager, player_id, planet_ids, planet_imprints, delta_time)
 
     def draw(self, surface: pygame.Surface):
         self.map.draw(surface)
@@ -33,6 +33,8 @@ class Map:
         self.map_mode = 0
         self.fullscreened = True
         self.zoom = 1.0
+
+        self.planet_imprint_handler = PlanetImprintHandler()
 
     def handle_event(self, event):
         if event.type == MOUSEWHEEL:
@@ -54,7 +56,7 @@ class Map:
         self.map_surface = pygame.Surface((1280 * self.zoom, 720 * self.zoom))
         self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
-    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int]):
+    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], planet_imprints:dict[int:PlanetImprint], delta_time: int | float):
         self.map_surface.fill((50, 50, 50))
         offset = pygame.mouse.get_pos() - pygame.Vector2(1280, 720) / 2
 
@@ -84,6 +86,9 @@ class Map:
             pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position  - offset, 3)
 
         elif self.map_mode == 2:
+            for i in range(10):
+                self.planet_imprint_handler.update(planet_imprints, delta_time * 10)
+
             player_position:Position = entity_manager.get_component(player_id, Position)
 
             for planet_id in planet_ids:
