@@ -1,51 +1,51 @@
 {
     "resources/player_shuttle/left_thrusters_hold": {
-        "name": "",
-        "duration": 0
+        "name": "left thrusters hold",
+        "duration": 4
     },
 
     "resources/player_shuttle/left_thrusters_start": {
-        "name": "",
-        "duration": 0
+        "name": "left thrusters start",
+        "duration": 4
     },
 
     "resources/player_shuttle/main_drive_hold": {
-        "name": "",
-        "duration": 0
+        "name": "main drive hold",
+        "duration": 2
     },
 
     "resources/player_shuttle/main_drive_start": {
-        "name": "",
-        "duration": 0
+        "name": "main drive start",
+        "duration": 5
     },
 
     "resources/player_shuttle/right_thruster_hold": {
-        "name": "",
-        "duration": 0
+        "name": "right thrusters hold",
+        "duration": 4
     },
 
     "resources/player_shuttle/right_thrusters_start": {
-        "name": "",
-        "duration": 0
+        "name": "right thrusters start",
+        "duration": 4
     },
 
     "resources/player_shuttle/spin_aclockwise_hold": {
-        "name": "",
-        "duration": 0
+        "name": "spin aclockwise hold",
+        "duration": 4
     },
 
     "resources/player_shuttle/spin_aclockwise_start": {
-        "name": "",
-        "duration": 0
+        "name": "spin aclockwise start",
+        "duration": 4
     },
 
     "resources/player_shuttle/spin_clockwise_hold": {
-        "name": "",
-        "duration": 0
+        "name": "spin clockwise hold",
+        "duration": 4
     },
 
     "resources/player_shuttle/spin_clockwise_start": {
-        "name": "",
-        "duration": 0
+        "name": "spin clockwise start",
+        "duration": 4
     }
 }

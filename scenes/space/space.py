@@ -10,7 +10,7 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 from entities import *
-from assets import Images
+from assets import Images, Animations
 from .hud import HUD
 
 def open_planets(entity_manager: EntityManager):
@@ -63,7 +63,7 @@ class Space(scene.Scene):
 
 
         # Player
-        starting_planet = self.entity_manager.get_component(self.planet_ids[18], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
+        starting_planet = self.entity_manager.get_component(self.planet_ids[0], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
 
         self.player_id = self.entity_manager.create_entity()
         self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
@@ -71,6 +71,7 @@ class Space(scene.Scene):
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(20))
         self.entity_manager.add_component(self.player_id, Rotation(0))
+        self.entity_manager.add_component(self.player_id, Animator())
 
         # Player surface
         self.entity_manager.add_component(self.player_id, Images.get_image("player"))
@@ -100,7 +101,7 @@ class Space(scene.Scene):
             # Get player attributes
             force = self.entity_manager.get_component(self.player_id, Force)
             rotation = self.entity_manager.get_component(self.player_id, Rotation)
-
+            animator = self.entity_manager.get_component(self.player_id, Animator)
             # Apply thruster force
             if key == K_SPACE:
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
@@ -109,26 +110,59 @@ class Space(scene.Scene):
             # Rotate spaceship ACW
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
-                self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
+
+                if animator.current_animation != "right thrusters hold":
+                    animator.current_animation = "right thrusters hold"
+                    animator.frame = 0
 
             # Rotate spaceship CW
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
-                self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
+                
+                if animator.current_animation != "left thrusters hold":
+                    animator.current_animation = "left thrusters hold"
+                    animator.frame = 0
 
             elif key == K_r:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
     def key_pressed(self, event: pygame.Event) -> None:
+        animator = self.entity_manager.get_component(self.player_id, Animator)
+        if event.key == K_a:
+            animator.current_animation = "right thrusters start"
+            animator.frame = 0
+
+        elif event.key == K_d:
+                animator.current_animation = "left thrusters start"
+                animator.frame = 0
+
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
+        animator = self.entity_manager.get_component(self.player_id, Animator)
+        if event.key in [K_a, K_d]:
+            animator.current_animation = None
+
         self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
         # Handle input
         self.handle_held_keys(delta_time)
+        
+        # Update player animation
+        player_animator = self.entity_manager.get_component(self.player_id, Animator)
+        player_rotation = self.entity_manager.get_component(self.player_id, Rotation)
+
+        if player_animator.current_animation != None:
+            image = Animations.get_animation(player_animator.current_animation, player_animator.frame)
+            player_animator.frame += 1
+
+        else:
+            image = Images.get_image("shuttle")
+
+        image = pygame.transform.rotate(image, player_rotation.angle - 90)
+        self.entity_manager.add_component(self.player_id, image)
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
@@ -145,7 +179,6 @@ class Space(scene.Scene):
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         
         self.timing_system.update(self.entity_manager, delta_time)
-
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:

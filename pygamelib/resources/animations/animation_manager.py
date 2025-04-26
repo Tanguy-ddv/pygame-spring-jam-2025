@@ -46,13 +46,14 @@ class AnimationManager(Singleton):
         images_in_folder.sort()
 
         images = [pygame.image.load(animation_folder + "/" + path_to_image).convert() for path_to_image in images_in_folder]
-
         self.register_animation(images, animation_name, duration, colorkey)
 
         return images
     
     def register_animation(self, images: list[pygame.Surface], animation_name: str, duration: int, colorkey: tuple = (0, 0, 0)):
-        images = [image.set_colorkey(colorkey) for image in images]
+        for image in images:
+            image.set_colorkey(colorkey)
+
         self.animation_dict[animation_name] = {"data":(duration, math.floor(duration / len(images))), "images":deepcopy(images)}
 
     def get_animation(self, animation_name: str, frame: int) -> pygame.Surface:
