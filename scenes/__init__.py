@@ -1,1 +1,1 @@
-from .space import Space
+from .space import *

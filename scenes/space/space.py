@@ -11,56 +11,7 @@ from pygame.locals import *
 from pygamelib import *
 from entities import *
 from assets import Images
-
-class HUD:
-    def __init__(self):
-        self.map_surface = pygame.Surface((526, 526), pygame.SRCALPHA)
-        self.map_surface_center = (526/2, 526/2)
-
-        self.map_mode = 1
-
-    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int]):
-        self.map_surface.fill((50, 50, 50))
-
-        if self.map_mode == 1:
-            #pass one to draw orbit tracks
-
-            for planet_id in planet_ids:
-                planet:Planet = entity_manager.get_component(planet_id, Planet)
-
-                if planet.kind != "moon":
-                    pygame.draw.circle(self.map_surface, (235, 222, 52), self.map_surface_center, planet.dist / 8000, 2)
-            
-            #pass two to draw planet positions
-
-            for planet_id in planet_ids:
-                planet:Planet = entity_manager.get_component(planet_id, Planet)
-
-                if planet.kind != "moon":
-                    on_map_position = (self.map_surface_center[0] + (planet.x / 8000), self.map_surface_center[1] + (planet.y / 8000))
-
-                    pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position, 2)
-
-            position:Position = entity_manager.get_component(player_id, Position)
-
-            on_map_position = (self.map_surface_center[0] + (position.x / 8000), self.map_surface_center[1] + (position.y / 8000))
-
-            pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position, 3)
-
-        elif self.map_mode == 2:
-            player_position:Position = entity_manager.get_component(player_id, Position)
-
-            for planet_id in planet_ids:
-                planet:Planet = entity_manager.get_component(planet_id, Planet)
-                on_map_position = (self.map_surface_center[0] + ((planet.x - player_position.x) / 16), self.map_surface_center[1] + ((planet.y - player_position.y) / 16))
-
-                pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position, planet.radius / 16)
-
-            pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, 3)
-
-    def draw(self, surface: pygame.Surface):
-        if self.map_mode != 0:
-            surface.blit(self.map_surface, self.map_surface.get_rect(center = (surface.get_width() - self.map_surface_center[0], self.map_surface_center[1])))
+from .hud import HUD
 
 def open_planets(entity_manager: EntityManager):
     with open("data/celestial_bodies.json") as f:
@@ -139,6 +90,11 @@ class Space(scene.Scene):
 
             elif event.type == KEYUP:
                 self.key_unpressed(event)
+
+            elif event.type == MOUSEWHEEL:
+                self.hud.handle_event(event)
+
+            print(event)
     
     def handle_held_keys(self, delta_time: float) -> None:
         for key in self.held_keys:
@@ -165,14 +121,15 @@ class Space(scene.Scene):
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x - 400, self.entity_manager.get_component(self.planet_ids[3], Planet).y
 
             elif key == K_1:
-                self.hud.map_mode = 1
+                self.hud.map.map_mode = 1
             elif key == K_2:
-                self.hud.map_mode = 2
+                self.hud.map.map_mode = 2
             elif key == K_0:
-                self.hud.map_mode = 0
+                self.hud.map.map_mode = 0
 
     def key_pressed(self, event: pygame.Event) -> None:
         self.held_keys.add(event.key)
+        self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
         self.held_keys.remove(event.key)
@@ -202,11 +159,14 @@ class Space(scene.Scene):
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
 
-        self.background_system.draw(surface, self.camera, Images)
-        self.planet_handler.draw(self.entity_manager, self.camera, surface)
-        self.camera.draw(surface, self.entity_manager)
-        self.bloom_system.draw(self.camera, surface, self.entity_manager)
-        self.hud.draw(surface)
+        if self.hud.map.map_mode != 0 and self.hud.map.fullscreened:
+            self.hud.draw(surface)
+
+        else:
+            self.background_system.draw(surface, self.camera, Images)
+            self.planet_handler.draw(self.entity_manager, self.camera, surface)
+            self.camera.draw(surface, self.entity_manager)
+            self.bloom_system.draw(self.camera, surface, self.entity_manager)
 
     def stop(self) -> None:
         pass
