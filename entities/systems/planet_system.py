@@ -12,7 +12,7 @@ from .camera_system import CameraSystem
 from utils.constants import *
 
 class Planet:
-    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, orbits: object | None) -> None:
+    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None) -> None:
         self.name = name
 
         self.radius = math.floor(math.sqrt(radius))
@@ -27,6 +27,8 @@ class Planet:
             self.dist = dist
         else:
             self.dist = dist / 5
+
+        self.mass = mass * 100
 
         self.orbits = orbits
 

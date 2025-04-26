@@ -25,6 +25,7 @@ def open_planets(entity_manager: EntityManager):
         image_name = values['image_name']
         orbits_str = values['orbits']
         kind = values["kind"]
+        mass = values["mass"]
         if orbits_str is None:
             orbits = None
         else:
@@ -32,7 +33,7 @@ def open_planets(entity_manager: EntityManager):
                 if planets[i].name == orbits_str:
                     orbits = planet_ids[i]
 
-        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, orbits)
+        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits)
 
         id = create_entity(entity_manager,
                            planet
@@ -57,7 +58,7 @@ class Space(scene.Scene):
 
         # Player
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Position(0, 0))
+        self.entity_manager.add_component(self.player_id, Position(0, 1200))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(1))
@@ -104,6 +105,9 @@ class Space(scene.Scene):
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
                 self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("player"), rotation.angle))
 
+            # elif key == K_1:
+                # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[3], Planet).y
+
     def key_pressed(self, event: pygame.Event) -> None:
         self.held_keys.add(event.key)
 
@@ -115,7 +119,7 @@ class Space(scene.Scene):
         self.handle_held_keys(delta_time)
 
         # Process physics
-        self.physics_system.update(self.entity_manager, delta_time)
+        self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
         # Update camera position
         self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
