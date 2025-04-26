@@ -45,7 +45,7 @@ class AnimationManager(Singleton):
 
         images_in_folder.sort()
 
-        images = [pygame.image.load(path_to_image).convert() for path_to_image in images_in_folder]
+        images = [pygame.image.load(animation_folder + "/" + path_to_image).convert() for path_to_image in images_in_folder]
 
         self.register_animation(images, animation_name, duration, colorkey)
 
