@@ -32,7 +32,11 @@ class Map:
 
         self.map_mode = 0
         self.fullscreened = False
+        self.panning = False
+
         self.zoom = 1.0
+        self.lastpos = (0, 0)
+        self.offset = pygame.Vector2(0, 0)
 
         self.planet_imprint_handler = PlanetImprintHandler()
 
@@ -43,6 +47,15 @@ class Map:
 
             elif event.y == -1:
                 self.set_zoom(self.zoom + 0.1)
+
+        elif event.type == MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.panning = True
+                self.last_pos = event.pos
+
+        elif event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                self.panning = False
 
         elif event.type == KEYDOWN:
             if event.key == K_UP:
@@ -81,7 +94,12 @@ class Map:
     def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], planet_imprints:dict[int:PlanetImprint], delta_time: int | float):
         self.map_surface.fill((50, 50, 50))
         if self.fullscreened:
-            offset = pygame.mouse.get_pos() - pygame.Vector2(1280, 720) / 2
+            if self.panning:
+                new_pos = pygame.Vector2(pygame.mouse.get_pos())
+                self.offset -= new_pos - self.last_pos
+                self.last_pos = new_pos
+
+            offset = self.offset
 
         else:
             offset = pygame.Vector2(0, 0)

@@ -92,7 +92,7 @@ class Space(scene.Scene):
             elif event.type == KEYUP:
                 self.key_unpressed(event)
 
-            elif event.type == MOUSEWHEEL:
+            elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 self.hud.handle_event(event)
 
             print(event)
