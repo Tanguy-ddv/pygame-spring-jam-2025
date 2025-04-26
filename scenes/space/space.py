@@ -95,8 +95,6 @@ class Space(scene.Scene):
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 self.hud.handle_event(event)
 
-            print(event)
-    
     def handle_held_keys(self, delta_time: float) -> None:
         for key in self.held_keys:
             # Get player attributes
@@ -132,8 +130,6 @@ class Space(scene.Scene):
         # Handle input
         self.handle_held_keys(delta_time)
 
-        print(self.entity_manager.get_component(self.player_id, Force))
-
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
@@ -154,20 +150,15 @@ class Space(scene.Scene):
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
-        render = True
 
-        if self.hud.map.map_mode != 0:
-            self.hud.draw(surface)
-
-        
-            if self.hud.map.fullscreened:
-                render = False
-
-        if render:
+        if not self.hud.map.fullscreened or self.hud.map.map_mode == 0: # Render when not fullscreened or when toggled off
             self.background_system.draw(surface, self.camera, Images)
             self.planet_handler.draw(self.entity_manager, self.camera, surface)
             self.camera.draw(surface, self.entity_manager)
             self.bloom_system.draw(self.camera, surface, self.entity_manager)
+
+        if self.hud.map.map_mode != 0:
+            self.hud.draw(surface)
 
     def stop(self) -> None:
         pass
