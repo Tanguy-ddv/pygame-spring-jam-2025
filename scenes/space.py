@@ -111,9 +111,15 @@ class Space(scene.Scene):
         self.timing_system = TimingSystem()
         self.camera = CameraSystem((1280, 720), (640, 360))
 
+        # Planets
+        self.planet_ids = open_planets(self.entity_manager)
+
+
         # Player
+        starting_planet = self.entity_manager.get_component(self.planet_ids[0], Planet) # Change the planet index to change starting planet NOTE: This sets player pos to centre of planet
+
         self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Position(0, 1200))
+        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)), starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
         self.entity_manager.add_component(self.player_id, Velocity(0, 0))
         self.entity_manager.add_component(self.player_id, Force(0, 0))
         self.entity_manager.add_component(self.player_id, Mass(1))
@@ -121,9 +127,6 @@ class Space(scene.Scene):
 
         # Player surface
         self.entity_manager.add_component(self.player_id, Images.get_image("player"))
-
-        # Planets
-        self.planet_ids = open_planets(self.entity_manager)
 
         # Variables
         self.held_keys = set()
