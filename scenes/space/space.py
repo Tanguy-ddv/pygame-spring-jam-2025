@@ -121,13 +121,6 @@ class Space(scene.Scene):
             elif key == K_r:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
-            elif key == K_1:
-                self.hud.map.map_mode = 1
-            elif key == K_2:
-                self.hud.map.map_mode = 2
-            elif key == K_0:
-                self.hud.map.map_mode = 0
-
     def key_pressed(self, event: pygame.Event) -> None:
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
@@ -161,11 +154,16 @@ class Space(scene.Scene):
 
     def draw(self, surface: pygame.Surface) -> None:
         surface.fill((0, 0, 0))
+        render = True
 
-        if self.hud.map.map_mode != 0 and self.hud.map.fullscreened:
+        if self.hud.map.map_mode != 0:
             self.hud.draw(surface)
 
-        else:
+        
+            if self.hud.map.fullscreened:
+                render = False
+
+        if render:
             self.background_system.draw(surface, self.camera, Images)
             self.planet_handler.draw(self.entity_manager, self.camera, surface)
             self.camera.draw(surface, self.entity_manager)
