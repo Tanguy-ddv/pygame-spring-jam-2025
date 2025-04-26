@@ -20,8 +20,8 @@ class PhysicsSystem:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
                 direction = math.atan2((planet.y - position.y), (planet.x - position.x))
                 distance = max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1)
-                force.x += 7 * math.cos(direction) * planet.mass / distance
-                force.y += 7 * math.sin(direction) * planet.mass / distance
+                force.x += 5 * math.cos(direction) * planet.mass / distance
+                force.y += 5 * math.sin(direction) * planet.mass / distance
             
             # Update motion
             velocity += force / mass.get_mass() * delta_time
