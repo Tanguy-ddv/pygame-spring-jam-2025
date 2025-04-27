@@ -159,15 +159,3 @@ class PlanetHandler:
             planet_imprints[entity_id] = from_planet_to_imprint(planet)
 
         return planet_imprints
-            
-#intended to handle planet imprints
-class PlanetImprintHandler:
-    def update(self, planet_imprints:dict[int:PlanetImprint], delta_time: float):
-        for planet_id, planet_imprint in planet_imprints.items():
-            planet_imprint:PlanetImprint
-            if planet_imprint.orbits is not None:
-                planet_imprint.theta = (delta_time/planet_imprint.year*24*GAMEH_PER_REALSEC + planet_imprint.theta)%360
-
-                orbit:PlanetImprint = planet_imprints[planet_imprint.orbits]
-
-                planet_imprint.x, planet_imprint.y = orbit.x + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.cos(planet_imprint.theta*math.pi/180), orbit.y + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.sin(planet_imprint.theta*math.pi/180)

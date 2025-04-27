@@ -32,3 +32,4 @@ class PhysicsSystem:
 
             # Reset force each frame
             entity_manager.add_component(entity_id, Force(0, 0))
+    

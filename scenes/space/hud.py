@@ -2,11 +2,13 @@
 
 # External
 import pygame
+import math
 from pygame.locals import *
 
 # Internal
 from pygamelib import *
 from entities import *
+from utils.constants import GAMEH_PER_REALSEC
 
 class HUD:
     def __init__(self):
@@ -37,8 +39,6 @@ class Map:
         self.zoom = 1.0
         self.lastpos = (0, 0)
         self.offset = pygame.Vector2(0, 0)
-
-        self.planet_imprint_handler = PlanetImprintHandler()
 
     def handle_event(self, event):
         if event.type == MOUSEWHEEL:
@@ -115,6 +115,8 @@ class Map:
         def calculate_on_map_position(self, position:pygame.Vector2):
             return self.map_surface_center[0] + calculate_scale(self, position.x / 460), self.map_surface_center[1] + calculate_scale(self, position.y / 460)
 
+        future_player_positions, future_player_crash = self.simulate(entity_manager, player_id, planet_imprints, 200)
+
         if self.map_mode == 1:
             #pass one to draw orbit tracks
             for planet_id in planet_ids:
@@ -154,8 +156,6 @@ class Map:
             pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position  - offset, min(max(calculate_scale(self, 4), 4), 4))
 
         elif self.map_mode == 2:
-            for i in range(10):
-                self.planet_imprint_handler.update(planet_imprints, delta_time * 10)
 
             player_position:Position = entity_manager.get_component(player_id, Position)
 
@@ -165,7 +165,78 @@ class Map:
 
                 pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position, calculate_scale(self, planet.radius / 4))
 
+            for i in range(len(future_player_positions) - 2):
+                p1 = future_player_positions[i]
+                p2 = future_player_positions[i + 1]
+                pygame.draw.line(self.map_surface, (0, 255, 0), (self.map_surface_center[0] + calculate_scale(self, (p1[0] - player_position.x) / 4), 
+                                                                 self.map_surface_center[1] + calculate_scale(self, (p1[1] - player_position.y) / 4)),
+                                                                (self.map_surface_center[0] + calculate_scale(self, (p2[0] - player_position.x) / 4), 
+                                                                 self.map_surface_center[1] + calculate_scale(self, (p2[1] - player_position.y) / 4)))
+            
+            if future_player_crash:
+                size = max(min(calculate_scale(self, 20), 40), 10)
+                surface = pygame.Surface((size,size), pygame.SRCALPHA)
+                pygame.draw.line(surface, (235, 222, 52), (0, 0), (size, size), 4)
+                pygame.draw.line(surface, (235, 222, 52), (size, 0), (0, size), 4)
+                position = (self.map_surface_center[0] + calculate_scale(self, (future_player_positions[len(future_player_positions) - 1][0] - player_position.x) / 4), 
+                            self.map_surface_center[1] + calculate_scale(self, (future_player_positions[len(future_player_positions) - 1][1] - player_position.y) / 4))
+                self.map_surface.blit(surface, surface.get_rect(center = position))
+
             pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, 5)
+
+    def simulate(self, entity_manager:EntityManager, player_id:int, planet_imprints:dict[int:PlanetImprint], i:int):
+        player_position = Position(entity_manager.get_component(player_id, Position).xy)
+        player_velocity = Velocity(entity_manager.get_component(player_id, Velocity).xy)
+        player_force= Force(entity_manager.get_component(player_id, Force).xy)
+        player_mass = Mass(entity_manager.get_component(player_id, Mass).get_mass())
+
+        future_player_positions = [player_position.xy]
+
+        dt = 0.05
+
+        j = 0
+
+        crash = False
+
+        while j < i and crash == False:
+            self.update_planet_imprints(planet_imprints, dt)
+            for planet_id in planet_imprints:
+                planet = planet_imprints[planet_id]
+                distance = max(math.sqrt((planet.x - player_position.x)** 2 + (planet.y - player_position.y)**2), 1)
+
+                if distance < planet.radius:
+                    crash = True
+                
+                if planet.kind == "moon":
+                    continue # skip moons due to difficulty orbiting planets (n-body problem)
+
+                direction = math.atan2((planet.y - player_position.y), (planet.x - player_position.x))
+
+                player_force.x += 9.81 * math.cos(direction) * (player_mass.magnitude * planet.mass) / distance
+                player_force.y += 9.81 * math.sin(direction) * (player_mass.magnitude * planet.mass) / distance
+            
+            # Update motion
+            player_velocity += player_force / player_mass.get_mass() * dt
+            player_position += player_velocity * dt
+
+            # Reset force each frame
+            player_force.xy = (0, 0)
+
+            future_player_positions.append(player_position.xy)
+
+            j += 1
+        
+        return future_player_positions, crash
+    
+    def update_planet_imprints(self, planet_imprints:dict[int:PlanetImprint], delta_time: float):
+        for planet_id, planet_imprint in planet_imprints.items():
+            planet_imprint:PlanetImprint
+            if planet_imprint.orbits is not None:
+                planet_imprint.theta = (delta_time/planet_imprint.year*24*GAMEH_PER_REALSEC + planet_imprint.theta)%360
+
+                orbit:PlanetImprint = planet_imprints[planet_imprint.orbits]
+
+                planet_imprint.x, planet_imprint.y = orbit.x + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.cos(planet_imprint.theta*math.pi/180), orbit.y + (planet_imprint.dist + orbit.radius + planet_imprint.radius)*math.sin(planet_imprint.theta*math.pi/180)
 
     def draw(self, surface: pygame.Surface):
         if self.map_mode == 0:
