@@ -57,10 +57,10 @@ class Space(scene.Scene):
         self.bloom_system = BloomSystem()
         self.timing_system = TimingSystem()
         self.camera = CameraSystem((1280, 720), (640, 360))
+        self.animation_system = AnimationSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
-
 
         # Player
         starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
@@ -110,25 +110,25 @@ class Space(scene.Scene):
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
                 force.y -= 1500 * math.sin(math.radians(rotation.angle))
 
-                if animator.current_animation == "main drive start" and animator.frame > 5:
-                    animator.current_animation = "main drive hold"
-                    animator.frame = 0
+                if  "main drive start" in animator.animation_stack and animator.animation_stack["main drive start"] > 5:
+                    animator.animation_stack["main drive hold"] =  0
+                    animator.animation_stack.pop("main drive start")
 
             # Rotate spaceship ACW
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-                if animator.current_animation == "spin aclockwise start" and animator.frame > 4:
-                    animator.current_animation = "spin aclockwise hold"
-                    animator.frame = 0
+                if  "spin aclockwise start" in animator.animation_stack and animator.animation_stack["spin aclockwise start"] > 4:
+                    animator.animation_stack["spin aclockwise hold"] =  0
+                    animator.animation_stack.pop("spin aclockwise start")
 
             # Rotate spaceship CW
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
-                
-                if animator.current_animation == "spin clockwise start" and animator.frame > 4:
-                    animator.current_animation = "spin clockwise hold"
-                    animator.frame = 0
+
+                if  "spin clockwise start" in animator.animation_stack and animator.animation_stack["spin clockwise start"] > 4:
+                    animator.animation_stack["spin clockwise hold"] =  0
+                    animator.animation_stack.pop("spin clockwise start")
 
             elif key == K_t:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
@@ -136,47 +136,43 @@ class Space(scene.Scene):
     def key_pressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
         if event.key == K_a:
-            animator.current_animation = "spin clockwise start"
-            animator.frame = 0
+            animator.animation_stack["spin clockwise start"] = 0
 
         elif event.key == K_d:
-            animator.current_animation = "spin aclockwise start"
-            animator.frame = 0
+            animator.animation_stack["spin aclockwise start"] = 0
 
         elif event.key == K_SPACE:
-            animator.current_animation = "main drive start"
-            animator.frame = 0
+            animator.animation_stack["main drive start"] = 0
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
-        if event.key in [K_a, K_d, K_SPACE]:
-            animator.current_animation = None
+        if event.key == K_a:
+            for animation in ["spin clockwise start", "spin clockwise hold"]:
+                if animation in animator.animation_stack:
+                    animator.animation_stack.pop(animation)
 
-        if event.key not in self.held_keys:
-            return
-        
+        elif event.key == K_d:
+            for animation in ["spin aclockwise start", "spin aclockwise hold"]:
+                if animation in animator.animation_stack:
+                    animator.animation_stack.pop(animation)
+
+        elif event.key == K_SPACE:
+            for animation in ["main drive start", "main drive hold"]:
+                if animation in animator.animation_stack:
+                    animator.animation_stack.pop(animation)
+
         self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
         # Handle input
         self.handle_held_keys(delta_time)
         
-        # Update player animation
-        player_animator = self.entity_manager.get_component(self.player_id, Animator)
+        # Update player surface
         player_rotation = self.entity_manager.get_component(self.player_id, Rotation)
-
-        if player_animator.current_animation != None:
-            image = Animations.get_animation(player_animator.current_animation, player_animator.frame)
-            player_animator.frame += 1
-
-        else:
-            image = Images.get_image("shuttle")
-
-        image = pygame.transform.rotate(image, player_rotation.angle - 90)
-        self.entity_manager.add_component(self.player_id, image)
+        self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
@@ -202,6 +198,7 @@ class Space(scene.Scene):
             self.background_system.draw(surface, self.camera, Images)
             self.planet_handler.draw(self.entity_manager, self.camera, surface)
             self.camera.draw(surface, self.entity_manager)
+            self.animation_system.draw(surface, self.entity_manager, self.camera)
             self.bloom_system.draw(self.camera, surface, self.entity_manager)
 
         if self.hud.map.map_mode != 0:

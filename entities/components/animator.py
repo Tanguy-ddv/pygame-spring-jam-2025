@@ -1,4 +1,4 @@
 class Animator:
     def __init__(self):
-        self.current_animation = None
+        self.animation_stack = {}
         self.frame = 0
