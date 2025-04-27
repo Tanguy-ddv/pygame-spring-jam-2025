@@ -165,8 +165,8 @@ class PlanetHandler:
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             if planet.on_screen:
-                if camera.selected_planet == entity_id:
-                    pygame.draw.circle(display_surface, (255, 255, 255), camera.get_relative_position((planet.x, planet.y)), planet.radius + 1)
+                if camera.selected_planet == entity_manager.get_component(entity_id, Planet):
+                    pygame.draw.circle(display_surface, (255, 255, 255), camera.get_relative_position((planet.x, planet.y)), planet.radius + 2)
 
                 display_surface.blit(planet.surface, planet.surface.get_rect(center = camera.get_relative_position((planet.x, planet.y))))
 

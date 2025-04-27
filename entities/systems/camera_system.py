@@ -55,7 +55,12 @@ class CameraSystem:
 
         else:
             self.set_position((self.selected_planet.x, self.selected_planet.y))
-            self.set_zoom(3)
+
+            if self.selected_planet.kind == "moon":
+                self.set_zoom(1.25)
+
+            else:
+                self.set_zoom(2.5)
 
     def draw(self, entity_manager):
         entity_ids = entity_manager.get_from_components(pygame.Surface, Position)
