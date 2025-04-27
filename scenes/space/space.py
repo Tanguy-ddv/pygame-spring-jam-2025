@@ -74,7 +74,7 @@ class Space(scene.Scene):
         self.entity_manager.add_component(self.player_id, Animator())
 
         # Player surface
-        self.entity_manager.add_component(self.player_id, Images.get_image("player"))
+        self.entity_manager.add_component(self.player_id, Images.get_image("shuttle"))
 
         # Variables
         self.held_keys = set()
@@ -106,7 +106,11 @@ class Space(scene.Scene):
             if key == K_SPACE:
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
                 force.y -= 1500 * math.sin(math.radians(rotation.angle))
-            
+
+                if animator.current_animation == "main drive start" and animator.frame > 5:
+                    animator.current_animation = "main drive hold"
+                    animator.frame = 0
+
             # Rotate spaceship ACW
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
@@ -133,17 +137,24 @@ class Space(scene.Scene):
             animator.frame = 0
 
         elif event.key == K_d:
-                animator.current_animation = "spin aclockwise start"
-                animator.frame = 0
+            animator.current_animation = "spin aclockwise start"
+            animator.frame = 0
+
+        elif event.key == K_SPACE:
+            animator.current_animation = "main drive start"
+            animator.frame = 0
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
-        if event.key in [K_a, K_d]:
+        if event.key in [K_a, K_d, K_SPACE]:
             animator.current_animation = None
 
+        if event.key not in self.held_keys:
+            return
+        
         self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
@@ -195,3 +206,24 @@ class Space(scene.Scene):
 
     def stop(self) -> None:
         pass
+
+"""
+TODO:
+
+- Someone needs to add functionality for multiple animations playing simultaneously 
+e.g. main drive + spin
+
+- Fuel system (Nott)
+- Weapons? (Nott)
+
+- Missions
+
+- Pirates
+
+- Some feedback loop to encourage player
+
+- New assets for all planets + bodies (Yaroslav)
+
+- Visual update for the background as opposed to all black fill + stars
+
+"""
