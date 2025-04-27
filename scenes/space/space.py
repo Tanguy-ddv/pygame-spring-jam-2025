@@ -11,7 +11,8 @@ from pygame.locals import *
 from pygamelib import *
 from entities import *
 from assets import *
-from .hud import HUD
+from utils import *
+from ..space.hud import HUD
 
 def open_planets(entity_manager: EntityManager):
     with open("data/celestial_bodies.json") as f:
@@ -69,14 +70,15 @@ class Space(scene.Scene):
         starting_planet = self.starting_planet
 
         self.player_id = create_entity(self.entity_manager,
+                                       Images.get_image("shuttle"),
+                                       Rotation(0),
+                                       Health(1, 5000),
+                                       Fuel(1000, 1000),
+                                       Animator(),
                                        Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))),
                                        Velocity(0, 0),
                                        Force(0, 0),
-                                       Mass(20),
-                                       Rotation(0),
-                                       Animator(),
-                                       Images.get_image("shuttle"),
-                                       Health(1, 5000),
+                                       Mass(20)
                                        ) 
 
         # Variables
@@ -100,6 +102,7 @@ class Space(scene.Scene):
 
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 self.hud.handle_event(event)
+                self.planet_handler.handle_event(self.entity_manager, self.camera, event)
 
     def handle_held_keys(self, delta_time: float) -> None:
         for key in self.held_keys:
@@ -110,6 +113,11 @@ class Space(scene.Scene):
 
             # Apply thruster force
             if key == K_SPACE:
+                fuel = self.entity_manager.get_component(self.player_id, Fuel)
+                if not fuel.fuel:
+                    continue
+
+                fuel.consume(THRUSTER_FUEL_RATE * delta_time)
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
                 force.y -= 1500 * math.sin(math.radians(rotation.angle))
 
@@ -170,6 +178,12 @@ class Space(scene.Scene):
         self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
+        # Update camera position
+        if self.camera.selected_planet != None and self.camera.changed:
+            self.background_system.reset_stars(self.camera)
+
+        self.camera.update(self.entity_manager, self.player_id)
+
         # Simulate death
         if self.entity_manager.get_component(self.player_id, Health).health <= 0:
             self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
@@ -188,9 +202,6 @@ class Space(scene.Scene):
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
-        # Update camera position
-        self.camera.set_position(self.entity_manager.get_component(self.player_id, Position))
-
         # Update stars
         self.background_system.update(self.camera, delta_time)
 
@@ -206,17 +217,17 @@ class Space(scene.Scene):
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
-        surface.fill((0, 0, 0))
-
+        self.camera.get_surface().fill((0, 0, 0))
+        
         if not self.hud.map.fullscreened or self.hud.map.map_mode == 0: # Render when not fullscreened or when toggled off
-            self.background_system.draw(surface, self.camera, Images)
-            self.planet_handler.draw(self.entity_manager, self.camera, surface)
-            self.camera.draw(surface, self.entity_manager)
-            self.animation_system.draw(surface, self.entity_manager, self.camera)
-            self.bloom_system.draw(self.camera, surface, self.entity_manager)
+            self.background_system.draw(self.camera.get_surface(), self.camera, Images)
+            self.planet_handler.draw(self.entity_manager, self.camera, self.camera.get_surface())
+            self.camera.draw(self.entity_manager)
+            self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
+            self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
+            surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
 
-        if self.hud.map.map_mode != 0:
-            self.hud.draw(surface)
+        self.hud.draw(surface)
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()

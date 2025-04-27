@@ -15,17 +15,94 @@ class HUD:
         # Toggle HUD
         self.enabled = True
 
-        # Map
+        # Elements
         self.map = Map()
+        self.manual = Manual()
+        self.log = Log()
+        self.fuel_display = FuelDisplay()
 
     def handle_event(self, event):
         self.map.handle_event(event)
+        self.manual.handle_event(event)
+        self.log.handle_event(event)
 
     def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], planet_imprints, delta_time) -> None:
         self.map.update(entity_manager, player_id, planet_ids, planet_imprints, delta_time)
+        self.manual.update(delta_time)
+        self.log.update(delta_time)
+        self.fuel_display.update(entity_manager, player_id, delta_time)
 
     def draw(self, surface: pygame.Surface):
-        self.map.draw(surface)
+        if not self.enabled:
+            return
+        
+        if self.manual.enabled:
+            self.manual.draw(surface)
+
+        else:
+            self.map.draw(surface)
+            self.log.draw(surface)
+            self.fuel_display.draw(surface)
+
+class FuelDisplay:
+    def __init__(self):
+        self.target_fuel_level = 1
+        self.fuel_level = 1
+        self.initial_fuel_level = 1
+
+        self.time_elapsed = 0
+        self.widget_center = (225, 25)
+        self.widget_size = (500, 50)
+        self.widget_rect = pygame.rect.FRect(self.widget_center[0] - self.widget_size[0] / 2, self.widget_center[1] - self.widget_size[1] / 2, self.widget_size[0], self.widget_size[1])
+
+    def update(self, entity_manager, player_id, delta_time):
+        self.time_elapsed += delta_time
+
+        fuel = entity_manager.get_component(player_id, Fuel)
+        last_target = self.target_fuel_level
+
+        self.target_fuel_level = fuel.fuel / fuel.max_fuel
+        if last_target != self.target_fuel_level:
+            self.initial_fuel_level = self.fuel_level
+
+        self.fuel_level = self.initial_fuel_level + (self.target_fuel_level - self.initial_fuel_level) * abs(math.sin(math.radians(min(self.time_elapsed * 90, 90))))
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, (40, 40, 40), self.widget_rect)
+
+        fuel_bar_rect = self.widget_rect.copy()
+        fuel_bar_rect.width *= self.fuel_level
+        pygame.draw.rect(surface, (255, 150, 40), fuel_bar_rect)
+
+class Manual:
+    def __init__(self):
+        self.enabled = False # Keybind T opens manual for tutorial
+
+    def handle_event(self, event):
+        pass
+
+    def update(self, delta_time):
+        pass
+
+    def draw(self, surface):
+        pass
+
+class Log:
+    def __init__(self):
+        self.enabled = True
+        self.active_missions = [] # Keybind J toggles quest log sidebar (active missions) They should also include dist to objective
+
+    def handle_event(self, event):
+        if event.type == KEYDOWN:
+            if event.key == K_j:
+                self.enabled = not self.enabled
+
+    def update(self, delta_time):
+        pass
+
+    def draw(self, surface):
+        if not self.enabled:
+            return
 
 class Map:
     def __init__(self):

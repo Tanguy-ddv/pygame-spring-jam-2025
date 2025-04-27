@@ -26,5 +26,3 @@ class CollisionsSystem:
                 if max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1) < planet.radius:
                     health.take_damage(1000000) #that should be sufficient to kill anything.
                     entity_manager.add_component(entity_id, Collided(planet_id))
-            
-

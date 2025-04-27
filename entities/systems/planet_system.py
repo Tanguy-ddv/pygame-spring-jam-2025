@@ -1,14 +1,16 @@
+# Built-ins
+from __future__ import annotations
 import random
 
 # External
 import pygame
+from pygame.locals import *
 import math
 import time
 
 # Internal
 from pygamelib.entities import *
 from entities import *
-from .camera_system import CameraSystem
 from utils.constants import *
 
 class Planet:
@@ -101,6 +103,22 @@ def from_planet_to_imprint(planet:Planet) -> PlanetImprint:
     return PlanetImprint(planet.radius, planet.day, planet.year, planet.kind, planet.dist, planet.mass, planet.orbits, planet.theta)
 
 class PlanetHandler:
+    def handle_event(self, entity_manager, camera: CameraSystem, event):
+        if event.type == MOUSEBUTTONDOWN:
+            entity_ids = entity_manager.get_from_components(Planet)
+
+            for entity_id in entity_ids:
+                planet: Planet = entity_manager.get_component(entity_id, Planet)
+                pos = camera.get_relative_position((planet.x - planet.radius, planet.y - planet.radius))
+
+                if pygame.rect.Rect(pos[0], pos[1], planet.radius * 2, planet.radius * 2).collidepoint(event.pos):
+                    camera.selected_planet = planet
+                    camera.changed = True
+                    return
+                
+            camera.selected_planet = None
+            camera.changed = True
+
     def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float):
         entity_ids = entity_manager.get_from_components(Planet)
 
@@ -147,6 +165,9 @@ class PlanetHandler:
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             if planet.on_screen:
+                if camera.selected_planet == entity_id:
+                    pygame.draw.circle(display_surface, (255, 255, 255), camera.get_relative_position((planet.x, planet.y)), planet.radius + 1)
+
                 display_surface.blit(planet.surface, planet.surface.get_rect(center = camera.get_relative_position((planet.x, planet.y))))
 
     def get_planet_imprints(self, entity_manager: EntityManager) -> dict[int:PlanetImprint]:

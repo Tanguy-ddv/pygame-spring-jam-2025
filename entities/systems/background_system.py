@@ -16,25 +16,30 @@ class BackgroundSystem:
         
         self.shooting_stars = []
     
+    def reset_stars(self, camera):
+        self.stars = []
+        for i in range(100):
+            self.stars.append({"x":random.randint(0, camera.internal_surface.size[0] * 3), "y":random.randint(0, camera.internal_surface.size[1]), "star_type":str(random.randint(0, 49))})
+        
     def spawn_new_meteor(self, camera:camera_system.CameraSystem):
         screen_border = random.randint(0, 3)
         speed = random.randint(450, 600)
 
         if screen_border == 0:
             direction = random.randint(45, 135)
-            self.shooting_stars.append({"x":random.randint(camera.camera_x - 640, camera.camera_x + 640), "y":camera.camera_y - 360, "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
+            self.shooting_stars.append({"x":random.randint(int(camera.camera_x - camera.internal_surface.size[0] / 2), int(camera.camera_x + camera.internal_surface.size[0] / 2)), "y":camera.camera_y - camera.internal_surface.size[1] / 2, "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
         
         elif screen_border == 1:
             direction = random.randint(225, 315)
-            self.shooting_stars.append({"x":random.randint(camera.camera_x - 640, camera.camera_x + 640), "y":camera.camera_y + 360, "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
+            self.shooting_stars.append({"x":random.randint(int(camera.camera_x - camera.internal_surface.size[0] / 2), int(camera.camera_x + camera.internal_surface.size[0] / 2)), "y":camera.camera_y + camera.internal_surface.size[1] / 2, "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
         
         elif screen_border == 2:
             direction = random.randint(-45, 45)
-            self.shooting_stars.append({"x":camera.camera_x - 640, "y":random.randint(camera.camera_y - 360, camera.camera_y + 360), "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
+            self.shooting_stars.append({"x":camera.camera_x - camera.internal_surface.size[0] / 2, "y":random.randint(int(camera.camera_y - camera.internal_surface.size[1] / 2), int(camera.camera_y + camera.internal_surface.size[1] / 2)), "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
         
         elif screen_border == 3:
             direction = random.randint(135, 225)
-            self.shooting_stars.append({"x":camera.camera_x + 640, "y":random.randint(camera.camera_y - 360, camera.camera_y + 360), "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
+            self.shooting_stars.append({"x":int(camera.camera_x + camera.internal_surface.size[0] / 2), "y":random.randint(int(camera.camera_y - camera.internal_surface.size[1] / 2), int(camera.camera_y + camera.internal_surface.size[1] / 2)), "direction":direction, "speed":speed, "star_type":str(random.randint(0, 24))})
 
     def cull_meteors(self, camera_bounding_box:tuple):
         # Delete off-screen meteors
@@ -68,19 +73,19 @@ class BackgroundSystem:
         for star in self.stars:
             if star["x"] < camera_bounding_box[0]:
                 star["x"] = camera_bounding_box[2] + (star["x"] - camera_bounding_box[0])
-                star["y"] = random.randint(camera.camera_y - 360, camera.camera_y + 360)
+                star["y"] = random.randint(int(camera.camera_y - camera.internal_surface.size[1] / 2), int(camera.camera_y + camera.internal_surface.size[1] / 2))
 
             elif star["x"] > camera_bounding_box[2]:
                 star["x"] = camera_bounding_box[0] + (star["x"] - camera_bounding_box[2])
-                star["y"] = random.randint(camera.camera_y - 360, camera.camera_y + 360)
+                star["y"] = random.randint(int(camera.camera_y - camera.internal_surface.size[1] / 2), int(camera.camera_y + camera.internal_surface.size[1] / 2))
 
             if star["y"] < camera_bounding_box[1]:
                 star["y"] = camera_bounding_box[3] + (star["y"] - camera_bounding_box[1])
-                star["x"] = random.randint(camera.camera_x - 640, camera.camera_x + 640)
+                star["x"] = random.randint(int(camera.camera_x - camera.internal_surface.size[0] / 2), int(camera.camera_x + camera.internal_surface.size[0] / 2))
 
             elif star["y"] > camera_bounding_box[3]:
                 star["y"] = camera_bounding_box[1] + (star["y"] - camera_bounding_box[3])
-                star["x"] = random.randint(camera.camera_x - 640, camera.camera_x + 640)
+                star["x"] = random.randint(int(camera.camera_x - camera.internal_surface.size[0] / 2), int(camera.camera_x + camera.internal_surface.size[0] / 2))
 
     def draw(self, surface:pygame.Surface, camera:camera_system.CameraSystem, Images:images.ImageManager):
         self.draw_stars(surface, camera, Images)
