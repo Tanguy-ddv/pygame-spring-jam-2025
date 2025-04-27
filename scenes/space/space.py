@@ -111,7 +111,7 @@ class Space(scene.Scene):
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-                if animator.current_animation != "spin aclockwise hold":
+                if animator.current_animation == "spin aclockwise start" and animator.frame > 4:
                     animator.current_animation = "spin aclockwise hold"
                     animator.frame = 0
 
@@ -119,7 +119,7 @@ class Space(scene.Scene):
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
                 
-                if animator.current_animation != "spin clockwise hold":
+                if animator.current_animation == "spin clockwise start" and animator.frame > 4:
                     animator.current_animation = "spin clockwise hold"
                     animator.frame = 0
 
@@ -129,11 +129,11 @@ class Space(scene.Scene):
     def key_pressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
         if event.key == K_a:
-            animator.current_animation = "right thrusters start"
+            animator.current_animation = "spin clockwise start"
             animator.frame = 0
 
         elif event.key == K_d:
-                animator.current_animation = "left thrusters start"
+                animator.current_animation = "spin aclockwise start"
                 animator.frame = 0
 
         self.held_keys.add(event.key)
