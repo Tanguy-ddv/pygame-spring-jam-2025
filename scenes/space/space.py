@@ -83,7 +83,9 @@ class Space(scene.Scene):
         self.hud = HUD()
 
     def start(self) -> None:
-        Sounds.get_sound("bgm").play(-1)
+        sound:pygame.Sound = Sounds.get_sound("bgm")
+        sound.set_volume(0.5)
+        sound.play(-1)
 
     def handle_events(self, events: list[pygame.Event]) -> None:
         for event in events:
@@ -102,6 +104,7 @@ class Space(scene.Scene):
             force = self.entity_manager.get_component(self.player_id, Force)
             rotation = self.entity_manager.get_component(self.player_id, Rotation)
             animator = self.entity_manager.get_component(self.player_id, Animator)
+            
             # Apply thruster force
             if key == K_SPACE:
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
