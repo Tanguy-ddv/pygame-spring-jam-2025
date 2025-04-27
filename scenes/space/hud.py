@@ -82,6 +82,10 @@ class Map:
                 elif self.map_mode == 2:
                     self.set_mode(1)
 
+            elif event.key == K_r:
+                self.set_zoom(1)
+                self.offset.x, self.offset.y = 0, 0
+
     def set_zoom(self, new_zoom):
         self.zoom = max(new_zoom, 0.01)
         # self.map_surface = pygame.Surface((1280 * self.zoom, 720 * self.zoom))
@@ -103,12 +107,13 @@ class Map:
 
         else:
             offset = pygame.Vector2(0, 0)
+            self.set_zoom(1)
 
         def calculate_scale(self, value:int|float):
             return value * self.zoom
 
         def calculate_on_map_position(self, position:pygame.Vector2):
-            return self.map_surface_center[0] + calculate_scale(self, position.x / 400), self.map_surface_center[1] + calculate_scale(self, position.y / 400)
+            return self.map_surface_center[0] + calculate_scale(self, position.x / 460), self.map_surface_center[1] + calculate_scale(self, position.y / 460)
 
         if self.map_mode == 1:
             #pass one to draw orbit tracks
@@ -117,10 +122,10 @@ class Map:
                 if planet.kind != "moon":
                     center = self.map_surface_center - offset
                     if planet.orbits == None:
-                        pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 400) + max(calculate_scale(self, planet.radius / 400), 5), 2)
+                        pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 460) + max(calculate_scale(self, planet.radius / 460), 5), 2)
                     else:
                         orbit:Planet = entity_manager.get_component(planet.orbits, Planet)
-                        pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 400) + calculate_scale(self, planet.radius / 400) + calculate_scale(self, orbit.radius / 400), 2)
+                        pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 460) + calculate_scale(self, planet.radius / 460) + calculate_scale(self, orbit.radius / 460), 2)
             
             #pass two drawing moon orbit
             for planet_id in planet_ids:
@@ -128,7 +133,7 @@ class Map:
                 if planet.kind == "moon":
                     orbit:Planet = entity_manager.get_component(planet.orbits, Planet)
                     center = calculate_on_map_position(self, pygame.Vector2(orbit.x, orbit.y)) - offset
-                    pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 400) + calculate_scale(self, planet.radius / 400) + calculate_scale(self, orbit.radius / 400), 2)
+                    pygame.draw.circle(self.map_surface, (235, 222, 52), center, calculate_scale(self, planet.dist / 460) + calculate_scale(self, planet.radius / 460) + calculate_scale(self, orbit.radius / 460), 2)
             
             #pass three to draw planet positions
 
@@ -138,13 +143,13 @@ class Map:
                 on_map_position = calculate_on_map_position(self, pygame.Vector2(planet.x, planet.y))
 
                 if planet.kind == "moon":
-                    pygame.draw.circle(self.map_surface, (235, 52, 201), on_map_position - offset, max(calculate_scale(self, planet.radius / 400), 4))
+                    pygame.draw.circle(self.map_surface, (235, 52, 201), on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 4))
                 else:
-                    pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position - offset, max(calculate_scale(self, planet.radius / 400), 5))
+                    pygame.draw.circle(self.map_surface, (255, 0, 0), on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 5))
 
             position:Position = entity_manager.get_component(player_id, Position)
 
-            on_map_position = (self.map_surface_center[0] + calculate_scale(self, position.x / 400), self.map_surface_center[1] + calculate_scale(self, position.y / 400))
+            on_map_position = (self.map_surface_center[0] + calculate_scale(self, position.x / 460), self.map_surface_center[1] + calculate_scale(self, position.y / 460))
 
             pygame.draw.circle(self.map_surface, (0, 0, 255), on_map_position  - offset, min(max(calculate_scale(self, 4), 4), 4))
 

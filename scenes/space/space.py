@@ -104,7 +104,7 @@ class Space(scene.Scene):
             force = self.entity_manager.get_component(self.player_id, Force)
             rotation = self.entity_manager.get_component(self.player_id, Rotation)
             animator = self.entity_manager.get_component(self.player_id, Animator)
-            
+
             # Apply thruster force
             if key == K_SPACE:
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
@@ -130,7 +130,7 @@ class Space(scene.Scene):
                     animator.current_animation = "spin clockwise hold"
                     animator.frame = 0
 
-            elif key == K_r:
+            elif key == K_t:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
     def key_pressed(self, event: pygame.Event) -> None:
