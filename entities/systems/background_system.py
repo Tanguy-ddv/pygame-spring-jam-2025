@@ -19,7 +19,7 @@ class BackgroundSystem:
     def reset_stars(self, camera):
         self.stars = []
         for i in range(100):
-            self.stars.append({"x":random.randint(0, camera.internal_surface.size[0] * 3), "y":random.randint(0, camera.internal_surface.size[1]), "star_type":str(random.randint(0, 49))})
+            self.stars.append({"x":random.randint(0, camera.internal_surface.size[0]), "y":random.randint(0, camera.internal_surface.size[1]), "star_type":str(random.randint(0, 49))})
         
     def spawn_new_meteor(self, camera:camera_system.CameraSystem):
         screen_border = random.randint(0, 3)

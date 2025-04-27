@@ -47,7 +47,6 @@ class CameraSystem:
         self.relative_offset = (self.internal_surface.size[0] / 2, self.internal_surface.size[1] / 2)
 
     def update(self, entity_manager, player_id):
-        self.changed = False
         self.internal_surface.fill((0, 0, 0))
         if self.selected_planet == None:
             self.set_position(entity_manager.get_component(player_id, Position))
@@ -58,6 +57,9 @@ class CameraSystem:
 
             if self.selected_planet.kind == "moon":
                 self.set_zoom(1.25)
+
+            elif self.selected_planet.kind == "sun":
+                self.set_zoom(5)
 
             else:
                 self.set_zoom(2.5)

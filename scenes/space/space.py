@@ -179,11 +179,12 @@ class Space(scene.Scene):
 
     def update(self, delta_time: float) -> None:
         # Update camera position
-        if self.camera.selected_planet != None and self.camera.changed:
-            self.background_system.reset_stars(self.camera)
-
         self.camera.update(self.entity_manager, self.player_id)
 
+        if self.camera.selected_planet != None and self.camera.changed:
+            self.background_system.reset_stars(self.camera)
+            self.camera.changed = False
+            
         # Simulate death
         if self.entity_manager.get_component(self.player_id, Health).health <= 0:
             self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
