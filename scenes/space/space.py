@@ -10,7 +10,7 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 from entities import *
-from assets import Images, Animations
+from assets import *
 from .hud import HUD
 
 def open_planets(entity_manager: EntityManager):
@@ -83,7 +83,7 @@ class Space(scene.Scene):
         self.hud = HUD()
 
     def start(self) -> None:
-        pass
+        Sounds.get_sound("bgm").play(-1)
 
     def handle_events(self, events: list[pygame.Event]) -> None:
         for event in events:
@@ -205,7 +205,7 @@ class Space(scene.Scene):
             self.hud.draw(surface)
 
     def stop(self) -> None:
-        pass
+        Sounds.get_sound("bgm").stop()
 
 """
 TODO:

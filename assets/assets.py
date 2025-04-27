@@ -6,6 +6,10 @@ from assets.image_caching import *
 pygame.init()
 temp_screen = pygame.display.set_mode((50, 50))
 
+# Sound init
+Sounds = SoundManager()
+Sounds.load_json("assets/jsons/sounds.json")
+
 # Font init
 Fonts = FontManager()
 Fonts.register_font(pygame.font.SysFont("Verdana", 32), "Verdana")
