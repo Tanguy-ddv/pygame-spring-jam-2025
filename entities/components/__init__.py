@@ -8,3 +8,5 @@ from .old_position import OldPosition
 from .animator import Animator
 from .collided import Collided
 from .health import Health
+from .shield import Shield
+from .fuel import Fuel
