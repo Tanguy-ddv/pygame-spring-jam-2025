@@ -58,6 +58,7 @@ class Space(scene.Scene):
         self.timing_system = TimingSystem()
         self.camera = CameraSystem((1280, 720), (640, 360))
         self.animation_system = AnimationSystem()
+        self.health_system = HealthSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -66,16 +67,16 @@ class Space(scene.Scene):
         self.starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
         starting_planet = self.starting_planet
 
-        self.player_id = self.entity_manager.create_entity()
-        self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
-        self.entity_manager.add_component(self.player_id, Velocity(0, 0))
-        self.entity_manager.add_component(self.player_id, Force(0, 0))
-        self.entity_manager.add_component(self.player_id, Mass(20))
-        self.entity_manager.add_component(self.player_id, Rotation(0))
-        self.entity_manager.add_component(self.player_id, Animator())
-
-        # Player surface
-        self.entity_manager.add_component(self.player_id, Images.get_image("shuttle"))
+        self.player_id = create_entity(self.entity_manager,
+                                       Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))),
+                                       Velocity(0, 0),
+                                       Force(0, 0),
+                                       Mass(20),
+                                       Rotation(0),
+                                       Animator(),
+                                       Images.get_image("shuttle"),
+                                       Health(1, 5000),
+                                       ) 
 
         # Variables
         self.held_keys = set()
@@ -197,6 +198,8 @@ class Space(scene.Scene):
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         
         self.timing_system.update(self.entity_manager, delta_time)
+        self.health_system.update(self.entity_manager, delta_time)
+        
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
