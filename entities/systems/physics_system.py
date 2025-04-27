@@ -32,10 +32,6 @@ class PhysicsSystem:
                     distance = max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1)
                     force.x += (9.81 * math.cos(direction) * (mass.magnitude * planet.mass) / distance) * multiplier
                     force.y += (9.81 * math.sin(direction) * (mass.magnitude * planet.mass) / distance) * multiplier
-
-                # Check for planetary collision
-                if max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1) < planet.radius:
-                    entity_manager.add_component(entity_id, Collided(planet_id))
             
             # Update motion
             velocity += force / mass.get_mass() * delta_time

@@ -6,3 +6,4 @@ from .bloom_system import BloomSystem, Bloom
 from .timing_system import TimingSystem
 from .animation_system import AnimationSystem
 from .health_system import HealthSystem
+from .collision_system import CollisionsSystem

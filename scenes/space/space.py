@@ -59,6 +59,7 @@ class Space(scene.Scene):
         self.camera = CameraSystem((1280, 720), (640, 360))
         self.animation_system = AnimationSystem()
         self.health_system = HealthSystem()
+        self.collision_system = CollisionsSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -170,9 +171,10 @@ class Space(scene.Scene):
 
     def update(self, delta_time: float) -> None:
         # Simulate death
-        if self.entity_manager.has_component(self.player_id, Collided):
+        if self.entity_manager.get_component(self.player_id, Health).health <= 0:
             self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
             self.entity_manager.add_component(self.player_id, Velocity())
+            self.entity_manager.add_component(self.player_id, Health(1, 5000))
             
             self.entity_manager.remove_component(self.player_id, Collided)
 
@@ -199,6 +201,7 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
         self.health_system.update(self.entity_manager, delta_time)
+        self.collision_system.update(self.entity_manager, self.planet_ids, delta_time)
         
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 

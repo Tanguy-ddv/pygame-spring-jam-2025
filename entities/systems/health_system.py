@@ -11,4 +11,4 @@ class HealthSystem:
 
         for entity_id in entity_ids:
             health:Health = entity_manager.get_component(entity_id, Health)
-            health.update_invincability()
+            health.update_invincability(delta_time)
