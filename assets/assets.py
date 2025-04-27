@@ -13,6 +13,7 @@ Sounds.load_json("assets/jsons/sounds.json")
 # Font init
 Fonts = FontManager()
 Fonts.register_font(pygame.font.SysFont("Verdana", 32), "Verdana")
+Fonts.register_font(pygame.font.SysFont("Verdana", 100), "Title")
 
 # Image init
 Images = ImageManager()
@@ -21,7 +22,8 @@ cache_size_variants(Images.get_image("star"), "star", Images, 50)
 cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 25)
 
 # Text pre-rendering
-Images.register_image(Fonts.get_font("Verdana").render("[PRESS ANY KEY TO START]", True, (60, 60, 60)), "start prompt")
+Images.register_image(Fonts.get_font("Verdana").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
+Images.register_image(Fonts.get_font("Title").render("ICS-PIONEER", True, (180, 180, 180)), "title text")
 
 # Animation init
 Animations = AnimationManager()
