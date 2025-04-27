@@ -8,8 +8,7 @@ from pygame.locals import *
 
 # Internal
 from pygamelib import *
-
-from scenes import Space
+from scenes import *
 
 class Game:
     def __init__(self, screen_size, fps):
@@ -20,8 +19,9 @@ class Game:
         self.clock = pygame.time.Clock()
 
         self.scene_manager = SceneManager()
+        self.scene_manager.register_scene(Title(), "title")
         self.scene_manager.register_scene(Space(), "space")
-        self.scene_manager.set_scene("space")
+        self.scene_manager.set_scene("title")
 
     async def start(self):
         self.is_running = True
@@ -43,7 +43,7 @@ class Game:
             self.scene_manager.update(delta_time)
 
             # Draw frame
-            self.screen.fill((60, 60, 60))
+            self.screen.fill((0, 0, 0))
             self.scene_manager.draw(self.screen)
 
             # Flip display
