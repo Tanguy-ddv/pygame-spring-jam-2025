@@ -63,7 +63,8 @@ class Space(scene.Scene):
         self.planet_ids = open_planets(self.entity_manager)
 
         # Player
-        starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
+        self.starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
+        starting_planet = self.starting_planet
 
         self.player_id = self.entity_manager.create_entity()
         self.entity_manager.add_component(self.player_id, Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))))
@@ -167,6 +168,13 @@ class Space(scene.Scene):
         self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
+        # Simulate death
+        if self.entity_manager.has_component(self.player_id, Collided):
+            self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
+            self.entity_manager.add_component(self.player_id, Velocity())
+            
+            self.entity_manager.remove_component(self.player_id, Collided)
+
         # Handle input
         self.handle_held_keys(delta_time)
         

@@ -43,10 +43,10 @@ class Map:
     def handle_event(self, event):
         if event.type == MOUSEWHEEL:
             if event.y == 1:
-                self.set_zoom(self.zoom - 0.1)
+                self.set_zoom(self.zoom + 0.1)
 
             elif event.y == -1:
-                self.set_zoom(self.zoom + 0.1)
+                self.set_zoom(self.zoom - 0.1)
 
         elif event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -58,11 +58,14 @@ class Map:
                 self.panning = False
 
         elif event.type == KEYDOWN:
+            self.key_pressed(event)
+
+    def key_pressed(self, event):
             if event.key == K_UP:
-                self.set_zoom(self.zoom - 0.1)
+                self.set_zoom(self.zoom + 0.1)
 
             elif event.key == K_DOWN:
-                self.set_zoom(self.zoom + 0.1)
+                self.set_zoom(self.zoom - 0.1)
 
             elif event.key == K_m:
                 if self.map_mode == 0:

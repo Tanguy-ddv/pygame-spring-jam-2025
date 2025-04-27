@@ -1,4 +1,9 @@
+# Built-ins
 import math
+
+# External
+import pygame
+
 # Internal
 from pygamelib.entities import *
 from entities import *
@@ -18,13 +23,19 @@ class PhysicsSystem:
 
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
-                if planet.kind == "moon":
-                    continue # skip moons due to difficulty orbiting planets (n-body problem)
+                if planet.kind != "moon":
+                    multiplier = 1
+                    if planet.kind == "sun":
+                        multiplier = 5
 
-                direction = math.atan2((planet.y - position.y), (planet.x - position.x))
-                distance = max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1)
-                force.x += 9.81 * math.cos(direction) * (mass.magnitude * planet.mass) / distance
-                force.y += 9.81 * math.sin(direction) * (mass.magnitude * planet.mass) / distance
+                    direction = math.atan2((planet.y - position.y), (planet.x - position.x))
+                    distance = max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1)
+                    force.x += (9.81 * math.cos(direction) * (mass.magnitude * planet.mass) / distance) * multiplier
+                    force.y += (9.81 * math.sin(direction) * (mass.magnitude * planet.mass) / distance) * multiplier
+
+                # Check for planetary collision
+                if max(math.sqrt((planet.x - position.x)** 2 + (planet.y - position.y)**2), 1) < planet.radius:
+                    entity_manager.add_component(entity_id, Collided(planet_id))
             
             # Update motion
             velocity += force / mass.get_mass() * delta_time
