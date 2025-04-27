@@ -206,23 +206,27 @@ class Map:
 
                 if distance < planet.radius:
                     crash = True
-                
-                if planet.kind == "moon":
-                    continue # skip moons due to difficulty orbiting planets (n-body problem)
-
-                direction = math.atan2((planet.y - player_position.y), (planet.x - player_position.x))
-
-                player_force.x += 9.81 * math.cos(direction) * (player_mass.magnitude * planet.mass) / distance
-                player_force.y += 9.81 * math.sin(direction) * (player_mass.magnitude * planet.mass) / distance
             
-            # Update motion
-            player_velocity += player_force / player_mass.get_mass() * dt
-            player_position += player_velocity * dt
+            if crash == False:
+                for planet_id in planet_imprints:
+                    planet = planet_imprints[planet_id]
+                    distance = max(math.sqrt((planet.x - player_position.x)** 2 + (planet.y - player_position.y)**2), 1)
+                    if planet.kind == "moon":
+                        continue # skip moons due to difficulty orbiting planets (n-body problem)
 
-            # Reset force each frame
-            player_force.xy = (0, 0)
+                    direction = math.atan2((planet.y - player_position.y), (planet.x - player_position.x))
 
-            future_player_positions.append(player_position.xy)
+                    player_force.x += 9.81 * math.cos(direction) * (player_mass.magnitude * planet.mass) / distance
+                    player_force.y += 9.81 * math.sin(direction) * (player_mass.magnitude * planet.mass) / distance
+                
+                # Update motion
+                player_velocity += player_force / player_mass.get_mass() * dt
+                player_position += player_velocity * dt
+
+                # Reset force each frame
+                player_force.xy = (0, 0)
+
+                future_player_positions.append(player_position.xy)
 
             j += 1
         
