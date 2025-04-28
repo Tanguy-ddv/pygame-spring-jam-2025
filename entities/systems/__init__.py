@@ -7,3 +7,4 @@ from .timing_system import TimingSystem
 from .animation_system import AnimationSystem
 from .health_system import HealthSystem
 from .collision_system import CollisionsSystem
+from .simulator import SimulationSystem

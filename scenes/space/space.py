@@ -1,4 +1,5 @@
 # Built-ins
+import pygame
 import json
 import math
 from typing import Any
@@ -62,6 +63,7 @@ class Space(scene.Scene):
         self.animation_system = AnimationSystem()
         self.health_system = HealthSystem()
         self.collision_system = CollisionsSystem()
+        self.simulator = SimulationSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -213,6 +215,9 @@ class Space(scene.Scene):
         player_circle.x, player_circle.y = player_position.x, player_position.y
         self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
 
+        # updated the simulator
+        self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 200)
+
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
 
@@ -228,7 +233,8 @@ class Space(scene.Scene):
         self.health_system.update(self.entity_manager, delta_time)
         self.collision_system.update(self.entity_manager)
         
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
+        simulated_player = self.simulator.get_simulated_entity(self.player_id)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], simulated_player["crash"], delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
