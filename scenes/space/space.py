@@ -1,4 +1,5 @@
 # Built-ins
+import pygame
 import json
 import math
 from typing import Any
@@ -39,7 +40,8 @@ def open_planets(entity_manager: EntityManager):
         planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
 
         id = create_entity(entity_manager,
-                           planet
+                           planet,
+                           CircleCollider((0, 0), math.floor(math.sqrt(radius)), False)
                            )
         planet_ids.append(id)
         planets.append(planet)
@@ -61,6 +63,7 @@ class Space(scene.Scene):
         self.animation_system = AnimationSystem()
         self.health_system = HealthSystem()
         self.collision_system = CollisionsSystem()
+        self.simulator = SimulationSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -78,7 +81,10 @@ class Space(scene.Scene):
                                        Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))),
                                        Velocity(0, 0),
                                        Force(0, 0),
-                                       Mass(20)
+                                       Mass(20),
+                                       CircleCollider((0, 0),
+                                                       9,
+                                                       )
                                        ) 
 
         # Variables
@@ -186,7 +192,13 @@ class Space(scene.Scene):
             self.camera.changed = False
             
         # Simulate death
-        if self.entity_manager.get_component(self.player_id, Health).health <= 0:
+        health:Health = self.entity_manager.get_component(self.player_id, Health)
+
+        if self.entity_manager.has_component(self.player_id, Collided):
+            if self.entity_manager.get_component(self.player_id, Collided).other in self.planet_ids:
+                health.health = -10000
+
+        if health.health <= 0:
             self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
             self.entity_manager.add_component(self.player_id, Velocity())
             self.entity_manager.add_component(self.player_id, Health(1, 5000))
@@ -198,7 +210,13 @@ class Space(scene.Scene):
         
         # Update player surface
         player_rotation = self.entity_manager.get_component(self.player_id, Rotation)
+        player_position:Position = self.entity_manager.get_component(self.player_id, Position) 
+        player_circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider) 
+        player_circle.x, player_circle.y = player_position.x, player_position.y
         self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
+
+        # updated the simulator
+        self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 50)
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
@@ -213,9 +231,10 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
         self.health_system.update(self.entity_manager, delta_time)
-        self.collision_system.update(self.entity_manager, self.planet_ids, delta_time)
+        self.collision_system.update(self.entity_manager)
         
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
+        simulated_player = self.simulator.get_simulated_entity(self.player_id)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], simulated_player["crash"], delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
@@ -226,7 +245,10 @@ class Space(scene.Scene):
             self.camera.draw(self.entity_manager)
             self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
-            surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
+            if self.camera.zoom == 1:
+                surface.blit(self.camera.get_surface())
+            else:
+                surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
 
         self.hud.draw(surface)
 
