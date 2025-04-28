@@ -70,7 +70,6 @@ class Space(scene.Scene):
 
         # Player
         self.starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
-        starting_planet = self.starting_planet
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -78,7 +77,7 @@ class Space(scene.Scene):
                                        Health(1, 5000),
                                        Fuel(1000, 1000),
                                        Animator(),
-                                       Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))),
+                                       Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))),
                                        Velocity(0, 0),
                                        Force(0, 0),
                                        Mass(20),
@@ -99,6 +98,9 @@ class Space(scene.Scene):
         sound.play(-1)
 
     def handle_events(self, events: list[pygame.Event]) -> None:
+        if self.entity_manager.has_component(self.player_id, Dying):
+            return
+        
         for event in events:
             if event.type == KEYDOWN:
                 self.key_pressed(event)
@@ -111,6 +113,9 @@ class Space(scene.Scene):
                 self.planet_handler.handle_event(self.entity_manager, self.camera, event)
 
     def handle_held_keys(self, delta_time: float) -> None:
+        if self.entity_manager.has_component(self.player_id, Dying):
+            return
+        
         for key in self.held_keys:
             # Get player attributes
             force = self.entity_manager.get_component(self.player_id, Force)
@@ -127,7 +132,7 @@ class Space(scene.Scene):
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
                 force.y -= 1500 * math.sin(math.radians(rotation.angle))
 
-                if  "main drive start" in animator.animation_stack and animator.animation_stack["main drive start"] > 5:
+                if  "main drive start" in animator.animation_stack and round(animator.animation_stack["main drive start"]) >= 5:
                     animator.animation_stack["main drive hold"] =  0
                     animator.animation_stack.pop("main drive start")
 
@@ -135,7 +140,7 @@ class Space(scene.Scene):
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-                if  "spin aclockwise start" in animator.animation_stack and animator.animation_stack["spin aclockwise start"] > 4:
+                if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin aclockwise start"]) >= 4:
                     animator.animation_stack["spin aclockwise hold"] =  0
                     animator.animation_stack.pop("spin aclockwise start")
 
@@ -143,7 +148,7 @@ class Space(scene.Scene):
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
 
-                if  "spin clockwise start" in animator.animation_stack and animator.animation_stack["spin clockwise start"] > 4:
+                if  "spin clockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
                     animator.animation_stack["spin clockwise hold"] =  0
                     animator.animation_stack.pop("spin clockwise start")
 
@@ -166,6 +171,7 @@ class Space(scene.Scene):
 
     def key_unpressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
+
         if event.key == K_a:
             for animation in ["spin clockwise start", "spin clockwise hold"]:
                 if animation in animator.animation_stack:
@@ -193,17 +199,30 @@ class Space(scene.Scene):
             
         # Simulate death
         health:Health = self.entity_manager.get_component(self.player_id, Health)
+        animator: Animator = self.entity_manager.get_component(self.player_id, Animator)
 
         if self.entity_manager.has_component(self.player_id, Collided):
             if self.entity_manager.get_component(self.player_id, Collided).other in self.planet_ids:
                 health.health = -10000
 
-        if health.health <= 0:
-            self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
-            self.entity_manager.add_component(self.player_id, Velocity())
-            self.entity_manager.add_component(self.player_id, Health(1, 5000))
-            
             self.entity_manager.remove_component(self.player_id, Collided)
+
+        if health.health <= 0:
+            if not self.entity_manager.has_component(self.player_id, Dying):
+                self.entity_manager.add_component(self.player_id, Dying())
+                animator.animation_stack = {"explosion1": 0}
+        
+        if self.entity_manager.has_component(self.player_id, Dying):
+            if round(animator.animation_stack["explosion1"]) >= 18:
+                # Stop dying
+                self.entity_manager.remove_component(self.player_id, Dying)
+                animator.animation_stack.pop("explosion1")
+
+                # Respawn / code on death VVVVVVVV
+                self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
+                self.entity_manager.add_component(self.player_id, Velocity(0, 0))
+                self.entity_manager.add_component(self.player_id, Force(0, 0))
+                self.entity_manager.add_component(self.player_id, Health(1, 1000))
 
         # Handle input
         self.handle_held_keys(delta_time)
@@ -214,6 +233,9 @@ class Space(scene.Scene):
         player_circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider) 
         player_circle.x, player_circle.y = player_position.x, player_position.y
         self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
+
+        # Update animations
+        self.animation_system.update(self.entity_manager, delta_time)
 
         # updated the simulator
         self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 50)
