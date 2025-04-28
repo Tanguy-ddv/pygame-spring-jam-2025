@@ -47,5 +47,25 @@
     "resources/player_shuttle/spin_clockwise_start": {
         "name": "spin clockwise start",
         "duration": 4
+    },
+
+    "resources/explosions/explosion1": {
+        "name": "explosion1",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion1.5": {
+        "name": "explosion1.5",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion2": {
+        "name": "explosion2",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion3": {
+        "name": "explosion3",
+        "duration": 22
     }
 }
