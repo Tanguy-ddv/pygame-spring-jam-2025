@@ -216,7 +216,7 @@ class Space(scene.Scene):
         self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
 
         # updated the simulator
-        self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 200)
+        self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 50)
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
@@ -245,7 +245,10 @@ class Space(scene.Scene):
             self.camera.draw(self.entity_manager)
             self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
-            surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
+            if self.camera.zoom == 1:
+                surface.blit(self.camera.get_surface())
+            else:
+                surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
 
         self.hud.draw(surface)
 

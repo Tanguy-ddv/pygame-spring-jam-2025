@@ -31,7 +31,7 @@ class SimulationSystem:
             else:
                 self.simulated_entities[entity_id]["circle_collider"] = None
             
-            dt = 0.05
+            dt = 0.2
 
             j = 0
 
