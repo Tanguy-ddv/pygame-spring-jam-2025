@@ -10,3 +10,4 @@ from .collided import Collided
 from .health import Health
 from .shield import Shield
 from .fuel import Fuel
+from .circle_collider import CircleCollider

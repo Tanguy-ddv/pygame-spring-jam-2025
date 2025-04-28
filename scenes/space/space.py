@@ -39,7 +39,8 @@ def open_planets(entity_manager: EntityManager):
         planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
 
         id = create_entity(entity_manager,
-                           planet
+                           planet,
+                           CircleCollider((0, 0), math.floor(math.sqrt(radius)), False)
                            )
         planet_ids.append(id)
         planets.append(planet)
@@ -78,7 +79,10 @@ class Space(scene.Scene):
                                        Position(starting_planet.dist * math.cos(math.radians(starting_planet.theta)) + starting_planet.radius * 3, starting_planet.dist * math.sin(math.radians(starting_planet.theta))),
                                        Velocity(0, 0),
                                        Force(0, 0),
-                                       Mass(20)
+                                       Mass(20),
+                                       CircleCollider((0, 0),
+                                                       9,
+                                                       )
                                        ) 
 
         # Variables
@@ -186,7 +190,13 @@ class Space(scene.Scene):
             self.camera.changed = False
             
         # Simulate death
-        if self.entity_manager.get_component(self.player_id, Health).health <= 0:
+        health:Health = self.entity_manager.get_component(self.player_id, Health)
+
+        if self.entity_manager.has_component(self.player_id, Collided):
+            if self.entity_manager.get_component(self.player_id, Collided).other in self.planet_ids:
+                health.health = -10000
+
+        if health.health <= 0:
             self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
             self.entity_manager.add_component(self.player_id, Velocity())
             self.entity_manager.add_component(self.player_id, Health(1, 5000))
@@ -198,6 +208,9 @@ class Space(scene.Scene):
         
         # Update player surface
         player_rotation = self.entity_manager.get_component(self.player_id, Rotation)
+        player_position:Position = self.entity_manager.get_component(self.player_id, Position) 
+        player_circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider) 
+        player_circle.x, player_circle.y = player_position.x, player_position.y
         self.entity_manager.add_component(self.player_id, pygame.transform.rotate(Images.get_image("shuttle"), player_rotation.angle - 90))
 
         # Process physics
@@ -213,7 +226,7 @@ class Space(scene.Scene):
         
         self.timing_system.update(self.entity_manager, delta_time)
         self.health_system.update(self.entity_manager, delta_time)
-        self.collision_system.update(self.entity_manager, self.planet_ids, delta_time)
+        self.collision_system.update(self.entity_manager)
         
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, self.planet_handler.get_planet_imprints(self.entity_manager), delta_time)
 
