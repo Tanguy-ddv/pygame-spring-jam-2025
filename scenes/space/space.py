@@ -165,6 +165,7 @@ class Space(scene.Scene):
 
         elif event.key == K_SPACE:
             animator.animation_stack["main drive start"] = 0
+            Sounds.get_sound("thrusters").play(loops=-1)
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
@@ -186,6 +187,7 @@ class Space(scene.Scene):
             for animation in ["main drive start", "main drive hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
+                    Sounds.get_sound("thrusters").stop()
 
         self.held_keys.remove(event.key)
 

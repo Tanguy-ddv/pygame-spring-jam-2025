@@ -1,4 +1,5 @@
 {
     "resources/music/Am I Alone.wav": "bgm",
-    "resources/music/select.wav": "select"
+    "resources/music/select.wav": "select",
+    "resources/music/thrusters.wav": "thrusters"
 }
