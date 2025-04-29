@@ -78,6 +78,9 @@ class Planet:
 
         self.on_screen = False
 
+        # Mission data
+        self.missions = []
+
 #this class is intended solely for flight path predictions
 class PlanetImprint:
     def __init__(self, radius: int, day: float, year: float, kind: str, dist: int, mass: int, orbits: object | None, theta: float | int) -> None:
@@ -168,10 +171,14 @@ class PlanetHandler:
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             if planet.on_screen:
-                if camera.selected_planet == entity_manager.get_component(entity_id, Planet):
-                    pygame.draw.circle(display_surface, (255, 255, 255), camera.get_relative_position((planet.x, planet.y)), planet.radius + 2)
+                if camera.selected_planet == planet:
+                    render_pos = (camera.internal_surface.size[0] / 2, camera.internal_surface.size[1] / 2)
+                    pygame.draw.circle(display_surface, (255, 255, 255), render_pos, planet.radius + 2)
 
-                display_surface.blit(planet.surface, planet.surface.get_rect(center = camera.get_relative_position((planet.x, planet.y))))
+                else:
+                    render_pos = camera.get_relative_position((planet.x, planet.y))
+
+                display_surface.blit(planet.surface, planet.surface.get_rect(center = render_pos))
 
     def get_planet_imprints(self, entity_manager: EntityManager) -> dict[int:PlanetImprint]:
         planet_imprints = {}

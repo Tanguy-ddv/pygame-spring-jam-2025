@@ -1,4 +1,5 @@
 import pygame
+import json
 from pygame.locals import *
 from pygamelib import *
 from assets.image_caching import *
@@ -25,6 +26,14 @@ cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 
 Images.register_image(Fonts.get_font("Verdana").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
 Images.register_image(Fonts.get_font("Title").render("ICS-PIONEER", True, (180, 180, 180)), "title text")
 
+# Prerender planet names
+with open("data/celestial_bodies.json", "r") as file:
+    names = json.load(file).keys()
+
+for planet_name in names:
+    Images.register_image(Fonts.get_font("Verdana").render(planet_name.capitalize(), True, (255, 255, 255)), planet_name + " title")
+
+# Pirate rendering
 image = pygame.Surface((50, 50))
 pygame.draw.polygon(image, (0, 255, 0), [(0, 0), (50, 25), (0, 50)])
 Images.register_image(image, "Pirate")

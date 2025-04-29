@@ -12,7 +12,7 @@ from. planet_system import Planet
 
 class PhysicsSystem:
     def update(self, entity_manager: EntityManager, planet_ids: list[int], delta_time: float):
-        entity_ids = entity_manager.get_from_components(Position, Velocity, Force, Mass)
+        entity_ids = entity_manager.get_from_components(Position, Velocity, Force, Mass, Simulate)
 
         for entity_id in entity_ids:
             # Entity attributes

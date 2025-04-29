@@ -46,23 +46,26 @@ class CameraSystem:
         self.internal_surface = pygame.Surface(self.screen_size * self.zoom)
         self.relative_offset = (self.internal_surface.size[0] / 2, self.internal_surface.size[1] / 2)
 
-    def update(self, entity_manager, player_id):
+    def update(self, entity_manager, player_id, delta_time):
         self.internal_surface.fill((0, 0, 0))
         if self.selected_planet == None:
+            if not entity_manager.has_component(player_id, Simulate):
+                entity_manager.add_component(player_id, Simulate())
+
             self.set_position(entity_manager.get_component(player_id, Position))
             self.set_zoom(1)
 
         else:
+            if entity_manager.has_component(player_id, Simulate):
+                entity_manager.remove_component(player_id, Simulate)
+
             self.set_position((self.selected_planet.x, self.selected_planet.y))
 
             if self.selected_planet.kind == "moon":
                 self.set_zoom(1.25)
 
-            elif self.selected_planet.kind == "sun":
-                self.set_zoom(5)
-
             else:
-                self.set_zoom(2.5)
+                self.set_zoom(1.5)
 
     def draw(self, entity_manager):
         entity_ids = entity_manager.get_from_components(pygame.Surface, Position)

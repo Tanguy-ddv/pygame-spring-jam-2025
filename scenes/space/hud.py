@@ -8,36 +8,37 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 from entities import *
+from assets import *
 from utils.constants import GAMEH_PER_REALSEC
 
 class HUD:
     def __init__(self):
-        # Toggle HUD
-        self.enabled = True
-
         # Elements
         self.map = Map()
+        self.planet_interface = PlanetInterface()
         self.manual = Manual()
         self.log = Log()
         self.fuel_display = FuelDisplay()
 
     def handle_event(self, event):
         self.map.handle_event(event)
+        self.planet_interface.handle_event(event)
         self.manual.handle_event(event)
         self.log.handle_event(event)
 
-    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], future_player_crash: bool, delta_time) -> None:
+    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], future_player_crash: bool, camera, delta_time) -> None:
         self.map.update(entity_manager, player_id, planet_ids, future_player_positions, future_player_crash)
         self.manual.update(delta_time)
         self.log.update(delta_time)
+        self.planet_interface.update(camera, delta_time)
         self.fuel_display.update(entity_manager, player_id, delta_time)
 
     def draw(self, surface: pygame.Surface):
-        if not self.enabled:
-            return
-        
         if self.manual.enabled:
             self.manual.draw(surface)
+
+        elif self.planet_interface.enabled:
+            self.planet_interface.draw(surface)
 
         else:
             self.map.draw(surface)
@@ -73,6 +74,40 @@ class FuelDisplay:
         fuel_bar_rect = self.widget_rect.copy()
         fuel_bar_rect.width *= self.fuel_level
         pygame.draw.rect(surface, (255, 150, 40), fuel_bar_rect)
+
+class PlanetInterface:
+    def __init__(self):
+        self.planet = None
+        self.enabled = False
+        self.dist = 40
+        self.width = 1280 / 3
+        self.height = 720 - self.dist * 2
+        self.zoom = 1
+
+    def handle_event(self, event):
+        pass
+
+    def update(self, camera, delta_time):
+        self.planet = camera.selected_planet
+        self.zoom = camera.zoom
+        self.enabled = self.planet != None
+
+    def draw(self, surface):
+        if not self.enabled:
+            return
+        
+        # Draw selected body name
+        text = Images.get_image(self.planet.name + " title")
+        surface.blit(text, (1280 / 2 - text.get_width() / 2, 720 / 2 - self.planet.radius / self.zoom - 50))
+        
+        # Draw Mission Board
+        pygame.draw.rect(surface, (60, 60, 60), (self.dist, self.dist, self.width, self.height))
+
+        for mission in self.planet.get_missions():
+            pass
+
+        # Draw Shop
+        pygame.draw.rect(surface, (60, 60, 60), (1280 - self.dist - self.width, self.dist, self.width, self.height))
 
 class Manual:
     def __init__(self):

@@ -86,7 +86,8 @@ class Space(scene.Scene):
                                        Mass(20),
                                        CircleCollider((0, 0), 9),
                                        OtherIds(),
-                                       Shield()
+                                       Shield(),
+                                       Simulate() # This makes player affected by physics
                                        ) 
 
         # Variables
@@ -189,7 +190,8 @@ class Space(scene.Scene):
                                Timer(),
                                Bullet(rotation.angle),
                                CircleCollider((position.x, position.y), 2),
-                               OriginId(self.player_id)
+                               OriginId(self.player_id),
+                               Simulate() # This is needed for all entities using the physics system
                                )
             
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
@@ -232,7 +234,7 @@ class Space(scene.Scene):
 
     def update(self, delta_time: float) -> None:
         # Update camera position
-        self.camera.update(self.entity_manager, self.player_id)
+        self.camera.update(self.entity_manager, self.player_id, delta_time)
 
         if self.camera.selected_planet != None and self.camera.changed:
             self.background_system.reset_stars(self.camera)
@@ -307,7 +309,7 @@ class Space(scene.Scene):
         self.collision_system.update(self.entity_manager)
         
         simulated_player = self.simulator.get_simulated_entity(self.player_id)
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], simulated_player["crash"], delta_time)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], simulated_player["crash"], self.camera, delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
