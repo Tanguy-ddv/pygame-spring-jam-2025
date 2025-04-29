@@ -72,7 +72,7 @@ class Space(scene.Scene):
         self.planet_ids = open_planets(self.entity_manager)
 
         # Player
-        self.starting_planet = self.entity_manager.get_component(self.planet_ids[2], Planet) # Change the planet index to change starting planet
+        self.starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -334,9 +334,6 @@ TODO:
 
 - Someone needs to add functionality for multiple animations playing simultaneously 
 e.g. main drive + spin
-
-- Fuel system (Nott)
-- Weapons? (Nott)
 
 - Missions
 
