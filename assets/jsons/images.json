@@ -3,8 +3,8 @@
     "resources/background/_shooting_star.png":"shooting_star",
     "resources/asteroids/asteroid.jpg":"asteroid1",
     "resources/planet_textures/sun.png":"sun",
-    "resources/planet_textures/_mercury.png":"mercury",
-    "resources/planet_textures/_venus.png":"venus",
+    "resources/planet_textures/mercury.png":"mercury",
+    "resources/planet_textures/venus.png":"venus",
     "resources/planet_textures/earth.png":"earth",
     "resources/planet_textures/_moon.png":"moon",
     "resources/planet_textures/mars.png":"mars",
@@ -14,5 +14,6 @@
     "resources/planet_textures/_neptune.png":"neptune",
     "resources/planet_textures/_moon_like.png":"moon_like",
     "resources/player_shuttle/shuttle.png":"shuttle",
-    "resources/projectiles/laser.png":"laser"
+    "resources/projectiles/laser.png":"laser",
+    "resources/shield/shield.png":"shield"
 }

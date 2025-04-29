@@ -70,7 +70,7 @@ class Space(scene.Scene):
         self.planet_ids = open_planets(self.entity_manager)
 
         # Player
-        self.starting_planet = self.entity_manager.get_component(self.planet_ids[5], Planet) # Change the planet index to change starting planet
+        self.starting_planet = self.entity_manager.get_component(self.planet_ids[2], Planet) # Change the planet index to change starting planet
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),

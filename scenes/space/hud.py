@@ -250,15 +250,6 @@ class Map:
                                                                  self.map_surface_center[1] + calculate_scale(self, (p1[1] - player_position.y) / 4)),
                                                                 (self.map_surface_center[0] + calculate_scale(self, (p2[0] - player_position.x) / 4), 
                                                                  self.map_surface_center[1] + calculate_scale(self, (p2[1] - player_position.y) / 4)))
-            
-            if future_player_crash and len(future_player_positions) > 0:
-                size = max(min(calculate_scale(self, 20), 40), 10)
-                surface = pygame.Surface((size,size), pygame.SRCALPHA)
-                pygame.draw.line(surface, (235, 222, 52), (0, 0), (size, size), 4)
-                pygame.draw.line(surface, (235, 222, 52), (size, 0), (0, size), 4)
-                position = (self.map_surface_center[0] + calculate_scale(self, (future_player_positions[len(future_player_positions) - 1][0] - player_position.x) / 4), 
-                            self.map_surface_center[1] + calculate_scale(self, (future_player_positions[len(future_player_positions) - 1][1] - player_position.y) / 4))
-                self.map_surface.blit(surface, surface.get_rect(center = position))
 
             pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, 5)
 
