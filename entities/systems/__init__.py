@@ -10,3 +10,4 @@ from .collision_system import CollisionsSystem
 from .simulator import SimulationSystem
 from .bullet_system import BulletSystem
 from .shield_system import ShieldRenderer
+from .pirate_system import PirateHandler

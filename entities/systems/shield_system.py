@@ -8,7 +8,6 @@ import random
 # Internal
 from pygamelib.entities import *
 from entities import *
-from utils.constants import *
 
 from assets import *
 

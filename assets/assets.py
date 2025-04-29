@@ -25,7 +25,9 @@ cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 
 Images.register_image(Fonts.get_font("Verdana").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
 Images.register_image(Fonts.get_font("Title").render("ICS-PIONEER", True, (180, 180, 180)), "title text")
 
-image = pygame.Surface((10, 10))
+image = pygame.Surface((50, 50))
+pygame.draw.polygon(image, (0, 255, 0), [(0, 0), (50, 25), (0, 50)])
+Images.register_image(image, "Pirate")
 
 # Animation init
 Animations = AnimationManager()

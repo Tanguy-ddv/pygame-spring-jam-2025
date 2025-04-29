@@ -14,3 +14,4 @@ from .dying import Dying
 from .bullet import Bullet
 from .origin_id import OriginId
 from .other_id import OtherIds
+from .pirate import Pirate

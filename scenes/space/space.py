@@ -66,6 +66,7 @@ class Space(scene.Scene):
         self.simulator = SimulationSystem()
         self.bullet_system = BulletSystem()
         self.shield_renderer = ShieldRenderer()
+        self.pirate_handler = PirateHandler()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -297,6 +298,7 @@ class Space(scene.Scene):
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
+        self.pirate_handler.update(self.entity_manager)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         
