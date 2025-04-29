@@ -1,0 +1,28 @@
+{
+    "gold": {
+      "exporters": ["mercury", "earth", "ganymede", "titan"],
+      "importers": ["pluto", "ceres", "europa", "venus", "mars"],
+      "price": 5000
+    },
+    "iron": {
+      "exporters": ["mars", "callisto", "rhea", "enceladus", "neptune"],
+      "importers": ["moon", "uranus", "io", "pluto"],
+      "price": 800
+    },
+    "helium": {
+      "exporters": ["jupiter", "saturn", "neptune", "venus"],
+      "importers": ["eris", "earth", "europa", "mercury", "ganymede"],
+      "price": 620
+    },
+    "carbon": {
+      "exporters": ["triton", "pluto", "venus", "saturn"],
+      "importers": ["mars", "titan", "iapetus", "ceres", "rhea"],
+      "price": 950
+    },
+    "silicon": {
+      "exporters": ["moon", "enceladus", "uranus", "io", "ganymede"],
+      "importers": ["mercury", "ganymede", "callisto", "triton", "titan"],
+      "price": 1100
+    }
+  }
+  
