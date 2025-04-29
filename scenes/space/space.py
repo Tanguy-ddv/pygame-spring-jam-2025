@@ -82,9 +82,8 @@ class Space(scene.Scene):
                                        Velocity(0, 0),
                                        Force(0, 0),
                                        Mass(20),
-                                       CircleCollider((0, 0),
-                                                       9,
-                                                       )
+                                       CircleCollider((0, 0), 9),
+                                       OtherIds()
                                        ) 
 
         # Variables
@@ -176,16 +175,19 @@ class Space(scene.Scene):
             velocity = self.entity_manager.get_component(self.player_id, Velocity)
             rotation = self.entity_manager.get_component(self.player_id, Rotation)
 
-            create_entity(self.entity_manager, 
-                          Position(position.x + 20 * math.cos(math.radians(rotation.angle)), position.y - 20 * math.sin(math.radians(rotation.angle))),
-                          Velocity(0, 0),
-                          Mass(0.00001),
-                          Force(3 * math.cos(math.radians(rotation.angle)), -3 * math.sin(math.radians(rotation.angle))),
-                          pygame.transform.rotate(Images.get_image("laser"), rotation.angle),
-                          Timer(),
-                          Bullet(rotation.angle),
-                          CircleCollider((position.x, position.y), 2)
-                          )
+            id = create_entity(self.entity_manager, 
+                               Position(position.x + 0 * math.cos(math.radians(rotation.angle)), position.y - 0 * math.sin(math.radians(rotation.angle))),
+                               Velocity(0, 0),
+                               Mass(0.00001),
+                               Force(3 * math.cos(math.radians(rotation.angle)), -3 * math.sin(math.radians(rotation.angle))),
+                               pygame.transform.rotate(Images.get_image("laser"), rotation.angle),
+                               Timer(),
+                               Bullet(rotation.angle),
+                               CircleCollider((position.x, position.y), 2),
+                               OriginId(self.player_id)
+                               )
+            
+            self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
@@ -222,12 +224,16 @@ class Space(scene.Scene):
             
         # Simulate death
         health:Health = self.entity_manager.get_component(self.player_id, Health)
-        animator: Animator = self.entity_manager.get_component(self.player_id, Animator)
+        animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
+        other_ids:OtherIds = self.entity_manager.get_component(self.player_id, OtherIds)
 
         if self.entity_manager.has_component(self.player_id, Collided):
             for id in self.entity_manager.get_component(self.player_id, Collided).other:
                 if id in self.planet_ids:
-                    health.health = -10000
+                    health.health = -1000
+                else:
+                    if not other_ids.check_for_other_id(id):
+                        health.take_damage(1)
 
             self.entity_manager.remove_component(self.player_id, Collided)
 

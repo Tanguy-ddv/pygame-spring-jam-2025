@@ -12,3 +12,5 @@ from .fuel import Fuel
 from .circle_collider import CircleCollider
 from .dying import Dying
 from .bullet import Bullet
+from .origin_id import OriginId
+from .other_id import OtherIds
