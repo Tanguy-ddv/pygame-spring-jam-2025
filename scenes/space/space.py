@@ -65,6 +65,7 @@ class Space(scene.Scene):
         self.collision_system = CollisionsSystem()
         self.simulator = SimulationSystem()
         self.bullet_system = BulletSystem()
+        self.shield_renderer = ShieldRenderer()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
@@ -83,7 +84,8 @@ class Space(scene.Scene):
                                        Force(0, 0),
                                        Mass(20),
                                        CircleCollider((0, 0), 9),
-                                       OtherIds()
+                                       OtherIds(),
+                                       Shield()
                                        ) 
 
         # Variables
@@ -118,11 +120,11 @@ class Space(scene.Scene):
         
         for key in self.held_keys:
             # Get player attributes
-            position = self.entity_manager.get_component(self.player_id, Position)
-            velocity = self.entity_manager.get_component(self.player_id, Velocity)
-            force = self.entity_manager.get_component(self.player_id, Force)
-            rotation = self.entity_manager.get_component(self.player_id, Rotation)
-            animator = self.entity_manager.get_component(self.player_id, Animator)
+            position:Position = self.entity_manager.get_component(self.player_id, Position)
+            velocity:Velocity = self.entity_manager.get_component(self.player_id, Velocity)
+            force:Force = self.entity_manager.get_component(self.player_id, Force)
+            rotation:Rotation = self.entity_manager.get_component(self.player_id, Rotation)
+            animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
 
             # Apply thruster force
             if key == K_w:
@@ -153,13 +155,19 @@ class Space(scene.Scene):
                 if  "spin clockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
                     animator.animation_stack["spin clockwise hold"] =  0
                     animator.animation_stack.pop("spin clockwise start")
-
+            
             elif key == K_t:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
-
     def key_pressed(self, event: pygame.Event) -> None:
-        animator = self.entity_manager.get_component(self.player_id, Animator)
+        position = self.entity_manager.get_component(self.player_id, Position)
+        velocity = self.entity_manager.get_component(self.player_id, Velocity)
+        rotation = self.entity_manager.get_component(self.player_id, Rotation)
+        animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
+        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
+        health:Health = self.entity_manager.get_component(self.player_id, Health)
+        circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
+
         if event.key == K_a:
             animator.animation_stack["spin clockwise start"] = 0
 
@@ -170,11 +178,7 @@ class Space(scene.Scene):
             animator.animation_stack["main drive start"] = 0
             Sounds.get_sound("thrusters").play(loops=-1)
 
-        elif event.key == K_SPACE:
-            position = self.entity_manager.get_component(self.player_id, Position)
-            velocity = self.entity_manager.get_component(self.player_id, Velocity)
-            rotation = self.entity_manager.get_component(self.player_id, Rotation)
-
+        elif event.key == K_SPACE and not shield.activated:
             id = create_entity(self.entity_manager, 
                                Position(position.x + 0 * math.cos(math.radians(rotation.angle)), position.y - 0 * math.sin(math.radians(rotation.angle))),
                                Velocity(0, 0),
@@ -188,12 +192,19 @@ class Space(scene.Scene):
                                )
             
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
+        
+        elif event.key == K_s:
+            circle.radius = 32.5
+            shield.up()
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
-        animator = self.entity_manager.get_component(self.player_id, Animator)
+        animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
+        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
+        health:Health = self.entity_manager.get_component(self.player_id, Health)
+        circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
         if event.key == K_a:
             for animation in ["spin clockwise start", "spin clockwise hold"]:
@@ -211,6 +222,10 @@ class Space(scene.Scene):
                     animator.animation_stack.pop(animation)
                     Sounds.get_sound("thrusters").stop()
 
+        elif event.key == K_s:
+            circle.radius = 9
+            shield.down()
+
         if event.key in self.held_keys:
             self.held_keys.remove(event.key)
 
@@ -226,13 +241,14 @@ class Space(scene.Scene):
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
         other_ids:OtherIds = self.entity_manager.get_component(self.player_id, OtherIds)
+        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
 
         if self.entity_manager.has_component(self.player_id, Collided):
             for id in self.entity_manager.get_component(self.player_id, Collided).other:
                 if id in self.planet_ids:
                     health.health = -1000
                 else:
-                    if not other_ids.check_for_other_id(id):
+                    if not other_ids.check_for_other_id(id) and shield.activated == False:
                         health.take_damage(1)
 
             self.entity_manager.remove_component(self.player_id, Collided)
@@ -300,6 +316,7 @@ class Space(scene.Scene):
             self.camera.draw(self.entity_manager)
             self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
+            self.shield_renderer.draw(self.entity_manager, self.camera)
             if self.camera.zoom == 1:
                 surface.blit(self.camera.get_surface())
             else:
