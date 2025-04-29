@@ -26,4 +26,7 @@ class CollisionsSystem:
                     entity_b_circle:CircleCollider = entity_manager.get_component(entity_id_b, CircleCollider)
                     if entity_id_a != entity_id_b:
                         if entity_a_circle.test_for_collision(entity_b_circle):
-                            entity_manager.add_component(entity_id_a, Collided(entity_id_b))
+                            if entity_manager.has_component(entity_id_a, Collided):
+                                entity_manager.get_component(entity_id_a, Collided).add_other_id(entity_id_b)
+                            else:
+                                entity_manager.add_component(entity_id_a, Collided(entity_id_b))

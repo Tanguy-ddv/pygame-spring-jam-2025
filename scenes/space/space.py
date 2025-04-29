@@ -64,12 +64,13 @@ class Space(scene.Scene):
         self.health_system = HealthSystem()
         self.collision_system = CollisionsSystem()
         self.simulator = SimulationSystem()
+        self.bullet_system = BulletSystem()
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
 
         # Player
-        self.starting_planet = self.entity_manager.get_component(self.planet_ids[7], Planet) # Change the planet index to change starting planet
+        self.starting_planet = self.entity_manager.get_component(self.planet_ids[5], Planet) # Change the planet index to change starting planet
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -118,12 +119,14 @@ class Space(scene.Scene):
         
         for key in self.held_keys:
             # Get player attributes
+            position = self.entity_manager.get_component(self.player_id, Position)
+            velocity = self.entity_manager.get_component(self.player_id, Velocity)
             force = self.entity_manager.get_component(self.player_id, Force)
             rotation = self.entity_manager.get_component(self.player_id, Rotation)
             animator = self.entity_manager.get_component(self.player_id, Animator)
 
             # Apply thruster force
-            if key == K_SPACE:
+            if key == K_w:
                 fuel = self.entity_manager.get_component(self.player_id, Fuel)
                 if not fuel.fuel:
                     continue
@@ -155,6 +158,7 @@ class Space(scene.Scene):
             elif key == K_t:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
 
+
     def key_pressed(self, event: pygame.Event) -> None:
         animator = self.entity_manager.get_component(self.player_id, Animator)
         if event.key == K_a:
@@ -163,9 +167,25 @@ class Space(scene.Scene):
         elif event.key == K_d:
             animator.animation_stack["spin aclockwise start"] = 0
 
-        elif event.key == K_SPACE:
+        elif event.key == K_w:
             animator.animation_stack["main drive start"] = 0
             Sounds.get_sound("thrusters").play(loops=-1)
+
+        elif event.key == K_SPACE:
+            position = self.entity_manager.get_component(self.player_id, Position)
+            velocity = self.entity_manager.get_component(self.player_id, Velocity)
+            rotation = self.entity_manager.get_component(self.player_id, Rotation)
+
+            create_entity(self.entity_manager, 
+                          Position(position.x + 20 * math.cos(math.radians(rotation.angle)), position.y - 20 * math.sin(math.radians(rotation.angle))),
+                          Velocity(0, 0),
+                          Mass(0.00001),
+                          Force(3 * math.cos(math.radians(rotation.angle)), -3 * math.sin(math.radians(rotation.angle))),
+                          pygame.transform.rotate(Images.get_image("laser"), rotation.angle),
+                          Timer(),
+                          Bullet(rotation.angle),
+                          CircleCollider((position.x, position.y), 2)
+                          )
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
@@ -183,13 +203,14 @@ class Space(scene.Scene):
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
 
-        elif event.key == K_SPACE:
+        elif event.key == K_w:
             for animation in ["main drive start", "main drive hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
                     Sounds.get_sound("thrusters").stop()
 
-        self.held_keys.remove(event.key)
+        if event.key in self.held_keys:
+            self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
         # Update camera position
@@ -204,8 +225,9 @@ class Space(scene.Scene):
         animator: Animator = self.entity_manager.get_component(self.player_id, Animator)
 
         if self.entity_manager.has_component(self.player_id, Collided):
-            if self.entity_manager.get_component(self.player_id, Collided).other in self.planet_ids:
-                health.health = -10000
+            for id in self.entity_manager.get_component(self.player_id, Collided).other:
+                if id in self.planet_ids:
+                    health.health = -10000
 
             self.entity_manager.remove_component(self.player_id, Collided)
 
@@ -225,6 +247,8 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, Velocity(0, 0))
                 self.entity_manager.add_component(self.player_id, Force(0, 0))
                 self.entity_manager.add_component(self.player_id, Health(1, 1000))
+                self.held_keys.clear()
+                Sounds.get_sound("thrusters").stop()
 
         # Handle input
         self.handle_held_keys(delta_time)
@@ -250,6 +274,7 @@ class Space(scene.Scene):
 
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
+        self.bullet_system.update(self.entity_manager)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         

@@ -11,3 +11,4 @@ from .shield import Shield
 from .fuel import Fuel
 from .circle_collider import CircleCollider
 from .dying import Dying
+from .bullet import Bullet

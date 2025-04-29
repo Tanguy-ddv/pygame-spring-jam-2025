@@ -8,3 +8,4 @@ from .animation_system import AnimationSystem
 from .health_system import HealthSystem
 from .collision_system import CollisionsSystem
 from .simulator import SimulationSystem
+from .bullet_system import BulletSystem
