@@ -58,7 +58,7 @@ class FuelDisplay:
         self.color_a = [200, 200, 40]
         self.color = self.color_a.copy()
         self.render_time = 0
-        self.text = Fonts.get_font("Body").render("POWER : 100%", True, "#cccccc")
+        self.text = Fonts.get_font("Body").render("POWER : 100%", True, "#222222")
 
     def update(self, entity_manager, player_id, delta_time):
         self.time_elapsed += delta_time
@@ -77,7 +77,7 @@ class FuelDisplay:
         if self.fuel_level != last_fuel:
             self.render_time += delta_time
             self.color[2] = 40 + abs(math.sin(math.radians(self.render_time * 90))) * 60
-            self.text = Fonts.get_font("Body").render(f"POWER : {round(self.fuel_level * 100)}%", True, "#cccccc")
+            self.text = Fonts.get_font("Body").render(f"POWER : {round(self.fuel_level * 100)}%", True, "#222222")
 
         else:
             self.render_time = 0
