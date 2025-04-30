@@ -12,14 +12,14 @@ class BackgroundSystem:
     def __init__(self):
         self.stars = []
         for i in range(100):
-            self.stars.append({"x":random.randint(0, 1280), "y":random.randint(0, 720), "star_type":str(random.randint(0, 49))})
+            self.stars.append({"x":random.randint(0, 1280), "y":random.randint(0, 720), "alpha": 0, "time": random.randint(0, 100), "star_type":str(random.randint(0, 49))})
         
         self.shooting_stars = []
     
     def reset_stars(self, camera):
         self.stars = []
         for i in range(100):
-            self.stars.append({"x":random.randint(0, camera.internal_surface.size[0]), "y":random.randint(0, camera.internal_surface.size[1]), "star_type":str(random.randint(0, 49))})
+            self.stars.append({"x":random.randint(0, camera.internal_surface.size[0]), "y":random.randint(0, camera.internal_surface.size[1]), "alpha": 0, "time": random.randint(0, 100) / 100, "star_type":str(random.randint(0, 49))})
         
     def spawn_new_meteor(self, camera:camera_system.CameraSystem):
         screen_border = random.randint(0, 3)
@@ -87,6 +87,9 @@ class BackgroundSystem:
                 star["y"] = camera_bounding_box[1] + (star["y"] - camera_bounding_box[3])
                 star["x"] = random.randint(int(camera.camera_x - camera.internal_surface.size[0] / 2), int(camera.camera_x + camera.internal_surface.size[0] / 2))
 
+            star["time"] += delta_time
+            star["alpha"] = abs(math.sin(math.radians(star["time"] * 30))) * 255
+
     def draw(self, surface:pygame.Surface, camera:camera_system.CameraSystem, Images:images.ImageManager):
         self.draw_stars(surface, camera, Images)
         self.draw_meteors(surface, camera, Images)
@@ -95,7 +98,8 @@ class BackgroundSystem:
         for star in self.stars:
             position = camera.get_relative_position((star["x"], star["y"]))
             image = Images.get_image("star variant " + star["star_type"])
-            surface.blit(image, image.get_rect(center = position), special_flags=pygame.BLEND_RGB_ADD)
+            image.set_alpha(star["alpha"])
+            surface.blit(image, image.get_rect(center = position))#, special_flags=pygame.BLEND_RGBA_ADD)
 
     def draw_meteors(self, surface:pygame.Surface, camera:camera_system.CameraSystem, Images:images.ImageManager):
         for shooting_star in self.shooting_stars:
