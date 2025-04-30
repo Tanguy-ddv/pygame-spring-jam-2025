@@ -13,8 +13,7 @@ Sounds.load_json("assets/jsons/sounds.json")
 
 # Font init
 Fonts = FontManager()
-Fonts.register_font(pygame.font.SysFont("Verdana", 32), "Verdana")
-Fonts.register_font(pygame.font.SysFont("Verdana", 100), "Title")
+Fonts.load_json("assets/jsons/fonts.json")
 
 # Image init
 Images = ImageManager()
@@ -23,7 +22,7 @@ cache_size_variants(Images.get_image("star"), "star", Images, 50)
 cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 25)
 
 # Text pre-rendering
-Images.register_image(Fonts.get_font("Verdana").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
+Images.register_image(Fonts.get_font("Body").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
 Images.register_image(Fonts.get_font("Title").render("ICS-PIONEER", True, (180, 180, 180)), "title text")
 
 # Prerender planet names
@@ -31,7 +30,7 @@ with open("data/celestial_bodies.json", "r") as file:
     names = json.load(file).keys()
 
 for planet_name in names:
-    Images.register_image(Fonts.get_font("Verdana").render(planet_name.capitalize(), True, (255, 255, 255)), planet_name + " title")
+    Images.register_image(Fonts.get_font("Body").render(planet_name.capitalize(), True, (255, 255, 255)), planet_name + " title")
 
 # Pirate rendering
 image = pygame.Surface((50, 50))

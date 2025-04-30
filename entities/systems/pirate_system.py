@@ -37,7 +37,7 @@ class PirateHandler:
 
             direction_to_player = math.atan2((player_position.y - position.y), (player_position.x - position.x))
             rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction_to_player)) / 10
-            force.x += 2000 * math.cos(math.radians(rotation.angle))
-            force.y += 2000 * math.sin(math.radians(rotation.angle))
+            force.x += 1500 * math.cos(math.radians(rotation.angle))
+            force.y += 1500 * math.sin(math.radians(rotation.angle))
 
             entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), -rotation.angle))

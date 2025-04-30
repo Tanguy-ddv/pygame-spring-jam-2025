@@ -55,6 +55,10 @@ class FuelDisplay:
         self.widget_center = (225, 25)
         self.widget_size = (500, 50)
         self.widget_rect = pygame.rect.FRect(self.widget_center[0] - self.widget_size[0] / 2, self.widget_center[1] - self.widget_size[1] / 2, self.widget_size[0], self.widget_size[1])
+        self.color_a = [200, 200, 40]
+        self.color = self.color_a.copy()
+        self.render_time = 0
+        self.text = Fonts.get_font("Body").render("POWER : 100%", True, "#cccccc")
 
     def update(self, entity_manager, player_id, delta_time):
         self.time_elapsed += delta_time
@@ -64,16 +68,31 @@ class FuelDisplay:
 
         self.target_fuel_level = fuel.fuel / fuel.max_fuel
         if last_target != self.target_fuel_level:
+            self.time_elapsed = 0
             self.initial_fuel_level = self.fuel_level
 
-        self.fuel_level = self.initial_fuel_level + (self.target_fuel_level - self.initial_fuel_level) * abs(math.sin(math.radians(min(self.time_elapsed * 90, 90))))
+        last_fuel = self.fuel_level
+        self.fuel_level = min(self.target_fuel_level, self.initial_fuel_level + (self.target_fuel_level - self.initial_fuel_level) * abs(math.sin(math.radians(min(self.time_elapsed * 90, 90)))))
+
+        if self.fuel_level != last_fuel:
+            self.render_time += delta_time
+            self.color[2] = 40 + abs(math.sin(math.radians(self.render_time * 90))) * 60
+            self.text = Fonts.get_font("Body").render(f"POWER : {round(self.fuel_level * 100)}%", True, "#cccccc")
+
+        else:
+            self.render_time = 0
+            self.color = self.color_a.copy()
 
     def draw(self, surface):
         pygame.draw.rect(surface, (40, 40, 40), self.widget_rect)
 
         fuel_bar_rect = self.widget_rect.copy()
         fuel_bar_rect.width *= self.fuel_level
-        pygame.draw.rect(surface, (255, 150, 40), fuel_bar_rect)
+        pygame.draw.rect(surface, self.color, fuel_bar_rect)
+
+        text_pos = self.widget_rect.copy()
+        text_pos.centerx = self.widget_size[0] / 2
+        surface.blit(self.text, text_pos)
 
 class PlanetInterface:
     def __init__(self):
@@ -103,8 +122,12 @@ class PlanetInterface:
         # Draw Mission Board
         pygame.draw.rect(surface, (60, 60, 60), (self.dist, self.dist, self.width, self.height))
 
-        for mission in self.planet.get_missions():
-            pass
+        # Render missions
+        y_index = 0
+
+        for mission in self.planet.missions:
+            mission_image = Images.get_image(mission + " display") 
+            surface.blit(mission_image, (self.dist, y_index * mission_image.get_height()))
 
         # Draw Shop
         pygame.draw.rect(surface, (60, 60, 60), (1280 - self.dist - self.width, self.dist, self.width, self.height))
@@ -312,7 +335,7 @@ class Map:
 
     def draw_overlay(self, surface: pygame.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (400, 225))
-        surface.blit(display_surface, (0, 0))
+        surface.blit(display_surface, (surface.get_width() - display_surface.get_width(), 0))
 
     def draw_fullscreen(self, surface: pygame.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (1280, 720))
