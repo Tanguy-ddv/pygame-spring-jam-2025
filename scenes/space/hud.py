@@ -21,10 +21,12 @@ class HUD:
         self.fuel_display = FuelDisplay()
 
     def handle_event(self, event):
-        self.map.handle_event(event)
+        if self.planet_interface.planet == None:
+            self.map.handle_event(event)
+            self.manual.handle_event(event)
+            self.log.handle_event(event)
+
         self.planet_interface.handle_event(event)
-        self.manual.handle_event(event)
-        self.log.handle_event(event)
 
     def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], future_player_crash: bool, camera, delta_time) -> None:
         self.map.update(entity_manager, player_id, planet_ids, future_player_positions, future_player_crash)
