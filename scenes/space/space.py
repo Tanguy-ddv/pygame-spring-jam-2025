@@ -90,6 +90,12 @@ class Space(scene.Scene):
                                        Simulate() # This makes player affected by physics
                                        ) 
 
+        self.test_pirate_id = create_pirate(self.entity_manager, 
+                                            (self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))),
+                                            Images.get_image("pirate"))
+        
+        self.pirate_handler.register_pirate(self.test_pirate_id)
+
         # Variables
         self.held_keys = set()
 
@@ -300,7 +306,7 @@ class Space(scene.Scene):
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
-        self.pirate_handler.update(self.entity_manager)
+        self.pirate_handler.update(self.entity_manager, self.player_id)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         

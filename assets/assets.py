@@ -36,7 +36,7 @@ for planet_name in names:
 # Pirate rendering
 image = pygame.Surface((50, 50))
 pygame.draw.polygon(image, (0, 255, 0), [(0, 0), (50, 25), (0, 50)])
-Images.register_image(image, "Pirate")
+Images.register_image(image, "pirate")
 
 # Animation init
 Animations = AnimationManager()
