@@ -13,5 +13,6 @@ def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame
                          OtherIds(),
                          Simulate(),
                          Rotation(0),
+                         Pirate(),
                          surface
                          )

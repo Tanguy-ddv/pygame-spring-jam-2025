@@ -10,6 +10,8 @@ from pygamelib.entities import *
 from entities import *
 from assets import *
 
+from ..systems.simulator import SimulationSystem
+
 MAX_RADIANS = math.pi * 2
 
 def get_shortest_distance_in_radians(radians_1:int|float, radians_2:int|float):
@@ -26,7 +28,7 @@ class PirateHandler:
     def unregister_pirate(self, id:int):
         self.pirate_ids.remove(id)
 
-    def update(self, entity_manager: EntityManager, player_id:int):
+    def update(self, entity_manager: EntityManager, player_id:int, simulator: SimulationSystem):
         player_position:pygame.Vector2 = entity_manager.get_component(player_id, Position)
 
         for id in self.pirate_ids:
@@ -34,10 +36,29 @@ class PirateHandler:
             rotation:Rotation = entity_manager.get_component(id, Rotation)
             force:Force = entity_manager.get_component(id, Force)
             surface:pygame.Surface = entity_manager.get_component(id, pygame.Surface)
+            pirate:Pirate = entity_manager.get_component(id, Pirate)
 
-            direction_to_player = math.atan2((player_position.y - position.y), (player_position.x - position.x))
-            rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction_to_player)) / 10
-            force.x += 1500 * math.cos(math.radians(rotation.angle))
-            force.y += 1500 * math.sin(math.radians(rotation.angle))
+            simulated_data:dict = simulator.get_simulated_entity(id)
+
+            direction = math.radians(rotation.angle)
+
+            if simulated_data["crash"]:
+                if len(simulated_data["future_positions"]) > 0:
+                    pirate.avoid_crash = 10
+            else:
+                if pirate.avoid_crash > 0:
+                    pirate.avoid_crash -= 1
+            if pirate.avoid_crash > 0:
+                last_position = simulated_data["future_positions"][len(simulated_data["future_positions"]) - 1]
+                direction = math.atan2((last_position[1] - position.y), (last_position[0] - position.x))
+                if id % 2 == 0:
+                    direction -= math.radians(90)
+                else:
+                    direction += math.radians(90)
+                force.x += 1500 * math.cos(math.radians(rotation.angle))
+                force.y += 1500 * math.sin(math.radians(rotation.angle))
+            else:
+                direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
+            rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction)) / 10
 
             entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), -rotation.angle))

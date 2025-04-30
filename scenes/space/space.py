@@ -296,7 +296,9 @@ class Space(scene.Scene):
         self.animation_system.update(self.entity_manager, delta_time)
 
         # updated the simulator
-        self.simulator.simulate(self.entity_manager, [self.player_id], self.planet_handler.get_planet_imprints(self.entity_manager), 50)
+        ids_list = [self.player_id]
+        ids_list.extend(list(self.pirate_handler.pirate_ids))
+        self.simulator.simulate(self.entity_manager, ids_list, self.planet_handler.get_planet_imprints(self.entity_manager), 50)
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)
@@ -307,7 +309,7 @@ class Space(scene.Scene):
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
-        self.pirate_handler.update(self.entity_manager, self.player_id)
+        self.pirate_handler.update(self.entity_manager, self.player_id, self.simulator)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         
