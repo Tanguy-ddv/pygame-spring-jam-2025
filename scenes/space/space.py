@@ -79,7 +79,7 @@ class Space(scene.Scene):
                                        Rotation(0),
                                        Health(1, 5000),
                                        Fuel(1000, 1000),
-                                       Balance()
+                                       Balance(0),
                                        Animator(),
                                        Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))),
                                        Velocity(0, 0),
