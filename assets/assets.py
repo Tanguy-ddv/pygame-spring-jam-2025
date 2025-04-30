@@ -23,7 +23,7 @@ cache_size_variants(Images.get_image("shooting_star"), "shooting_star", Images, 
 
 # Text pre-rendering
 Images.register_image(Fonts.get_font("Body").render("[PRESS ANY KEY TO START]", True, (255, 255, 255)), "start prompt")
-Images.register_image(Fonts.get_font("Title").render("ICS-PIONEER", True, (180, 180, 180)), "title text")
+Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 
 # Prerender planet names
 with open("data/celestial_bodies.json", "r") as file:
