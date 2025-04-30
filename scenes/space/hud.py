@@ -55,7 +55,7 @@ class FuelDisplay:
         self.widget_center = (225, 25)
         self.widget_size = (500, 50)
         self.widget_rect = pygame.rect.FRect(self.widget_center[0] - self.widget_size[0] / 2, self.widget_center[1] - self.widget_size[1] / 2, self.widget_size[0], self.widget_size[1])
-        self.color_a = [200, 200, 40]
+        self.color_a = [240, 240, 40]
         self.color = self.color_a.copy()
         self.render_time = 0
         self.text = Fonts.get_font("Body").render("POWER : 100%", True, "#222222")
@@ -76,7 +76,7 @@ class FuelDisplay:
 
         if self.fuel_level != last_fuel:
             self.render_time += delta_time
-            self.color[2] = 40 + abs(math.sin(math.radians(self.render_time * 90))) * 60
+            self.color[2] = 40 + abs(math.sin(math.radians(self.render_time * 90))) * 90
             self.text = Fonts.get_font("Body").render(f"POWER : {round(self.fuel_level * 100)}%", True, "#222222")
 
         else:
@@ -84,7 +84,7 @@ class FuelDisplay:
             self.color = self.color_a.copy()
 
     def draw(self, surface):
-        pygame.draw.rect(surface, (40, 40, 40), self.widget_rect)
+        pygame.draw.rect(surface, (125, 125, 125), self.widget_rect)
 
         fuel_bar_rect = self.widget_rect.copy()
         fuel_bar_rect.width *= self.fuel_level

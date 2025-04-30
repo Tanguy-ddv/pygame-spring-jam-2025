@@ -330,7 +330,7 @@ class Space(scene.Scene):
             if self.camera.zoom == 1:
                 surface.blit(self.camera.get_surface())
             else:
-                surface.blit(pygame.transform.smoothscale(self.camera.get_surface(), self.camera.screen_size))
+                surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size))
 
         self.hud.draw(surface)
 
