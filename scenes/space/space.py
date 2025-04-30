@@ -152,17 +152,17 @@ class Space(scene.Scene):
             elif key == K_a:
                 rotation.angle = (rotation.angle + (120 * delta_time)) % 360
 
-                if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin aclockwise start"]) >= 4:
-                    animator.animation_stack["spin aclockwise hold"] =  0
-                    animator.animation_stack.pop("spin aclockwise start")
+                if  "spin clockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
+                    animator.animation_stack["spin clockwise hold"] =  0
+                    animator.animation_stack.pop("spin clockwise start")
 
             # Rotate spaceship CW
             elif key == K_d:
                 rotation.angle = (rotation.angle - (120 * delta_time)) % 360
 
-                if  "spin clockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
-                    animator.animation_stack["spin clockwise hold"] =  0
-                    animator.animation_stack.pop("spin clockwise start")
+                if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
+                    animator.animation_stack["spin aclockwise hold"] =  0
+                    animator.animation_stack.pop("spin aclockwise start")
             
             elif key == K_t:
                 self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
@@ -177,10 +177,10 @@ class Space(scene.Scene):
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
         if event.key == K_a:
-            animator.animation_stack["spin clockwise start"] = 0
+            animator.animation_stack["spin aclockwise start"] = 0
 
         elif event.key == K_d:
-            animator.animation_stack["spin aclockwise start"] = 0
+            animator.animation_stack["spin clockwise start"] = 0
 
         elif event.key == K_w:
             animator.animation_stack["main drive start"] = 0
@@ -216,12 +216,12 @@ class Space(scene.Scene):
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
         if event.key == K_a:
-            for animation in ["spin clockwise start", "spin clockwise hold"]:
+            for animation in ["spin aclockwise start", "spin aclockwise hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
 
         elif event.key == K_d:
-            for animation in ["spin aclockwise start", "spin aclockwise hold"]:
+            for animation in ["spin clockwise start", "spin clockwise hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
 
