@@ -44,7 +44,8 @@ class Title(Scene):
         self.time_elapsed += delta_time
         self.lerp_time = min(1, self.lerp_time + delta_time)
 
-        self.camera.set_position(self.original + (self.target - self.original) * self.lerp_time)
+        # self.camera.set_position(self.original + (self.target - self.original) * self.lerp_time)
+        self.camera.set_position((self.camera.real_camera_x + 100 * delta_time, self.camera.real_camera_y + 100 * delta_time))
         self.background_system.update(self.camera, delta_time)
 
         if self.transition_timer != None:
