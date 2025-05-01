@@ -43,7 +43,7 @@
         "day" : 24 ,
         "rotation_direction" : "clockwise"
     },
-    "moon" : {
+    "the moon" : {
         "mass" : 22,
         "dist" : 384,
         "radius" : 1737,

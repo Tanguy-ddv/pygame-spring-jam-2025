@@ -15,5 +15,12 @@
     "resources/planet_textures/_moon_like.png":"moon_like",
     "resources/player_shuttle/shuttle.png":"shuttle",
     "resources/projectiles/laser.png":"laser",
-    "resources/shield/shield.png":"shield"
+    "resources/shield/shield.png":"shield",
+    "resources/pirates/pirate_light_top_with_smile.png": "pirate light smile",
+    "resources/pirates/pirate_light_top.png": "pirate light",
+    "resources/pirates/pirate_with_side_drives.png": "pirate side drives",
+    "resources/pirates/pirate_with_skull.png": "pirate skull",
+    "resources/pirates/pirate_with_smile.png":"pirate smile",
+    "resources/pirates/pirate.png": "pirate"
+
 }

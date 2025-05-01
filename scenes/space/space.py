@@ -73,6 +73,8 @@ class Space(scene.Scene):
 
         # Player
         self.starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
+        self.playing = True
+        self.restart = False
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -255,21 +257,31 @@ class Space(scene.Scene):
             if not self.entity_manager.has_component(self.player_id, Dying):
                 self.entity_manager.add_component(self.player_id, Dying())
                 animator.animation_stack = {"explosion1": 0}
+                self.entity_manager.remove_component(self.player_id, Simulate)
         
         if self.entity_manager.has_component(self.player_id, Dying):
+            self.entity_manager.remove_component(self.player_id, Simulate)
             if round(animator.animation_stack["explosion1"]) >= 18:
                 # Stop dying
                 self.entity_manager.remove_component(self.player_id, Dying)
+                self.playing = False
+
                 animator.animation_stack.pop("explosion1")
 
                 # Respawn / code on death VVVVVVVV
-                self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
-                self.entity_manager.add_component(self.player_id, Velocity(0, 0))
-                self.entity_manager.add_component(self.player_id, Force(0, 0))
-                self.entity_manager.add_component(self.player_id, Health(1, 1000))
-                self.held_keys.clear()
+                # self.entity_manager.add_component(self.player_id, Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))))
+                # self.entity_manager.add_component(self.player_id, Velocity(0, 0))
+                # self.entity_manager.add_component(self.player_id, Force(0, 0))
+                # self.entity_manager.add_component(self.player_id, Health(1, 1000))
+                # self.held_keys.clear()
                 Sounds.get_sound("thrusters").stop()
 
+        if not self.playing:
+            # Update stars
+            self.background_system.update(self.camera, delta_time)
+            self.restart = True
+            return
+        
         # Handle input
         self.handle_held_keys(delta_time)
         
@@ -314,8 +326,8 @@ class Space(scene.Scene):
         if not self.hud.map.fullscreened or self.hud.map.map_mode == 0: # Render when not fullscreened or when toggled off
             self.background_system.draw(self.camera.get_surface(), self.camera, Images)
             self.planet_handler.draw(self.entity_manager, self.camera, self.camera.get_surface())
-            self.camera.draw(self.entity_manager)
             self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
+            self.camera.draw(self.entity_manager)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
             self.shield_renderer.draw(self.entity_manager, self.camera)
             if self.camera.zoom == 1:
@@ -323,7 +335,11 @@ class Space(scene.Scene):
             else:
                 surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size))
 
-        self.hud.draw(surface)
+        if self.playing:
+            self.hud.draw(surface)
+            return
+        
+        # DEATH SCREEN VVV
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()

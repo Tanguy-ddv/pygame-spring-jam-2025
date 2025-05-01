@@ -27,6 +27,10 @@ class Game:
         self.is_running = True
 
         while self.is_running:
+            # Restart game
+            if self.scene_manager.current_scene == "space" and  self.scene_manager.scene_dict[self.scene_manager.current_scene].restart:
+                self.scene_manager.register_scene(Space(), "space")
+                
             # Get delta time
             delta_time = self.clock.tick(self.fps) / 1000
             await asyncio.sleep(0)

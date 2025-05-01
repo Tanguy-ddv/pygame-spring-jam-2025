@@ -6,7 +6,7 @@
     },
     "iron": {
       "exporters": ["mars", "callisto", "rhea", "enceladus", "neptune"],
-      "importers": ["moon", "uranus", "io", "pluto"],
+      "importers": ["the moon", "uranus", "io", "pluto"],
       "price": 800
     },
     "helium": {
@@ -20,7 +20,7 @@
       "price": 950
     },
     "silicon": {
-      "exporters": ["moon", "enceladus", "uranus", "io", "ganymede"],
+      "exporters": ["the moon", "enceladus", "uranus", "io", "ganymede"],
       "importers": ["mercury", "ganymede", "callisto", "triton", "titan"],
       "price": 1100
     }

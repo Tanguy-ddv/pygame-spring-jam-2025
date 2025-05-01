@@ -32,11 +32,6 @@ with open("data/celestial_bodies.json", "r") as file:
 for planet_name in names:
     Images.register_image(Fonts.get_font("Body").render(planet_name.capitalize(), True, (255, 255, 255)), planet_name + " title")
 
-# Pirate rendering
-image = pygame.Surface((50, 50))
-pygame.draw.polygon(image, (0, 255, 0), [(25, 0), (50, 50), (0, 50)])
-Images.register_image(image, "pirate")
-
 # Animation init
 Animations = AnimationManager()
 Animations.load_json("assets/jsons/animations.json")

@@ -4,7 +4,7 @@ from pygamelib import *
 from .entity_template import create_entity
 
 def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame.Surface):
-    return create_entity(entity_manager,
+    pirate = create_entity(entity_manager,
                          Position(position),
                          Velocity(0, 0),
                          Force(0, 0),
@@ -16,5 +16,9 @@ def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame
                          Pirate(),
                          Health(1),
                          Timer(),
-                         surface
+                         surface,
+                         Animator()
                          )
+    
+    entity_manager.get_component(pirate, Animator).animation_stack["pirate main drive hold"] = 0
+    return pirate
