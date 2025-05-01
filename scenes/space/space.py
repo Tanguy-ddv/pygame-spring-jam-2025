@@ -74,6 +74,7 @@ class Space(scene.Scene):
         # Player
         self.starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
         self.playing = True
+        self.gameover = False
         self.restart = False
 
         self.player_id = create_entity(self.entity_manager,
@@ -101,6 +102,8 @@ class Space(scene.Scene):
 
         # Variables
         self.held_keys = set()
+        self.prompt_colour = [0, 0, 0]
+        self.time_elapsed = 0
 
         # HUD
         self.hud = HUD()
@@ -179,7 +182,13 @@ class Space(scene.Scene):
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
-        if event.key == K_a:
+        if self.gameover:
+            return
+        
+        if event.key == K_ESCAPE:
+            self.playing = not self.playing
+
+        elif event.key == K_a:
             animator.animation_stack["spin aclockwise start"] = 0
 
         elif event.key == K_d:
@@ -196,6 +205,7 @@ class Space(scene.Scene):
         elif event.key == K_s:
             circle.radius = 32.5
             shield.up()
+
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
@@ -230,6 +240,8 @@ class Space(scene.Scene):
             self.held_keys.remove(event.key)
 
     def update(self, delta_time: float) -> None:
+        self.time_elapsed += delta_time
+
         # Update camera position
         self.camera.update(self.entity_manager, self.player_id, delta_time)
 
@@ -265,6 +277,7 @@ class Space(scene.Scene):
                 # Stop dying
                 self.entity_manager.remove_component(self.player_id, Dying)
                 self.playing = False
+                self.gameover = True
 
                 animator.animation_stack.pop("explosion1")
 
@@ -274,12 +287,11 @@ class Space(scene.Scene):
                 # self.entity_manager.add_component(self.player_id, Force(0, 0))
                 # self.entity_manager.add_component(self.player_id, Health(1, 1000))
                 # self.held_keys.clear()
+
+                # Stop all active sounds
                 Sounds.get_sound("thrusters").stop()
 
         if not self.playing:
-            # Update stars
-            self.background_system.update(self.camera, delta_time)
-            self.restart = True
             return
         
         # Handle input
@@ -339,7 +351,24 @@ class Space(scene.Scene):
             self.hud.draw(surface)
             return
         
+        # PAUSE SCREEN VVV
+        surface.fill("#555555", surface.get_rect(), special_flags=BLEND_RGB_MULT)
+        if not self.gameover:
+            image = Images.get_image("pause text")
+            surface.blit(image, (surface.get_width() / 2 - image.get_width() / 2, 50))
+            pygame.draw.rect(surface, (180, 180, 180), (surface.get_width() / 2 - image.get_width() / 2 - 20, 50 + image.get_height(), surface.get_width() / 2 - image.get_width() / 2 + 20, 10))
+            
+            for i, _ in enumerate(self.prompt_colour):
+                self.prompt_colour[i] = abs(math.sin(math.radians(self.time_elapsed * 40))) * 60 + 100
+
+            prompt_image = Images.get_image("unpause prompt").copy()
+            prompt_image.fill(self.prompt_colour, special_flags=BLEND_RGB_SUB)
+
+            surface.blit(prompt_image, (surface.get_width() / 2 - prompt_image.get_width() / 2, 650))
+            return
+        
         # DEATH SCREEN VVV
+
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()
