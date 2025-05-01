@@ -14,5 +14,7 @@ def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame
                          Simulate(),
                          Rotation(0),
                          Pirate(),
+                         Health(1),
+                         Timer(),
                          surface
                          )
