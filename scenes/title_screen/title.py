@@ -32,8 +32,9 @@ class Title(Scene):
     def handle_events(self, events):
         for event in events:
             if event.type in [KEYDOWN, MOUSEBUTTONDOWN]:
-                Sounds.get_sound("select").play()
-                self.transition_timer = Sounds.get_sound("select").get_length()
+                if self.transition_timer == None:
+                    Sounds.get_sound("select").play()
+                    self.transition_timer = Sounds.get_sound("select").get_length()
 
             elif event.type == MOUSEMOTION:
                  self.original = self.target
@@ -44,8 +45,8 @@ class Title(Scene):
         self.time_elapsed += delta_time
         self.lerp_time = min(1, self.lerp_time + delta_time)
 
-        # self.camera.set_position(self.original + (self.target - self.original) * self.lerp_time)
-        self.camera.set_position((self.camera.real_camera_x + 100 * delta_time, self.camera.real_camera_y + 100 * delta_time))
+        self.camera.set_position(self.original + (self.target - self.original) * self.lerp_time)
+        # self.camera.set_position((self.camera.real_camera_x + 100 * delta_time, self.camera.real_camera_y + 100 * delta_time))
         self.background_system.update(self.camera, delta_time)
 
         if self.transition_timer != None:

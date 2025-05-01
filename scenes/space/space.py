@@ -76,6 +76,7 @@ class Space(scene.Scene):
         self.playing = True
         self.gameover = False
         self.restart = False
+        self.transition_timer = None
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -183,6 +184,10 @@ class Space(scene.Scene):
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
         if self.gameover:
+            if self.transition_timer == None:
+                Sounds.get_sound("select").play()
+                self.transition_timer = Sounds.get_sound("select").get_length()
+                
             return
         
         if event.key == K_ESCAPE:
@@ -266,7 +271,7 @@ class Space(scene.Scene):
             self.entity_manager.remove_component(self.player_id, Collided)
 
         if health.health <= 0:
-            if not self.entity_manager.has_component(self.player_id, Dying):
+            if not self.entity_manager.has_component(self.player_id, Dying) and not self.gameover:
                 self.entity_manager.add_component(self.player_id, Dying())
                 animator.animation_stack = {"explosion1": 0}
                 self.entity_manager.remove_component(self.player_id, Simulate)
@@ -292,6 +297,9 @@ class Space(scene.Scene):
                 Sounds.get_sound("thrusters").stop()
 
         if not self.playing:
+            if self.transition_timer != None:
+                self.transition_timer -= delta_time
+
             return
         
         # Handle input
@@ -331,7 +339,7 @@ class Space(scene.Scene):
                 
         simulated_player = self.simulator.get_simulated_entity(self.player_id)
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
-
+        
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
         
@@ -351,24 +359,30 @@ class Space(scene.Scene):
             self.hud.draw(surface)
             return
         
-        # PAUSE SCREEN VVV
         surface.fill("#555555", surface.get_rect(), special_flags=BLEND_RGB_MULT)
         if not self.gameover:
             image = Images.get_image("pause text")
-            surface.blit(image, (surface.get_width() / 2 - image.get_width() / 2, 50))
-            pygame.draw.rect(surface, (180, 180, 180), (surface.get_width() / 2 - image.get_width() / 2 - 20, 50 + image.get_height(), surface.get_width() / 2 - image.get_width() / 2 + 20, 10))
-            
-            for i, _ in enumerate(self.prompt_colour):
-                self.prompt_colour[i] = abs(math.sin(math.radians(self.time_elapsed * 40))) * 60 + 100
-
             prompt_image = Images.get_image("unpause prompt").copy()
-            prompt_image.fill(self.prompt_colour, special_flags=BLEND_RGB_SUB)
 
-            surface.blit(prompt_image, (surface.get_width() / 2 - prompt_image.get_width() / 2, 650))
-            return
-        
-        # DEATH SCREEN VVV
+        else:
+            image = Images.get_image("gameover text")
+            prompt_image = Images.get_image("restart prompt").copy()
 
+        if self.transition_timer != None:
+            if self.transition_timer <= 0:
+                self.restart = True
+ 
+            else:
+                for i, _ in enumerate(self.prompt_colour):
+                    self.prompt_colour[i] = abs(math.sin(math.radians(self.time_elapsed * 800))) * 90
+        else:
+            for i, _ in enumerate(self.prompt_colour):
+                    self.prompt_colour[i] = abs(math.sin(math.radians(self.time_elapsed * 40))) * 60 + 100
+
+        prompt_image.fill(self.prompt_colour, special_flags=BLEND_RGB_SUB)
+        surface.blit(image, (surface.get_width() / 2 - image.get_width() / 2, 50))
+        pygame.draw.rect(surface, (180, 180, 180), (surface.get_width() / 2 - image.get_width() / 2 - 20, 50 + image.get_height(), image.get_width() + 40, 10))
+        surface.blit(prompt_image, (surface.get_width() / 2 - prompt_image.get_width() / 2, 650))
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()
