@@ -157,7 +157,7 @@ class Space(scene.Scene):
 
             # Rotate spaceship ACW
             elif key == K_a:
-                rotation.angle = (rotation.angle + (120 * delta_time)) % 360
+                rotation.angle = (rotation.angle + (240 * delta_time)) % 360
 
                 if  "spin clockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
                     animator.animation_stack["spin clockwise hold"] =  0
@@ -165,7 +165,7 @@ class Space(scene.Scene):
 
             # Rotate spaceship CW
             elif key == K_d:
-                rotation.angle = (rotation.angle - (120 * delta_time)) % 360
+                rotation.angle = (rotation.angle - (240 * delta_time)) % 360
 
                 if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
                     animator.animation_stack["spin aclockwise hold"] =  0
@@ -260,15 +260,16 @@ class Space(scene.Scene):
         other_ids:OtherIds = self.entity_manager.get_component(self.player_id, OtherIds)
         shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
 
-        if self.entity_manager.has_component(self.player_id, Collided):
-            for id in self.entity_manager.get_component(self.player_id, Collided).other:
-                if id in self.planet_ids:
-                    health.health = -1000
-                else:
-                    if not other_ids.check_for_other_id(id) and shield.activated == False:
-                        health.take_damage(1)
+        if not self.entity_manager.has_component(self.player_id, Dying):
+            if self.entity_manager.has_component(self.player_id, Collided):
+                for id in self.entity_manager.get_component(self.player_id, Collided).other:
+                    if id in self.planet_ids:
+                        health.health = -1000
+                    else:
+                        if not other_ids.check_for_other_id(id) and shield.activated == False:
+                            health.take_damage(1)
 
-            self.entity_manager.remove_component(self.player_id, Collided)
+                self.entity_manager.remove_component(self.player_id, Collided)
 
         if health.health <= 0:
             if not self.entity_manager.has_component(self.player_id, Dying) and not self.gameover:

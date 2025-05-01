@@ -14,7 +14,7 @@ def create_bullet(entity_manager: EntityManager, position:tuple, direction:int, 
                          pygame.transform.rotate(Images.get_image("laser"), direction),
                          Timer(),
                          Bullet(direction),
-                         CircleCollider(position, 2),
+                         CircleCollider(position, 4),
                          OriginId(origin_id),
                          Simulate() # This is needed for all entities using the physics system
                          )

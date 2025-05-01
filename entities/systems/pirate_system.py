@@ -38,56 +38,54 @@ class PirateHandler:
             position:pygame.Vector2 = entity_manager.get_component(id, Position)
             rotation:Rotation = entity_manager.get_component(id, Rotation)
             force:Force = entity_manager.get_component(id, Force)
-            surface:pygame.Surface = entity_manager.get_component(id, pygame.Surface)
             pirate:Pirate = entity_manager.get_component(id, Pirate)
-            health:Health = entity_manager.get_component(id, Health)
             circle:CircleCollider = entity_manager.get_component(id, CircleCollider)
             other_ids:OtherIds = entity_manager.get_component(id, OtherIds)
             timer:Timer = entity_manager.get_component(id, Timer)
+            animator = entity_manager.get_component(id, Animator)
 
             simulated_data:dict = simulator.get_simulated_entity(id)
 
-            direction = math.radians(rotation.angle)
+            if not entity_manager.has_component(id, Dying):
+                direction = math.radians(rotation.angle)
 
-            if simulated_data["crash"]:
-                pirate.avoid_crash = 20
-            else:
+                if simulated_data["crash"]:
+                    pirate.avoid_crash = 20
+                else:
+                    if pirate.avoid_crash > 0:
+                        pirate.avoid_crash -= 1
                 if pirate.avoid_crash > 0:
-                    pirate.avoid_crash -= 1
-            if pirate.avoid_crash > 0:
-                if len(simulated_data["future_positions"]) > 0:
-                    last_position = simulated_data["future_positions"][len(simulated_data["future_positions"]) - 1]
-                    direction = math.atan2((last_position[1] - position.y), (last_position[0] - position.x))
-                    if id % 2 == 0:
-                        direction -= math.radians(90)
-                    else:
-                        direction += math.radians(90)
-            else:
-                # new_player_position = (player_position.x + player_velocity.x * 0.05, player_position.y - player_velocity.y * 0.05)
-                direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
+                    if len(simulated_data["future_positions"]) > 0:
+                        last_position = simulated_data["future_positions"][len(simulated_data["future_positions"]) - 1]
+                        direction = math.atan2((last_position[1] - position.y), (last_position[0] - position.x))
+                        if id % 2 == 0:
+                            direction -= math.radians(90)
+                        else:
+                            direction += math.radians(90)
+                else:
+                    direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 
-                if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction)) <= 10:
-                    distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
-                    if timer.time % 100 == 0 and distance <= 1280:
-                        bullet_id = create_bullet(entity_manager, position.xy, rotation.angle, id)
-                        other_ids.add_other_id(bullet_id)
-            # rotation.angle = -math.degrees(direction)      
-            rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) / 10
-            force.x += 1500 * math.cos(math.radians(rotation.angle))
-            force.y -= 1500 * math.sin(math.radians(rotation.angle))
+                    if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction)) <= 10:
+                        distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
+                        if timer.time % 100 == 0 and distance <= 1280:
+                            bullet_id = create_bullet(entity_manager, position.xy, rotation.angle, id)
+                            other_ids.add_other_id(bullet_id)
+                
+                rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) / 10
+                force.x += 1500 * math.cos(math.radians(rotation.angle))
+                force.y -= 1500 * math.sin(math.radians(rotation.angle))
 
-            circle.x, circle.y = position.x, position.y
+                circle.x, circle.y = position.x, position.y
 
-            entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), rotation.angle - 90))
+                entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), rotation.angle - 90))
 
-            animator = entity_manager.get_component(id, Animator)
-            if entity_manager.has_component(id, Collided):
-                collided:Collided = entity_manager.get_component(id, Collided)
-                for other_id in collided.other:
-                    if not other_id in other_ids.other_ids:
-                        animator.animation_stack = {"explosion2": 0}
-                        entity_manager.remove_component(id, pygame.Surface)
-                        entity_manager.remove_component(id, Simulate)
+                if entity_manager.has_component(id, Collided):
+                    collided:Collided = entity_manager.get_component(id, Collided)
+                    for other_id in collided.other:
+                        if not other_id in other_ids.other_ids:
+                            animator.animation_stack = {"explosion2": 0}
+                            entity_manager.remove_component(id, pygame.Surface)
+                            entity_manager.remove_component(id, Simulate)
 
             if "explosion2" in animator.animation_stack:
                 entity_manager.remove_component(id, pygame.Surface)
