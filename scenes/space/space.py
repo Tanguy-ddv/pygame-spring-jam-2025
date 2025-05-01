@@ -92,7 +92,7 @@ class Space(scene.Scene):
                                        ) 
 
         self.test_pirate_id = create_pirate(self.entity_manager, 
-                                            (self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))),
+                                            (self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta)) - 150),
                                             Images.get_image("pirate"))
         
         self.pirate_handler.register_pirate(self.test_pirate_id)
@@ -188,19 +188,7 @@ class Space(scene.Scene):
             Sounds.get_sound("thrusters").play(loops=-1)
 
         elif event.key == K_SPACE and not shield.activated:
-            id = create_entity(self.entity_manager, 
-                               Position(position.x + 0 * math.cos(math.radians(rotation.angle)), position.y - 0 * math.sin(math.radians(rotation.angle))),
-                               Velocity(0, 0),
-                               Mass(0.00001),
-                               Force(3 * math.cos(math.radians(rotation.angle)), -3 * math.sin(math.radians(rotation.angle))),
-                               pygame.transform.rotate(Images.get_image("laser"), rotation.angle),
-                               Timer(),
-                               Bullet(rotation.angle),
-                               CircleCollider((position.x, position.y), 2),
-                               OriginId(self.player_id),
-                               Simulate() # This is needed for all entities using the physics system
-                               )
-            
+            id = create_bullet(self.entity_manager, position.xy, rotation.angle, self.player_id)
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
         
         elif event.key == K_s:
@@ -316,9 +304,9 @@ class Space(scene.Scene):
         self.timing_system.update(self.entity_manager, delta_time)
         self.health_system.update(self.entity_manager, delta_time)
         self.collision_system.update(self.entity_manager)
-        
+                
         simulated_player = self.simulator.get_simulated_entity(self.player_id)
-        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], simulated_player["crash"], self.camera, delta_time)
+        self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))

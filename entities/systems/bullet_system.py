@@ -21,8 +21,9 @@ class BulletSystem:
             origin_id:OriginId = entity_manager.get_component(entity_id, OriginId)
 
             if timer.time > 5000:
-                entity_manager.delete_entity(entity_id)
-                entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                if origin_id.origin_id in entity_manager.entity_ids:
+                    entity_manager.delete_entity(entity_id)
+                    entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
 
             circle_collider.x = position.x + 5 * math.cos(bullet.direction)
             circle_collider.y = position.y - 5 * math.sin(bullet.direction)
@@ -31,5 +32,6 @@ class BulletSystem:
                 collided:Collided = entity_manager.get_component(entity_id, Collided)
                 for id in collided.other:
                     if id != origin_id.origin_id:
-                        entity_manager.delete_entity(entity_id)
-                        entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                        if origin_id.origin_id in entity_manager.entity_ids:
+                            entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                            entity_manager.delete_entity(entity_id)

@@ -11,4 +11,3 @@ def create_planet(entity_manager:EntityManager, position:tuple, radius:int, surf
                          pygame.Surface((radius * 2 + atmosphere_radius * 2, radius * 2 + atmosphere_radius * 2), pygame.SRCALPHA),
                          Bloom((radius * 2 + atmosphere_radius * 2, radius * 2 + atmosphere_radius * 2), pygame.SRCALPHA)
                          )
-

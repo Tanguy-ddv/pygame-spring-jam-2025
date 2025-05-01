@@ -56,7 +56,7 @@ class EntityManager(Singleton):
         if not components:
             self.component_dict.pop(component_type)
 
-    def delete_entity(self, entity_id: int) -> None:
+    def delete_entity(self, entity_id: int) -> None:        
         if entity_id not in self.entity_ids:
             return
         

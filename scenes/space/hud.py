@@ -28,8 +28,8 @@ class HUD:
 
         self.planet_interface.handle_event(event)
 
-    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], future_player_crash: bool, camera, delta_time) -> None:
-        self.map.update(entity_manager, player_id, planet_ids, future_player_positions, future_player_crash)
+    def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], pirate_handler: PirateHandler, camera, delta_time) -> None:
+        self.map.update(entity_manager, player_id, planet_ids, future_player_positions, pirate_handler)
         self.manual.update(delta_time)
         self.log.update(delta_time)
         self.planet_interface.update(camera, delta_time)
@@ -235,7 +235,7 @@ class Map:
         self.map_mode = new_mode
         self.set_zoom(1)
 
-    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], future_player_positions:list[tuple], future_player_crash:bool):
+    def update(self, entity_manager: EntityManager, player_id:int, planet_ids:list[int], future_player_positions:list[tuple], pirate_handler:PirateHandler):
         self.map_surface.fill((50, 50, 50))
         if self.fullscreened:
             if self.panning:
@@ -311,7 +311,12 @@ class Map:
                                                                 (self.map_surface_center[0] + calculate_scale(self, (p2[0] - player_position.x) / 4), 
                                                                  self.map_surface_center[1] + calculate_scale(self, (p2[1] - player_position.y) / 4)))
 
-            pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, 5)
+            pygame.draw.circle(self.map_surface, (0, 0, 255), self.map_surface_center, min(max(calculate_scale(self, 5), 5), 10))
+
+            for entity_id in pirate_handler.pirate_ids:
+                pirate_position:Position = entity_manager.get_component(entity_id, Position)
+                position = (self.map_surface_center[0] + calculate_scale(self, (pirate_position.x - player_position.x) / 4), self.map_surface_center[1] + calculate_scale(self, (pirate_position.y - player_position.y) / 4))
+                pygame.draw.circle(self.map_surface, (0, 255, 0), position, min(max(calculate_scale(self, 5), 5), 10))
 
     def draw(self, surface: pygame.Surface):
         if self.map_mode == 0:

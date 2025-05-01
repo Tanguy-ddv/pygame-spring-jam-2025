@@ -33,3 +33,7 @@ class CollisionsSystem:
                                 entity_manager.get_component(entity_id_a, Collided).add_other_id(entity_id_b)
                             else:
                                 entity_manager.add_component(entity_id_a, Collided(entity_id_b))
+                            if entity_manager.has_component(entity_id_b, Collided):
+                                entity_manager.get_component(entity_id_b, Collided).add_other_id(entity_id_a)
+                            else:
+                                entity_manager.add_component(entity_id_b, Collided(entity_id_a))
