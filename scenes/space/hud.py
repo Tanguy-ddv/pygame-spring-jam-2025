@@ -42,6 +42,9 @@ class HUD:
         elif self.planet_interface.enabled:
             self.planet_interface.draw(surface)
 
+        elif self.map.fullscreened and self.map.map_mode != 0:
+            self.map.draw(surface)
+
         else:
             self.map.draw(surface)
             self.log.draw(surface)
