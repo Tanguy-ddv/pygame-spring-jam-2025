@@ -125,6 +125,9 @@ class Space(scene.Scene):
             elif event.type == KEYUP:
                 self.key_unpressed(event)
 
+            elif not self.playing:
+                return
+
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 self.hud.handle_event(event)
                 self.planet_handler.handle_event(self.entity_manager, self.camera, event)
@@ -167,7 +170,7 @@ class Space(scene.Scene):
             elif key == K_d:
                 rotation.angle = (rotation.angle - (240 * delta_time)) % 360
 
-                if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin clockwise start"]) >= 4:
+                if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin aclockwise start"]) >= 4:
                     animator.animation_stack["spin aclockwise hold"] =  0
                     animator.animation_stack.pop("spin aclockwise start")
             
