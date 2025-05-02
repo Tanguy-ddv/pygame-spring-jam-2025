@@ -192,11 +192,14 @@ class Space(scene.Scene):
                 self.transition_timer = Sounds.get_sound("select").get_length()
                 
             return
-        
-        if event.key == K_ESCAPE:
-            self.playing = not self.playing
 
-        elif event.key == K_a:
+        elif not self.playing:
+            if event.key == K_ESCAPE:
+                self.playing = not self.playing
+
+            return
+            
+        if event.key == K_a:
             animator.animation_stack["spin aclockwise start"] = 0
 
         elif event.key == K_d:
