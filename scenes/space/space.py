@@ -90,7 +90,7 @@ class Space(scene.Scene):
         spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, 3, 30)
         spawn_chunk = 15
         while spawn_chunks[spawn_chunk] != False:
-            spawn_chunk = random.randint(0, 12) * 30 + 15
+            spawn_chunk = random.randint(0, 11) * 30 + 15
         spawn_chunks[spawn_chunk] = True
 
         dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
@@ -116,7 +116,7 @@ class Space(scene.Scene):
         
         spawn_chunk = 15
         while spawn_chunks[spawn_chunk] != False:
-            spawn_chunk = random.randint(0, 12) * 30 + 15
+            spawn_chunk = random.randint(0, 11) * 30 + 15
         spawn_chunks[spawn_chunk] = True
 
         dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
