@@ -20,6 +20,33 @@ class HUD:
         self.log = Log()
         self.fuel_display = FuelDisplay()
 
+        # Test missions
+        self.log.add_mission(
+            "kill",
+            3,
+            "pirates",
+            "jupiter",
+            "earth"
+        )
+
+        self.log.add_mission(
+            "deliver",
+            "3200kg",
+            "steel",
+            "jupiter",
+            "earth"
+        )
+
+        self.log.add_mission(
+            "complete",
+            0,
+            0,
+            0,
+            "earth"
+        )
+
+        list(self.log.get_missions())[0].set_amount(1)
+
     def handle_event(self, event):
         if self.planet_interface.planet == None:
             self.map.handle_event(event)
@@ -163,19 +190,83 @@ class Manual:
 class Log:
     def __init__(self):
         self.enabled = True
-        self.active_missions = [] # Keybind J toggles quest log sidebar (active missions) They should also include dist to objective
+        self.mission_dict = {} # Keybind J toggles quest log sidebar (active missions) They should also include dist to objective
+        self.distance = 100
+        self.position = 0
+        self.duration = .5 # Num seconds to appear / reappear
+        self.time_elapsed = self.duration
 
+    def _render_mission(self, mission):
+        if mission.type == "kill":
+            surface = Fonts.get_font("Body").render(
+                f"-Eliminate {mission.max_amount} {mission.item}\n near {mission.destination}\n ({mission.max_amount - mission.amount} remaining)\n",
+                True,
+                (255, 255, 255)
+            )
+
+        elif mission.type == "deliver":
+            surface = Fonts.get_font("Body").render(
+                f"-Deliver {mission.max_amount}\n of {mission.item} to {mission.destination}\n",
+                True,
+                (255, 255, 255)
+            )
+
+        elif mission.type == "complete":
+            surface = Fonts.get_font("Body").render(
+                f"-Claim reward\n from {mission.source}\n",
+                True,
+                (150, 255, 150)
+            )
+
+        else:
+            surface = self.mission_dict[mission]
+
+        return surface
+
+    def add_mission(self, mission_type, max_amount, item, destination, source):
+        mission = Mission(mission_type, max_amount, item, destination, source)
+        surface = self._render_mission(mission)
+
+        self.mission_dict[mission] = surface
+    
+    def get_missions(self):
+        return self.mission_dict.keys()
+    
     def handle_event(self, event):
         if event.type == KEYDOWN:
             if event.key == K_j:
                 self.enabled = not self.enabled
 
     def update(self, delta_time):
-        pass
+        if self.enabled:
+            self.time_elapsed = min(self.time_elapsed + delta_time, self.duration)
+
+        else:
+            self.time_elapsed = max(self.time_elapsed - delta_time, -self.duration)
+
+        self.position = (self.distance / self.duration * self.time_elapsed) - self.distance
+        for mission in self.mission_dict:
+            if mission.type == "clear":
+                self.mission_dict.pop(mission)
+
+            elif mission.amount != mission.last_amount or mission.last_type != mission.type:
+                self.mission_dict[mission] = self._render_mission(mission)
 
     def draw(self, surface):
-        if not self.enabled:
-            return
+        log_text = Images.get_image("log text")
+        surface.blit(log_text, (self.position, 240 - log_text.get_height()))
+        pygame.draw.rect(surface, (255, 255, 255), (self.position, 240, log_text.get_width(), 5))
+
+        offsety = 0
+        mission_list = list(self.mission_dict)
+        mission_list.sort(key=lambda x: 0 if x.type == "complete" else 1)
+
+        for mission in mission_list:
+            if mission.type == "clear":
+                continue
+
+            surface.blit(self.mission_dict[mission], (self.position, offsety + 250))
+            offsety += self.mission_dict[mission].get_height() + 10
 
 class Map:
     def __init__(self):

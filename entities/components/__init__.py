@@ -17,3 +17,4 @@ from .other_id import OtherIds
 from .pirate import Pirate
 from .simulate import Simulate
 from .balance import Balance
+from .mission import Mission
