@@ -59,8 +59,9 @@ class PirateHandler:
                     if pirate.avoid_crash > 0:
                         pirate.avoid_crash -= 1
 
-                if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 750:
-                    pirate.slow_down = 10
+                if math.sqrt((position.x - player_position.x) ** 2 + (position.y - player_position.y) ** 2) >= 1280 * 1.5:
+                    if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 750:
+                        pirate.slow_down = 10
                 else:
                     pirate.slow_down -= 1
                 
