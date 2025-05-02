@@ -36,6 +36,7 @@ class PirateHandler:
 
         for id in self.pirate_ids.copy():
             position:pygame.Vector2 = entity_manager.get_component(id, Position)
+            velocity:pygame.Vector2 = entity_manager.get_component(id, Velocity)
             rotation:Rotation = entity_manager.get_component(id, Rotation)
             force:Force = entity_manager.get_component(id, Force)
             pirate:Pirate = entity_manager.get_component(id, Pirate)
@@ -47,13 +48,22 @@ class PirateHandler:
             simulated_data:dict = simulator.get_simulated_entity(id)
 
             if not entity_manager.has_component(id, Dying):
+
                 direction = math.radians(rotation.angle)
+
+                direction_to_player = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 
                 if simulated_data["crash"]:
                     pirate.avoid_crash = 20
                 else:
                     if pirate.avoid_crash > 0:
                         pirate.avoid_crash -= 1
+
+                if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 750:
+                    pirate.slow_down = 10
+                else:
+                    pirate.slow_down -= 1
+                
                 if pirate.avoid_crash > 0:
                     if len(simulated_data["future_positions"]) > 0:
                         last_position = simulated_data["future_positions"][len(simulated_data["future_positions"]) - 1]
@@ -62,6 +72,8 @@ class PirateHandler:
                             direction -= math.radians(90)
                         else:
                             direction += math.radians(90)
+                elif pirate.slow_down > 0:
+                    direction = math.degrees(-math.atan2(velocity.y, velocity.x))
                 else:
                     direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 
