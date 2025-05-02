@@ -33,5 +33,8 @@ class BulletSystem:
                 for id in collided.other:
                     if id != origin_id.origin_id:
                         if origin_id.origin_id in entity_manager.entity_ids:
-                            entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
-                            entity_manager.delete_entity(entity_id)
+                            try:
+                                entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                                entity_manager.delete_entity(entity_id)
+                            except:
+                                pass # Still found an edge case so just skip it lol?
