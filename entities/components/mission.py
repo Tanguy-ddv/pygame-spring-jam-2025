@@ -1,5 +1,5 @@
 class Mission:
-    def __init__(self, mission_type, max_amount, item, destination, source):
+    def __init__(self, mission_type, max_amount, item, destination, source, reward, unit):
         self.source = source
         self.destination = destination
         self.max_amount = max_amount
@@ -7,6 +7,9 @@ class Mission:
 
         self.last_type = mission_type
         self.type = mission_type
+        self.reward = reward
+        self.unit = unit
+
         self.last_amount = 0
         self.amount = 0
 

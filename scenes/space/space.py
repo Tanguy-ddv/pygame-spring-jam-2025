@@ -79,7 +79,6 @@ class Space(scene.Scene):
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
         self.planet_dict = {self.entity_manager.get_component(planet_id, Planet).name: planet_id for planet_id in self.planet_ids}
-        print(self.planet_dict)
 
         # Player
         self.starting_planet = self.entity_manager.get_component(self.planet_dict["neptune"], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
@@ -136,6 +135,7 @@ class Space(scene.Scene):
         self.held_keys = set()
         self.prompt_colour = [0, 0, 0]
         self.time_elapsed = 0
+        self.duration = 1.3
 
         # HUD
         self.hud = HUD()
@@ -356,6 +356,7 @@ class Space(scene.Scene):
                 self.entity_manager.remove_component(self.player_id, Dying)
                 self.playing = False
                 self.gameover = True
+                self.time_elapsed = 0
 
                 animator.animation_stack.pop("explosion1")
 
@@ -444,14 +445,18 @@ class Space(scene.Scene):
             self.hud.draw(surface)
             return
         
-        surface.fill("#555555", surface.get_rect(), special_flags=BLEND_RGB_MULT)
         if not self.gameover:
+            surface.fill("#555555", surface.get_rect(), special_flags=BLEND_RGB_MULT)
             image = Images.get_image("pause text")
             prompt_image = Images.get_image("unpause prompt").copy()
 
         else:
+            surface.fill((85, 85, 85, min(self.time_elapsed / self.duration * 255, 255)), surface.get_rect(), special_flags=BLEND_RGBA_MULT)
             image = Images.get_image("gameover text")
             prompt_image = Images.get_image("restart prompt").copy()
+
+            image.set_alpha(self.time_elapsed / self.duration * 255)
+            prompt_image.set_alpha(self.time_elapsed / self.duration * 255)
 
         if self.transition_timer != None:
             if self.transition_timer <= 0:

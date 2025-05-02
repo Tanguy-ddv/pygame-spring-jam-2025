@@ -79,7 +79,11 @@ class Planet:
         self.on_screen = False
 
         # Mission data
-        self.missions = []
+        if self.kind != "sun":
+            self.missions = [new_mission(self.name) for _ in range(6)]
+
+        else:
+            self.missions = []
 
 #this class is intended solely for flight path predictions
 class PlanetImprint:

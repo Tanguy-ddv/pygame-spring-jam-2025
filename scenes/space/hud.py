@@ -21,31 +21,9 @@ class HUD:
         self.fuel_display = FuelDisplay()
 
         # Test missions
-        self.log.add_mission(
-            "kill",
-            3,
-            "pirates",
-            "jupiter",
-            "earth"
-        )
-
-        self.log.add_mission(
-            "deliver",
-            "3200kg",
-            "steel",
-            "jupiter",
-            "earth"
-        )
-
-        self.log.add_mission(
-            "complete",
-            0,
-            0,
-            0,
-            "earth"
-        )
-
-        list(self.log.get_missions())[0].set_amount(1)
+        self.log.add_mission(new_mission("earth"))
+        self.log.add_mission(new_mission("earth"))
+        self.log.add_mission(new_mission("earth"))
 
     def handle_event(self, event):
         if self.planet_interface.planet == None:
@@ -168,8 +146,9 @@ class PlanetInterface:
         y_index = 0
 
         for mission in self.planet.missions:
-            mission_image = Images.get_image(mission + " display") 
-            surface.blit(mission_image, (self.dist, y_index * mission_image.get_height()))
+            # mission_image = Images.get_image(mission + " display") 
+            # surface.blit(mission_image, (self.dist, y_index * mission_image.get_height()))
+            pass
 
         # Draw Shop
         pygame.draw.rect(surface, (60, 60, 60), (1280 - self.dist - self.width, self.dist, self.width, self.height))
@@ -191,29 +170,30 @@ class Log:
     def __init__(self):
         self.enabled = True
         self.mission_dict = {} # Keybind J toggles quest log sidebar (active missions) They should also include dist to objective
-        self.distance = 100
+        self.distance = 400
         self.position = 0
         self.duration = .5 # Num seconds to appear / reappear
         self.time_elapsed = self.duration
 
     def _render_mission(self, mission):
+        font = Fonts.get_font("Small")
         if mission.type == "kill":
-            surface = Fonts.get_font("Body").render(
+            surface = font.render(
                 f"-Eliminate {mission.max_amount} {mission.item}\n near {mission.destination}\n ({mission.max_amount - mission.amount} remaining)\n",
                 True,
                 (255, 255, 255)
             )
 
         elif mission.type == "deliver":
-            surface = Fonts.get_font("Body").render(
-                f"-Deliver {mission.max_amount}\n of {mission.item} to {mission.destination}\n",
+            surface = font.render(
+                f"-Deliver {mission.max_amount}{mission.unit}\n of {mission.item} to {mission.destination}\n",
                 True,
                 (255, 255, 255)
             )
 
         elif mission.type == "complete":
-            surface = Fonts.get_font("Body").render(
-                f"-Claim reward\n from {mission.source}\n",
+            surface = font.render(
+                f"-${mission.reward} reward\n at {mission.destination}",
                 True,
                 (150, 255, 150)
             )
@@ -223,11 +203,8 @@ class Log:
 
         return surface
 
-    def add_mission(self, mission_type, max_amount, item, destination, source):
-        mission = Mission(mission_type, max_amount, item, destination, source)
-        surface = self._render_mission(mission)
-
-        self.mission_dict[mission] = surface
+    def add_mission(self, mission):
+        self.mission_dict[mission] = self._render_mission(mission)
     
     def get_missions(self):
         return self.mission_dict.keys()
@@ -254,8 +231,8 @@ class Log:
 
     def draw(self, surface):
         log_text = Images.get_image("log text")
-        surface.blit(log_text, (self.position, 240 - log_text.get_height()))
-        pygame.draw.rect(surface, (255, 255, 255), (self.position, 240, log_text.get_width(), 5))
+        surface.blit(log_text, (self.position + 15 - 25 + log_text.get_width() / 2, 270 - log_text.get_height()))
+        pygame.draw.rect(surface, (255, 255, 255), (self.position + 15, 270, log_text.get_width() * 2 - 50, 5))
 
         offsety = 0
         mission_list = list(self.mission_dict)
@@ -265,8 +242,8 @@ class Log:
             if mission.type == "clear":
                 continue
 
-            surface.blit(self.mission_dict[mission], (self.position, offsety + 250))
-            offsety += self.mission_dict[mission].get_height() + 10
+            surface.blit(self.mission_dict[mission], (self.position + 20, offsety + 300))
+            offsety += self.mission_dict[mission].get_height() + 12
 
 class Map:
     def __init__(self):
@@ -274,6 +251,7 @@ class Map:
         self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
         self.map_mode = 0
+        self.last_mode = 1
         self.fullscreened = False
         self.panning = False
 
@@ -310,7 +288,7 @@ class Map:
 
             elif event.key == K_m:
                 if self.map_mode == 0:
-                    self.set_mode(1)
+                    self.set_mode(self.last_mode)
 
                 else:
                     self.set_mode(0)
@@ -325,6 +303,8 @@ class Map:
 
                 elif self.map_mode == 2:
                     self.set_mode(1)
+
+                self.last_mode = self.map_mode
 
             elif event.key == K_r:
                 self.set_zoom(1)

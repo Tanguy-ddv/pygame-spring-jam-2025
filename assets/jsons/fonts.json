@@ -7,5 +7,10 @@
     "Body": {
         "path": "resources/Silkscreen/slkscr.ttf",
         "size": 32
+    },
+
+    "Small": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 24
     }
 }
