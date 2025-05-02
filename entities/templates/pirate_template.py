@@ -9,7 +9,7 @@ def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame
                          Velocity(0, 0),
                          Force(0, 0),
                          Mass(20),
-                         CircleCollider((0, 0), 9),
+                         CircleCollider((0, 0), 11),
                          OtherIds(),
                          Simulate(),
                          Rotation(0),

@@ -65,7 +65,7 @@ class PirateHandler:
                 else:
                     direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 
-                    if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), direction)) <= 10:
+                    if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) <= 10:
                         distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
                         if timer.time % 100 == 0 and distance <= 1280:
                             bullet_id = create_bullet(entity_manager, position.xy, rotation.angle, id)
@@ -86,6 +86,7 @@ class PirateHandler:
                             animator.animation_stack = {"explosion2": 0}
                             entity_manager.remove_component(id, pygame.Surface)
                             entity_manager.remove_component(id, Simulate)
+                            entity_manager.add_component(id, Dying())
 
             if "explosion2" in animator.animation_stack:
                 entity_manager.remove_component(id, pygame.Surface)

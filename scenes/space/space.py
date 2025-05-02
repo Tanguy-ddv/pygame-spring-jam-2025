@@ -15,6 +15,13 @@ from assets import *
 from utils import *
 from ..space.hud import HUD
 
+MAX_RADIANS = math.pi * 2
+
+def get_shortest_distance_in_radians(radians_1:int|float, radians_2:int|float):
+    difference = (radians_2 - radians_1) % MAX_RADIANS
+    return 2 * difference % MAX_RADIANS - difference
+
+
 def open_planets(entity_manager: EntityManager):
     with open("data/celestial_bodies.json") as f:
         planet_dict: dict[str, dict[str, Any]] = json.load(f)
@@ -210,7 +217,14 @@ class Space(scene.Scene):
             Sounds.get_sound("thrusters").play(loops=-1)
 
         elif event.key == K_SPACE and not shield.activated:
-            id = create_bullet(self.entity_manager, position.xy, rotation.angle, self.player_id)
+            final_direction = rotation.angle
+            for pirate_id in self.pirate_handler.pirate_ids:
+                pirate_position = self.entity_manager.get_component(pirate_id, Position)
+                direction = math.atan2((pirate_position.y - position.y), (pirate_position.x - position.x))
+                direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
+                if abs(direction_inaccuracy) <= 10:
+                    final_direction = rotation.angle + (direction_inaccuracy / 2)
+            id = create_bullet(self.entity_manager, position.xy, final_direction, self.player_id)
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
         
         elif event.key == K_s:
