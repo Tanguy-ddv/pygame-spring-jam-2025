@@ -20,7 +20,7 @@ class BulletSystem:
             circle_collider:CircleCollider = entity_manager.get_component(entity_id, CircleCollider)
             origin_id:OriginId = entity_manager.get_component(entity_id, OriginId)
 
-            if timer.time > 5000:
+            if timer.time > 3000:
                 if origin_id.origin_id in entity_manager.entity_ids:
                     entity_manager.delete_entity(entity_id)
                     entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
