@@ -14,6 +14,7 @@ from entities import *
 from assets import *
 from utils import *
 from ..space.hud import HUD
+from .spawn_chunker import find_spawn_chunks_for_planet
 
 MAX_RADIANS = math.pi * 2
 
@@ -80,10 +81,21 @@ class Space(scene.Scene):
 
         # Player
         self.starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
+        self.starting_planet_orbits = self.entity_manager.get_component(self.starting_planet.orbits, Planet)
         self.playing = True
         self.gameover = False
         self.restart = False
         self.transition_timer = None
+
+        spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, 3, 30)
+        spawn_chunk = 15
+        while spawn_chunks[spawn_chunk] != False:
+            spawn_chunk = random.randint(0, 12) * 30 + 15
+        spawn_chunks[spawn_chunk] = True
+
+        dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
+        spawn_position = (dist * math.cos(math.radians(self.starting_planet.theta))), dist * math.sin(math.radians(self.starting_planet.theta))
+        spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5)
 
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
@@ -92,7 +104,7 @@ class Space(scene.Scene):
                                        Fuel(1000, 1000),
                                        Balance(0),
                                        Animator(),
-                                       Position(self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta))),
+                                       Position(spawn_position),
                                        Velocity(0, 0),
                                        Force(0, 0),
                                        Mass(20),
@@ -101,9 +113,18 @@ class Space(scene.Scene):
                                        Shield(),
                                        Simulate() # This makes player affected by physics
                                        ) 
+        
+        spawn_chunk = 15
+        while spawn_chunks[spawn_chunk] != False:
+            spawn_chunk = random.randint(0, 12) * 30 + 15
+        spawn_chunks[spawn_chunk] = True
+
+        dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
+        spawn_position = (dist * math.cos(math.radians(self.starting_planet.theta))), dist * math.sin(math.radians(self.starting_planet.theta))
+        spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5)
 
         self.test_pirate_id = create_pirate(self.entity_manager, 
-                                            (self.starting_planet.dist * math.cos(math.radians(self.starting_planet.theta)) + self.starting_planet.radius * 3, self.starting_planet.dist * math.sin(math.radians(self.starting_planet.theta)) - 150),
+                                            spawn_position,
                                             Images.get_image("pirate"))
         
         self.pirate_handler.register_pirate(self.test_pirate_id)
