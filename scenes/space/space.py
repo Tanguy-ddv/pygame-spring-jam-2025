@@ -116,20 +116,21 @@ class Space(scene.Scene):
                                        Simulate() # This makes player affected by physics
                                        ) 
         
-        spawn_chunk = 15
-        while spawn_chunks[spawn_chunk] != False:
-            spawn_chunk = random.randint(0, 11) * 30 + 15
-        spawn_chunks[spawn_chunk] = True
+        for i in range(4):
+            spawn_chunk = 15
+            while spawn_chunks[spawn_chunk] != False:
+                spawn_chunk = random.randint(0, 11) * 30 + 15
+            spawn_chunks[spawn_chunk] = True
 
-        dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
-        spawn_position = (dist * math.cos(math.radians(self.starting_planet.theta))), dist * math.sin(math.radians(self.starting_planet.theta))
-        spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5)
+            dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
+            spawn_position = (dist * math.cos(math.radians(self.starting_planet.theta))), dist * math.sin(math.radians(self.starting_planet.theta))
+            spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5)
 
-        self.test_pirate_id = create_pirate(self.entity_manager, 
-                                            spawn_position,
-                                            Images.get_image("pirate"))
-        
-        self.pirate_handler.register_pirate(self.test_pirate_id)
+            self.test_pirate_id = create_pirate(self.entity_manager, 
+                                                spawn_position,
+                                                Images.get_image("pirate"))
+            
+            self.pirate_handler.register_pirate(self.test_pirate_id)
 
         # Variables
         self.held_keys = set()

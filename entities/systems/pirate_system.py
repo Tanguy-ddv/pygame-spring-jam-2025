@@ -59,8 +59,8 @@ class PirateHandler:
                     if pirate.avoid_crash > 0:
                         pirate.avoid_crash -= 1
 
-                if math.sqrt((position.x - player_position.x) ** 2 + (position.y - player_position.y) ** 2) >= 1280 * 1.5:
-                    if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 750:
+                if math.sqrt((position.x - player_position.x) ** 2 + (position.y - player_position.y) ** 2) >= 640:
+                    if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 500:
                         pirate.slow_down = 10
                 else:
                     pirate.slow_down -= 1
@@ -74,7 +74,7 @@ class PirateHandler:
                         else:
                             direction += math.radians(90)
                 elif pirate.slow_down > 0:
-                    direction = math.degrees(-math.atan2(velocity.y, velocity.x))
+                    direction = math.atan2(-velocity.y, -velocity.x)
                 else:
                     direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 

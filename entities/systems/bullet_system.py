@@ -22,8 +22,11 @@ class BulletSystem:
 
             if timer.time > 3000:
                 if origin_id.origin_id in entity_manager.entity_ids:
-                    entity_manager.delete_entity(entity_id)
-                    entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                    try:
+                        entity_manager.delete_entity(entity_id)
+                        entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                    except:
+                        pass #ANOTHER EDGE CASE ARE YOU JOKING
 
             circle_collider.x = position.x + 5 * math.cos(bullet.direction)
             circle_collider.y = position.y - 5 * math.sin(bullet.direction)
