@@ -181,9 +181,6 @@ class Space(scene.Scene):
                     animator.animation_stack["spin aclockwise hold"] =  0
                     animator.animation_stack.pop("spin aclockwise start")
             
-            elif key == K_t:
-                self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[17], Planet).x + 800, self.entity_manager.get_component(self.planet_ids[17], Planet).y
-
     def key_pressed(self, event: pygame.Event) -> None:
         position = self.entity_manager.get_component(self.player_id, Position)
         velocity = self.entity_manager.get_component(self.player_id, Velocity)
@@ -224,7 +221,9 @@ class Space(scene.Scene):
                 direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
                 if abs(direction_inaccuracy) <= 10:
                     final_direction = rotation.angle + (direction_inaccuracy / 2)
-            id = create_bullet(self.entity_manager, position.xy, final_direction, self.player_id)
+            
+            radians_final_direction = math.radians(final_direction)
+            id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
         
         elif event.key == K_s:

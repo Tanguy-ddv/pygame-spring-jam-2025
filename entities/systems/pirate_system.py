@@ -81,7 +81,9 @@ class PirateHandler:
                     if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) <= 10:
                         distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
                         if timer.time % 100 == 0 and distance <= 1280:
-                            bullet_id = create_bullet(entity_manager, position.xy, rotation.angle + random.randint(-4, 4), id)
+                            angle = rotation.angle + random.randint(-4, 4)
+                            radians_angle = math.radians(angle)
+                            bullet_id = create_bullet(entity_manager, (position.x + 20 * math.cos(radians_angle), position.y - 20 * math.sin(radians_angle)), angle, id)
                             other_ids.add_other_id(bullet_id)
                 
                 rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) / 10
