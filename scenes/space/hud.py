@@ -94,9 +94,19 @@ class FuelDisplay:
         fuel_bar_rect = self.widget_rect.copy()
         fuel_bar_rect.width *= self.fuel_level
         pygame.draw.rect(surface, self.color, fuel_bar_rect)
+        color = self.color.copy()
+        color[0] *= 0.95
+        color[1] *= 0.95
+        color[2] *= 0.95
+        shade_rect = fuel_bar_rect.copy()
+        shade_rect.height /= 2
+        shade_rect.y += shade_rect.height 
+
+        pygame.draw.rect(surface, color, shade_rect)
 
         text_pos = self.widget_rect.copy()
-        text_pos.centerx = self.widget_size[0] / 2
+        text_pos.x = self.widget_rect.x + self.widget_size[0] / 2 - self.text.width / 2
+        text_pos.y = self.widget_rect.y + self.widget_size[1] / 2 - self.text.height / 2
         surface.blit(self.text, text_pos)
 
 class PlanetInterface:

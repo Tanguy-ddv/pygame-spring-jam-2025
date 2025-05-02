@@ -88,6 +88,7 @@ class Space(scene.Scene):
         self.gameover = False
         self.restart = False
         self.transition_timer = None
+        self.bullet_timer = 0
 
         spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict["neptune"], 30)
         spawn_chunk = 15
@@ -166,18 +167,24 @@ class Space(scene.Scene):
         if self.entity_manager.has_component(self.player_id, Dying):
             return
         
-        for key in self.held_keys:
-            # Get player attributes
-            position:Position = self.entity_manager.get_component(self.player_id, Position)
-            velocity:Velocity = self.entity_manager.get_component(self.player_id, Velocity)
-            force:Force = self.entity_manager.get_component(self.player_id, Force)
-            rotation:Rotation = self.entity_manager.get_component(self.player_id, Rotation)
-            animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
+        # Get player attributes
+        position:Position = self.entity_manager.get_component(self.player_id, Position)
+        velocity:Velocity = self.entity_manager.get_component(self.player_id, Velocity)
+        force:Force = self.entity_manager.get_component(self.player_id, Force)
+        rotation:Rotation = self.entity_manager.get_component(self.player_id, Rotation)
+        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
+        animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
+        fuel = self.entity_manager.get_component(self.player_id, Fuel)
 
+        for key in self.held_keys:
             # Apply thruster force
             if key == K_w:
-                fuel = self.entity_manager.get_component(self.player_id, Fuel)
                 if not fuel.fuel:
+                    for anim in ["main drive start", "main drive hold"]:
+                        if anim in animator.animation_stack:
+                            animator.animation_stack.pop(anim)
+                    
+                    Sounds.get_sound("thrusters").fadeout(100)
                     continue
 
                 fuel.consume(THRUSTER_FUEL_RATE * delta_time)
@@ -203,7 +210,23 @@ class Space(scene.Scene):
                 if  "spin aclockwise start" in animator.animation_stack and round(animator.animation_stack["spin aclockwise start"]) >= 4:
                     animator.animation_stack["spin aclockwise hold"] =  0
                     animator.animation_stack.pop("spin aclockwise start")
-            
+
+            # Fire bullet
+            elif key == K_SPACE and not shield.activated and self.bullet_timer <= 0:
+                final_direction = rotation.angle
+                for pirate_id in self.pirate_handler.pirate_ids:
+                    pirate_position = self.entity_manager.get_component(pirate_id, Position)
+                    direction = math.atan2((pirate_position.y - position.y), (pirate_position.x - position.x))
+                    direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
+                    if abs(direction_inaccuracy) <= 10:
+                        final_direction = rotation.angle + (direction_inaccuracy / 2)
+                
+                radians_final_direction = math.radians(final_direction)
+                id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
+                self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
+                self.bullet_timer = 0.25
+                fuel.consume(BULLET_COST)
+
     def key_pressed(self, event: pygame.Event) -> None:
         position = self.entity_manager.get_component(self.player_id, Position)
         velocity = self.entity_manager.get_component(self.player_id, Velocity)
@@ -212,6 +235,7 @@ class Space(scene.Scene):
         shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
+        fuel = self.entity_manager.get_component(self.player_id, Fuel)
 
         if self.gameover:
             if self.transition_timer == None:
@@ -234,9 +258,9 @@ class Space(scene.Scene):
 
         elif event.key == K_w:
             animator.animation_stack["main drive start"] = 0
-            Sounds.get_sound("thrusters").play(loops=-1)
+            Sounds.get_sound("thrusters").play(loops=-1, fade_ms=500)
 
-        elif event.key == K_SPACE and not shield.activated:
+        elif event.key == K_SPACE and not shield.activated and self.bullet_timer <= 0:
             final_direction = rotation.angle
             for pirate_id in self.pirate_handler.pirate_ids:
                 pirate_position = self.entity_manager.get_component(pirate_id, Position)
@@ -248,6 +272,8 @@ class Space(scene.Scene):
             radians_final_direction = math.radians(final_direction)
             id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
+            self.bullet_timer = 0.25
+            fuel.consume(BULLET_COST)
         
         elif event.key == K_s:
             circle.radius = 32.5
@@ -277,7 +303,8 @@ class Space(scene.Scene):
             for animation in ["main drive start", "main drive hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
-                    Sounds.get_sound("thrusters").stop()
+
+            Sounds.get_sound("thrusters").fadeout(300)
 
         elif event.key == K_s:
             circle.radius = 9
@@ -288,7 +315,9 @@ class Space(scene.Scene):
 
     def update(self, delta_time: float) -> None:
         self.time_elapsed += delta_time
+        self.bullet_timer -= delta_time
 
+        
         # Update camera position
         self.camera.update(self.entity_manager, self.player_id, delta_time)
 
@@ -301,7 +330,8 @@ class Space(scene.Scene):
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
         other_ids:OtherIds = self.entity_manager.get_component(self.player_id, OtherIds)
         shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
-
+        fuel = self.entity_manager.get_component(self.player_id, Fuel)
+        
         if not self.entity_manager.has_component(self.player_id, Dying):
             if self.entity_manager.has_component(self.player_id, Collided):
                 for id in self.entity_manager.get_component(self.player_id, Collided).other:
@@ -345,6 +375,18 @@ class Space(scene.Scene):
 
             return
         
+        elif self.camera.selected_planet != None:
+            self.background_system.update(self.camera, delta_time)
+            simulated_player = self.simulator.get_simulated_entity(self.player_id)
+            self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
+            return
+        
+        if fuel.fuel <= 0:
+            shield.activated = False
+
+        if shield.activated:
+            fuel.consume(SHIELD_FUEL_RATE * delta_time)
+
         # Handle input
         self.handle_held_keys(delta_time)
         
