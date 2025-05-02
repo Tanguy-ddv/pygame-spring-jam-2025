@@ -78,16 +78,18 @@ class Space(scene.Scene):
 
         # Planets
         self.planet_ids = open_planets(self.entity_manager)
+        self.planet_dict = {self.entity_manager.get_component(planet_id, Planet).name: planet_id for planet_id in self.planet_ids}
+        print(self.planet_dict)
 
         # Player
-        self.starting_planet = self.entity_manager.get_component(self.planet_ids[3], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
+        self.starting_planet = self.entity_manager.get_component(self.planet_dict["neptune"], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
         self.starting_planet_orbits = self.entity_manager.get_component(self.starting_planet.orbits, Planet)
         self.playing = True
         self.gameover = False
         self.restart = False
         self.transition_timer = None
 
-        spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, 3, 30)
+        spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict["neptune"], 30)
         spawn_chunk = 15
         while spawn_chunks[spawn_chunk] != False:
             spawn_chunk = random.randint(0, 11) * 30 + 15
