@@ -29,7 +29,7 @@ Images.register_image(Fonts.get_font("Title").render("PAUSED" , True, (180, 180,
 Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 180, 180)), "gameover text")
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("MISSIONS", True, (255, 255, 255)), "log text")
-
+Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 image = pygame.Surface((400, 284))
 image.fill((50, 50, 50))
 

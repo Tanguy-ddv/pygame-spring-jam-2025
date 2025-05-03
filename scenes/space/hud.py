@@ -15,16 +15,11 @@ class HUD:
     def __init__(self):
         # Elements
         self.map = Map()
-        self.planet_interface = PlanetInterface()
-        self.manual = Manual()
         self.log = Log()
+        self.planet_interface = PlanetInterface(self.log)
+        self.manual = Manual()
         self.fuel_display = FuelDisplay()
         self.waypoint_markers = WaypointMarkers(40, 10)
-
-        # Test missions
-        self.log.add_mission(new_mission("earth"))
-        self.log.add_mission(new_mission("earth"))
-        self.log.add_mission(new_mission("earth"))
 
     def handle_event(self, event):
         if self.planet_interface.planet == None:
@@ -46,6 +41,7 @@ class HUD:
     def draw(self, surface: pygame.Surface, camera: CameraSystem):
         if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
+            self.log.draw(surface)
 
         elif self.map.fullscreened and self.map.map_mode != 0:
             self.map.draw(surface)
@@ -119,13 +115,15 @@ class FuelDisplay:
         surface.blit(self.text, text_pos)
 
 class PlanetInterface:
-    def __init__(self):
+    def __init__(self, log):
         self.planet = None
         self.enabled = False
         self.dist = 40
         self.width = 1280 / 3
         self.height = 720 - self.dist * 2
         self.zoom = 1
+
+        self.log = log
 
     def handle_event(self, event):
         pass
@@ -134,6 +132,9 @@ class PlanetInterface:
         self.planet = camera.selected_planet
         self.zoom = camera.zoom
         self.enabled = self.planet != None
+
+        if self.enabled:
+            self.log.enabled = True
 
     def draw(self, surface):
         if not self.enabled:
@@ -144,18 +145,17 @@ class PlanetInterface:
         surface.blit(text, (1280 / 2 - text.get_width() / 2, 720 / 2 - self.planet.radius / self.zoom - 50))
         
         # Draw Mission Board
-        pygame.draw.rect(surface, (60, 60, 60), (self.dist, self.dist, self.width, self.height))
+        board_x = 1280 - self.dist - self.width
+        board_y = self.dist
+        pygame.draw.rect(surface, (60, 60, 60), (board_x, board_y, self.width, self.height))
 
         # Render missions
-        y_index = 0
+        offsety = 0
 
-        for mission in self.planet.missions:
-            # mission_image = Images.get_image(mission + " display") 
-            # surface.blit(mission_image, (self.dist, y_index * mission_image.get_height()))
-            pass
-
-        # Draw Shop
-        pygame.draw.rect(surface, (60, 60, 60), (1280 - self.dist - self.width, self.dist, self.width, self.height))
+        for mission in self.planet.mission_dict:
+            mission_image = self.planet.mission_dict[mission]
+            surface.blit(mission_image, (board_x, board_y + offsety))
+            offsety += mission_image.get_height()
 
 class Manual:
     def __init__(self):
@@ -246,6 +246,10 @@ class Log:
         mission_list = list(self.mission_dict)
         mission_list.sort(key=lambda x: 0 if x.type == "complete" else 1)
 
+        if mission_list == []:
+            surface.blit(Images.get_image("empty log"), (self.position + 20, 300))
+            return
+        
         for mission in mission_list:
             if mission.type == "clear":
                 continue

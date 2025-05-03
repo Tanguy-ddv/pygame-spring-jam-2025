@@ -11,6 +11,7 @@ import time
 # Internal
 from pygamelib.entities import *
 from entities import *
+from assets import Fonts
 from utils.constants import *
 
 class Planet:
@@ -79,11 +80,39 @@ class Planet:
         self.on_screen = False
 
         # Mission data
+        self.mission_dict = {}
         if self.kind != "sun":
-            self.missions = [new_mission(self.name) for _ in range(6)]
+            for _ in range(6):
+                mission = new_mission(self.name)
+                self.mission_dict[mission] = self._render_mission(mission)
+
+    def _render_mission(self, mission):
+        font = Fonts.get_font("Small")
+        if mission.type == "kill":
+            surface = font.render(
+                f"-Eliminate {mission.max_amount} {mission.item}\n near {mission.destination}\n ({mission.max_amount - mission.amount} remaining)\n",
+                True,
+                (255, 255, 255)
+            )
+
+        elif mission.type == "deliver":
+            surface = font.render(
+                f"-Deliver {mission.max_amount}{mission.unit}\n of {mission.item} to {mission.destination}\n",
+                True,
+                (255, 255, 255)
+            )
+
+        elif mission.type == "complete":
+            surface = font.render(
+                f"-${mission.reward} reward\n at {mission.destination}",
+                True,
+                (150, 255, 150)
+            )
 
         else:
-            self.missions = []
+            surface = self.mission_dict[mission]
+
+        return surface
 
 #this class is intended solely for flight path predictions
 class PlanetImprint:

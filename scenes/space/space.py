@@ -55,7 +55,7 @@ def open_planets(entity_manager: EntityManager):
         planets.append(planet)
 
         if kind == "sun":
-            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 2560, (255, 227, 84)))
+            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 5000, (255, 227, 84)))
         elif kind == "moon":
             entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 2560, (137, 35, 247)))
         else:
@@ -88,7 +88,7 @@ class Space(scene.Scene):
         self.planet_dict = {self.entity_manager.get_component(planet_id, Planet).name: planet_id for planet_id in self.planet_ids}
 
         # Player
-        self.starting_planet = self.entity_manager.get_component(self.planet_dict["neptune"], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
+        self.starting_planet = self.entity_manager.get_component(self.planet_dict["earth"], Planet) # Please dont change this from now its set to earth for tutorial reasons later on
         self.starting_planet_orbits = self.entity_manager.get_component(self.starting_planet.orbits, Planet)
         self.playing = True
         self.gameover = False
@@ -96,7 +96,7 @@ class Space(scene.Scene):
         self.transition_timer = None
         self.bullet_timer = 0
 
-        spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict["neptune"], 30)
+        spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict["earth"], 30)
         spawn_chunk = 15
         while spawn_chunks[spawn_chunk] != False:
             spawn_chunk = random.randint(0, 11) * 30 + 15
@@ -123,7 +123,7 @@ class Space(scene.Scene):
                                        Simulate() # This makes player affected by physics
                                        )
         
-        spawn_planet_siege(self.entity_manager, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
+        # spawn_planet_siege(self.entity_manager, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
 
         # Variables
         self.held_keys = set()
