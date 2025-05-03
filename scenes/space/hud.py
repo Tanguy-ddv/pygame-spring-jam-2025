@@ -373,13 +373,13 @@ class Map:
                 on_map_position = calculate_on_map_position(self, pygame.Vector2(planet.x, planet.y))
 
                 if planet.kind == "moon":
-                    pygame.draw.circle(self.map_surface, "#8923f7", on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 2))
+                    pygame.draw.circle(self.map_surface, (137, 35, 247), on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 2))
 
                 elif planet.kind == "sun":
-                    pygame.draw.circle(self.map_surface, "#ffe354", on_map_position - offset, max(calculate_scale(self, planet.radius / 50), 3))
+                    pygame.draw.circle(self.map_surface, (255, 227, 84), on_map_position - offset, max(calculate_scale(self, planet.radius / 50), 3))
 
                 else:
-                    pygame.draw.circle(self.map_surface, "#2c5fb0", on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 5))
+                    pygame.draw.circle(self.map_surface, (44, 95, 176), on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 5))
 
             position:Position = entity_manager.get_component(player_id, Position)
 
@@ -478,5 +478,6 @@ class WaypointMarkers:
             distance = math.sqrt((waypoint.position.x - self.waypoint_center.x) ** 2 + (waypoint.position.y - self.waypoint_center.y) ** 2)
             fade = (1 - (distance / waypoint.max_viewable_distance))
             fade = min(max(fade, 0), 1)
-            color = (waypoint.color[0] * fade, waypoint.color[1] * fade, waypoint.color[2] * fade)
-            pygame.draw.line(surface, color, starting_position, ending_position, 2)
+            if fade != 0:
+                color = (waypoint.color[0] * fade, waypoint.color[1] * fade, waypoint.color[2] * fade)
+                pygame.draw.line(surface, color, starting_position, ending_position, 2)

@@ -44,6 +44,7 @@ class PirateHandler:
             other_ids:OtherIds = entity_manager.get_component(id, OtherIds)
             timer:Timer = entity_manager.get_component(id, Timer)
             animator = entity_manager.get_component(id, Animator)
+            waypoint:Waypoint = entity_manager.get_component(id, Waypoint)
 
             simulated_data:dict = simulator.get_simulated_entity(id)
 
@@ -55,12 +56,11 @@ class PirateHandler:
 
                 if simulated_data["crash"]:
                     pirate.avoid_crash = 20
-                else:
-                    if pirate.avoid_crash > 0:
-                        pirate.avoid_crash -= 1
+                if pirate.avoid_crash > 0:
+                    pirate.avoid_crash -= 1
 
                 if math.sqrt((position.x - player_position.x) ** 2 + (position.y - player_position.y) ** 2) >= 640:
-                    if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 750:
+                    if math.sqrt((velocity.x) ** 2 + (velocity.y) ** 2) >= 350:
                         pirate.slow_down = 10
                 if pirate.slow_down > 0:
                     pirate.slow_down -= 1
@@ -74,8 +74,7 @@ class PirateHandler:
                         else:
                             direction += math.radians(90)
                 elif pirate.slow_down > 0:
-                    print(True)
-                    direction = math.atan2(-velocity.y, -velocity.x)
+                    direction = math.atan2(velocity.y, velocity.x) + math.radians(180)
                 else:
                     direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
 
@@ -92,6 +91,7 @@ class PirateHandler:
                 force.y -= 1500 * math.sin(math.radians(rotation.angle))
 
                 circle.x, circle.y = position.x, position.y
+                waypoint.position.xy = position.xy
 
                 entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), rotation.angle - 90))
 
