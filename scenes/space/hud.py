@@ -478,4 +478,4 @@ class WaypointMarkers:
             fade = (1 - (distance / waypoint.max_viewable_distance))
             fade = min(max(fade, 0), 1)
             color = (waypoint.color[0] * fade, waypoint.color[1] * fade, waypoint.color[2] * fade)
-            pygame.draw.line(surface, color, starting_position, ending_position)
+            pygame.draw.line(surface, color, starting_position, ending_position, 2)
