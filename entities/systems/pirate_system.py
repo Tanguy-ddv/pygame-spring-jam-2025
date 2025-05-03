@@ -22,6 +22,7 @@ def get_shortest_distance_in_radians(radians_1:int|float, radians_2:int|float):
 class PirateHandler:
     def __init__(self):
         self.pirate_ids = set()
+        self.dead_pirates = {}
 
     def register_pirate(self, id:int):
         self.pirate_ids.add(id)
@@ -31,6 +32,8 @@ class PirateHandler:
             self.pirate_ids.remove(id)
 
     def update(self, entity_manager: EntityManager, player_id:int, simulator: SimulationSystem):
+        self.dead_pirates.clear()
+
         player_position:pygame.Vector2 = entity_manager.get_component(player_id, Position)
         player_velocity:pygame.Vector2 = entity_manager.get_component(player_id, Velocity)
 
@@ -109,3 +112,4 @@ class PirateHandler:
                 if animator.animation_stack["explosion2"] > 18:
                     entity_manager.delete_entity(id)
                     self.unregister_pirate(id)
+                    self.dead_pirates[id] = {"position":position}
