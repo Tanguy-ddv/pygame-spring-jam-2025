@@ -19,6 +19,7 @@ class HUD:
         self.manual = Manual()
         self.log = Log()
         self.fuel_display = FuelDisplay()
+        self.waypoint_markers = WaypointMarkers(40, 10)
 
         # Test missions
         self.log.add_mission(new_mission("earth"))
@@ -39,8 +40,10 @@ class HUD:
         self.log.update(delta_time)
         self.planet_interface.update(camera, delta_time)
         self.fuel_display.update(entity_manager, player_id, delta_time)
+        self.waypoint_markers.update(entity_manager)
+        self.waypoint_markers.set_waypoint_center(entity_manager.get_component(player_id, Position))
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.Surface, camera: CameraSystem):
         if self.manual.enabled:
             self.manual.draw(surface)
 
@@ -54,6 +57,8 @@ class HUD:
             self.map.draw(surface)
             self.log.draw(surface)
             self.fuel_display.draw(surface)
+
+        self.waypoint_markers.draw(surface, camera)
 
 class FuelDisplay:
     def __init__(self):
@@ -445,3 +450,32 @@ class Map:
     def draw_fullscreen(self, surface: pygame.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (1280, 720))
         surface.blit(display_surface, display_surface.get_rect(center = (surface.get_width() - 1280 / 2, 720 / 2)))
+
+class WaypointMarkers:
+    def __init__(self, waypoint_distance:int, waypoint_length:int):
+        self.waypoint_center = pygame.Vector2(0, 0)
+        self.waypoint_distance = waypoint_distance
+        self.waypoint_length = waypoint_length
+        self.waypoints = []
+
+    def set_waypoint_center(self, waypoint_center:pygame.Vector2):
+        self.waypoint_center = waypoint_center
+
+    def update(self, entity_manager: EntityManager):
+        self.waypoints.clear()
+        
+        entity_ids = entity_manager.get_from_components(Waypoint)
+        for entity_id in entity_ids:
+            self.waypoints.append(entity_manager.get_component(entity_id, Waypoint))
+
+    def draw(self, surface: pygame.Surface, camera: CameraSystem):
+        for waypoint in self.waypoints:
+            direction = math.atan2((waypoint.position.y - self.waypoint_center.y), (waypoint.position.x - self.waypoint_center.x))
+            starting_position = camera.get_relative_position(self.waypoint_center)
+            starting_position = (starting_position[0] + math.cos(direction) * self.waypoint_distance, starting_position[1] + math.sin(direction) * self.waypoint_distance)
+            ending_position = (starting_position[0] + math.cos(direction) * self.waypoint_length, starting_position[1] + math.sin(direction) * self.waypoint_length)
+            distance = math.sqrt((waypoint.position.x - self.waypoint_center.x) ** 2 + (waypoint.position.y - self.waypoint_center.y) ** 2)
+            fade = (1 - (distance / waypoint.max_viewable_distance))
+            fade = min(max(fade, 0), 1)
+            color = (waypoint.color[0] * fade, waypoint.color[1] * fade, waypoint.color[2] * fade)
+            pygame.draw.line(surface, color, starting_position, ending_position)

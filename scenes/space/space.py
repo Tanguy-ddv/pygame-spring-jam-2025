@@ -49,7 +49,8 @@ def open_planets(entity_manager: EntityManager):
 
         id = create_entity(entity_manager,
                            planet,
-                           CircleCollider((0, 0), math.floor(math.sqrt(radius)), False)
+                           CircleCollider((0, 0), math.floor(math.sqrt(radius)), False),
+                           Waypoint(pygame.Vector2(0, 0), 1280, (255, 0, 0))
                            )
         planet_ids.append(id)
         planets.append(planet)
@@ -423,10 +424,10 @@ class Space(scene.Scene):
         self.timing_system.update(self.entity_manager, delta_time)
         self.health_system.update(self.entity_manager, delta_time)
         self.collision_system.update(self.entity_manager)
-                
+
         simulated_player = self.simulator.get_simulated_entity(self.player_id)
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
-        
+                
     def draw(self, surface: pygame.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
         
@@ -443,7 +444,7 @@ class Space(scene.Scene):
                 surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size))
 
         if self.playing:
-            self.hud.draw(surface)
+            self.hud.draw(surface, self.camera)
             return
         
         if not self.gameover:

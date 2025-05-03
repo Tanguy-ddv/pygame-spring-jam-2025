@@ -127,11 +127,12 @@ class PlanetHandler:
             camera.changed = True
 
     def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float):
-        entity_ids = entity_manager.get_from_components(Planet, CircleCollider)
+        entity_ids = entity_manager.get_from_components(Planet, CircleCollider, Waypoint)
 
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             circle:CircleCollider = entity_manager.get_component(entity_id, CircleCollider)
+            waypoint:Waypoint = entity_manager.get_component(entity_id, Waypoint)
 
             if planet.orbits is not None:
                 planet.theta = (delta_time/planet.year*24*GAMEH_PER_REALSEC + planet.theta)%360
@@ -141,6 +142,7 @@ class PlanetHandler:
                 planet.x, planet.y = orbit.x + (planet.dist + orbit.radius + planet.radius)*math.cos(planet.theta*math.pi/180), orbit.y + (planet.dist + orbit.radius + planet.radius)*math.sin(planet.theta*math.pi/180)
             
             circle.x, circle.y = planet.x, planet.y
+            waypoint.position.xy = planet.x, planet.y
 
             if math.sqrt(((planet.x - camera.camera_x) ** 2) + ((planet.y - camera.camera_y) ** 2)) < 1280 + planet.radius:
                 planet.surface.fill((0, 0, 0))
@@ -167,7 +169,6 @@ class PlanetHandler:
                 planet.on_screen = True
 
             else:
-                
                 planet.on_screen = False
 
     def draw(self, entity_manager: EntityManager, camera: CameraSystem, display_surface: pygame.Surface):

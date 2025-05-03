@@ -18,3 +18,4 @@ from .pirate import Pirate
 from .simulate import Simulate
 from .balance import Balance
 from .mission import Mission
+from .waypoint_marker import Waypoint
