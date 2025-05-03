@@ -58,7 +58,8 @@ class HUD:
             self.log.draw(surface)
             self.fuel_display.draw(surface)
 
-        self.waypoint_markers.draw(surface, camera)
+        if self.planet_interface.enabled == False and self.map.fullscreened == False:
+            self.waypoint_markers.draw(surface, camera)
 
 class FuelDisplay:
     def __init__(self):
