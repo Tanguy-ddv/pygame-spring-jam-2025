@@ -159,7 +159,7 @@ class PlanetInterface:
 
 class Manual:
     def __init__(self):
-        self.enabled = False # Keybind T opens manual for tutorial
+        self.enabled = True # Keybind T opens manual for tutorial
 
     def handle_event(self, event):
         if event.type == KEYDOWN:
@@ -172,7 +172,7 @@ class Manual:
     def draw(self, surface:pygame.Surface):
         if self.enabled:
             image = Images.get_image("manual")
-            surface.blit(image, image.get_rect(center = (1080, 586)))
+            surface.blit(image, image.get_rect(center = (1080, 578)))
 
 class Log:
     def __init__(self):
@@ -309,10 +309,12 @@ class Map:
                 if self.map_mode == 1:
                     self.set_mode(2)
 
+                    self.last_mode = self.map_mode
+
                 elif self.map_mode == 2:
                     self.set_mode(1)
 
-                self.last_mode = self.map_mode
+                    self.last_mode = self.map_mode
 
             elif event.key == K_r:
                 self.set_zoom(1)
