@@ -30,6 +30,26 @@ Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 18
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("MISSIONS", True, (255, 255, 255)), "log text")
 
+image = pygame.Surface((400, 268))
+image.fill((50, 50, 50))
+
+y = 10
+image.blit(Fonts.get_font("Tiny").render("W to engage the main drive", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("A or D to rotate", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("SPACE to shoot", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("M to show the map", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("V to change map view", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("TAB to change map mode", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("J to toggle mission board", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("CLICK on planets to access their trade", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("information", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("T to toggle this menu", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("ESC to pause", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("Complete missions to earn cash, ", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("more cash = higher score", True, (255, 255, 255)), (10, y)); y += 16
+
+Images.register_image(image, "manual")
+
 # Prerender planet names
 with open("data/celestial_bodies.json", "r") as file:
     names = json.load(file).keys()

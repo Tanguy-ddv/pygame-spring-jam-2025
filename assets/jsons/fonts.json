@@ -12,5 +12,10 @@
     "Small": {
         "path": "resources/Silkscreen/slkscr.ttf",
         "size": 24
+    },
+
+    "Tiny": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 16
     }
 }

@@ -44,10 +44,7 @@ class HUD:
         self.waypoint_markers.set_waypoint_center(entity_manager.get_component(player_id, Position))
 
     def draw(self, surface: pygame.Surface, camera: CameraSystem):
-        if self.manual.enabled:
-            self.manual.draw(surface)
-
-        elif self.planet_interface.enabled:
+        if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
 
         elif self.map.fullscreened and self.map.map_mode != 0:
@@ -57,6 +54,7 @@ class HUD:
             self.map.draw(surface)
             self.log.draw(surface)
             self.fuel_display.draw(surface)
+            self.manual.draw(surface)
 
         if self.planet_interface.enabled == False and self.map.fullscreened == False:
             self.waypoint_markers.draw(surface, camera)
@@ -164,13 +162,17 @@ class Manual:
         self.enabled = False # Keybind T opens manual for tutorial
 
     def handle_event(self, event):
-        pass
+        if event.type == KEYDOWN:
+            if event.key == K_t:
+                self.enabled = not self.enabled
 
     def update(self, delta_time):
         pass
 
-    def draw(self, surface):
-        pass
+    def draw(self, surface:pygame.Surface):
+        if self.enabled:
+            image = Images.get_image("manual")
+            surface.blit(image, image.get_rect(center = (1080, 586)))
 
 class Log:
     def __init__(self):
