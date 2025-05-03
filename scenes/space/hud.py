@@ -154,8 +154,8 @@ class PlanetInterface:
 
         for mission in self.planet.mission_dict:
             mission_image = self.planet.mission_dict[mission]
-            surface.blit(mission_image, (board_x, board_y + offsety))
-            offsety += mission_image.get_height()
+            surface.blit(mission_image, (board_x, board_y + offsety + self.height - mission_image.get_height() - 4))
+            offsety -= mission_image.get_height() + 2
 
 class Manual:
     def __init__(self):

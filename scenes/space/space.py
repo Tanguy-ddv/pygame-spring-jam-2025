@@ -368,6 +368,9 @@ class Space(scene.Scene):
             if self.transition_timer != None:
                 self.transition_timer -= delta_time
 
+            if self.gameover:
+                self.entity_manager.remove_component(self.player_id, pygame.Surface)
+                
             return
         
         elif self.camera.selected_planet != None:
@@ -384,7 +387,7 @@ class Space(scene.Scene):
 
         # Handle input
         self.handle_held_keys(delta_time)
-        
+    
         # Update player surface
         player_rotation = self.entity_manager.get_component(self.player_id, Rotation)
         player_position:Position = self.entity_manager.get_component(self.player_id, Position) 

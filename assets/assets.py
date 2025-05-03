@@ -29,6 +29,8 @@ Images.register_image(Fonts.get_font("Title").render("PAUSED" , True, (180, 180,
 Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 180, 180)), "gameover text")
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("MISSIONS", True, (255, 255, 255)), "log text")
+Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
+Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 image = pygame.Surface((400, 284))
 image.fill((50, 50, 50))
@@ -57,6 +59,8 @@ with open("data/celestial_bodies.json", "r") as file:
 
 for planet_name in names:
     Images.register_image(Fonts.get_font("Body").render(planet_name.capitalize(), True, (255, 255, 255)), planet_name + " title")
+
+Images.register_image(pygame.transform.smoothscale_by(Images.get_image("earth"), (1.5, 1)), "earth")
 
 # Animation init
 Animations = AnimationManager()
