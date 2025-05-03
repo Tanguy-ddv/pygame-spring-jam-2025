@@ -89,22 +89,36 @@ class Planet:
     def _render_mission(self, mission):
         font = Fonts.get_font("Small")
         if mission.type == "kill":
-            surface = pygame.Surface((1280 / 3, font.get_height() * 2.5), SRCALPHA)
-            pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 2.5), 0, 5)
+            surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+            pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
+            title = font.render(
+                f"Bounty hunting : ${mission.reward}",
+                True,
+                (0, 255, 0)
+            )
+
+            surface.blit(title), (0, 0)
             surface.blit(font.render(
                 f"Eliminate {mission.max_amount} {mission.item}\nnear {mission.destination}\n",
                 True,
                 (255, 255, 255)
-            ), (0, 5))
+            ), (0, 5 + title.get_height()))
 
         elif mission.type == "deliver":
-            surface = pygame.Surface((1280 / 3, font.get_height() * 2.5), SRCALPHA)
-            pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 2.5), 0, 5)
+            surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+            pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
+            title = font.render(
+                f"Transportation : ${mission.reward}",
+                True,
+                (0, 255, 0)
+            )
+
+            surface.blit(title), (0, 0)
             surface.blit(font.render(
                 f"Deliver {mission.max_amount}{mission.unit}\nof {mission.item} to {mission.destination}\n",
                 True,
                 (255, 255, 255)
-            ), (0, 6))
+            ), (0, 5 + title.get_height()))
 
         elif mission.type == "complete":
             surface = pygame.Surface((1280 / 3, font.get_height() * 3))
@@ -119,7 +133,7 @@ class Planet:
             surface = self.mission_dict[mission]
 
         text = Images.get_image("accept")
-        surface.blit(text, (1280 / 3 - text.get_width() - 8, font.get_height() * 1.25 - text.get_height() / 2))
+        surface.blit(text, (1280 / 3 - text.get_width() - 8, font.get_height() * 3.5 - text.get_height() - 5))
 
         return surface
 

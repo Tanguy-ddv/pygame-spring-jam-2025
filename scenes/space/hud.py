@@ -132,7 +132,28 @@ class PlanetInterface:
         self.log = log
 
     def handle_event(self, event):
-        pass
+        if self.planet == None:
+            return
+        
+        if event.type == MOUSEBUTTONDOWN:
+            offsety = 0
+
+            mission_list = list(self.planet.mission_dict.keys())
+            mission_list.sort(key=lambda x: x.reward, reverse=False)
+
+            for mission in mission_list:
+                board_x = 1280 - self.dist - self.width
+                board_y = self.dist
+                topleft = (board_x, board_y + offsety + self.height - self.planet.mission_dict[mission].get_height() - 4)
+                offsety -= self.planet.mission_dict[mission].get_height() + 2
+
+                if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
+                    self.log.add_mission(mission)
+                    self.planet.mission_dict.pop(mission)
+
+                    mission = new_mission(self.planet.name)
+                    self.planet.mission_dict[mission] = self.planet._render_mission(mission)
+                    return
 
     def update(self, camera, delta_time):
         self.planet = camera.selected_planet
@@ -158,7 +179,10 @@ class PlanetInterface:
         # Render missions
         offsety = 0
 
-        for mission in self.planet.mission_dict:
+        mission_list = list(self.planet.mission_dict.keys())
+        mission_list.sort(key=lambda x: x.reward, reverse=False)
+
+        for mission in mission_list:
             mission_image = self.planet.mission_dict[mission]
             surface.blit(mission_image, (board_x, board_y + offsety + self.height - mission_image.get_height() - 4))
             offsety -= mission_image.get_height() + 2
@@ -219,6 +243,9 @@ class Log:
         return surface
 
     def add_mission(self, mission):
+        if len(self.mission_dict) >= 1:
+            return
+        
         self.mission_dict[mission] = self._render_mission(mission)
     
     def get_missions(self):
