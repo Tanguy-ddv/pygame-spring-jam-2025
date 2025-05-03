@@ -155,7 +155,6 @@ class Space(scene.Scene):
 
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 self.hud.handle_event(event)
-                self.planet_handler.handle_event(self.entity_manager, self.camera, event)
 
     def handle_held_keys(self, delta_time: float) -> None:
         if self.entity_manager.has_component(self.player_id, Dying):
@@ -254,6 +253,21 @@ class Space(scene.Scene):
             animator.animation_stack["main drive start"] = 0
             Sounds.get_sound("thrusters").play(loops=-1, fade_ms=500)
 
+        elif event.key == K_f:
+            # Check if docked then undock
+            if self.camera.selected_planet != None:
+                self.camera.selected_planet = None
+                return
+            
+            # Dock at planet
+            for planet_id in self.entity_manager.get_from_components(Planet):
+                planet: Planet = self.entity_manager.get_component(planet_id, Planet)
+
+                if math.hypot(position.x - planet.x, position.y - planet.y) < 350:
+                    self.camera.selected_planet = planet
+                    self.camera.changed = True
+                    return
+                
         elif event.key == K_SPACE and not shield.activated and self.bullet_timer <= 0:
             final_direction = rotation.angle
             for pirate_id in self.pirate_handler.pirate_ids:
@@ -370,13 +384,14 @@ class Space(scene.Scene):
 
             if self.gameover:
                 self.entity_manager.remove_component(self.player_id, pygame.Surface)
-                
+
             return
         
         elif self.camera.selected_planet != None:
             self.background_system.update(self.camera, delta_time)
             simulated_player = self.simulator.get_simulated_entity(self.player_id)
             self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
+            self.planet_handler.update(self.entity_manager, self.camera, delta_time, True)
             return
         
         if fuel.fuel <= 0:
@@ -437,6 +452,21 @@ class Space(scene.Scene):
                 surface.blit(self.camera.get_surface())
             else:
                 surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size))
+
+            if self.playing:
+                for planet_id in self.entity_manager.get_from_components(Planet):
+                    planet: Planet = self.entity_manager.get_component(planet_id, Planet)
+                    position = self.entity_manager.get_component(self.player_id, Position)
+
+                    if math.hypot(position.x - planet.x, position.y - planet.y) < 350:
+                        if self.camera.selected_planet == None:
+                            dock_prompt = Images.get_image("dock prompt")
+
+                        else:
+                            dock_prompt = Images.get_image("undock prompt")
+
+                        surface.blit(dock_prompt, (1280 / 2- dock_prompt.get_width() / 2, 650))
+                        break
 
         if self.playing:
             self.hud.draw(surface, self.camera)

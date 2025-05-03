@@ -148,23 +148,7 @@ def from_planet_to_imprint(planet:Planet) -> PlanetImprint:
     return PlanetImprint(planet.radius, planet.day, planet.year, planet.kind, planet.dist, planet.mass, planet.orbits, planet.theta)
 
 class PlanetHandler:
-    def handle_event(self, entity_manager, camera: CameraSystem, event):
-        if event.type == MOUSEBUTTONDOWN:
-            entity_ids = entity_manager.get_from_components(Planet)
-
-            for entity_id in entity_ids:
-                planet: Planet = entity_manager.get_component(entity_id, Planet)
-                pos = camera.get_relative_position((planet.x - planet.radius, planet.y - planet.radius))
-
-                if pygame.rect.Rect(pos[0], pos[1], planet.radius * 2, planet.radius * 2).collidepoint(event.pos):
-                    camera.selected_planet = planet
-                    camera.changed = True
-                    return
-                
-            camera.selected_planet = None
-            camera.changed = True
-
-    def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float):
+    def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float, paused=False):
         entity_ids = entity_manager.get_from_components(Planet, CircleCollider, Waypoint)
 
         for entity_id in entity_ids:
@@ -172,6 +156,31 @@ class PlanetHandler:
             circle:CircleCollider = entity_manager.get_component(entity_id, CircleCollider)
             waypoint:Waypoint = entity_manager.get_component(entity_id, Waypoint)
 
+            if paused:
+                if planet.on_screen:
+                    planet.surface.fill((0, 0, 0))
+                    planet.surface.set_colorkey((0, 0, 0))
+
+                    dx = delta_time/planet.day*GAMEH_PER_REALSEC * planet.diameter
+
+                    for i in range(len(planet.image_offsets)):
+                        if planet.rotation_direction == "clockwise":
+                            planet.image_offsets[i].x += dx
+                            if planet.image_offsets[i].x > planet.borders[1]:
+                                planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+                        else:
+                            planet.image_offsets[i].x -= dx
+                            if planet.image_offsets[i].x < planet.borders[1]:
+                                planet.image_offsets[i].x = planet.borders[0] + (planet.image_offsets[i].x - planet.borders[1])
+
+                    for image_offset in planet.image_offsets:
+                        position = (math.floor(planet.surface_center[0] + image_offset.x), math.floor(planet.surface_center[1] + image_offset.y))
+                        planet.surface.blit(planet.surface_image, planet.surface_image.get_rect(center = position))
+
+                    planet.surface.blit(planet.circle_mask, planet.circle_mask.get_rect(center = planet.surface_center))
+
+                continue
+            
             if planet.orbits is not None:
                 planet.theta = (delta_time/planet.year*24*GAMEH_PER_REALSEC + planet.theta)%360
 

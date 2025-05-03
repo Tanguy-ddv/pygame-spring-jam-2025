@@ -29,9 +29,11 @@ Images.register_image(Fonts.get_font("Title").render("PAUSED" , True, (180, 180,
 Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 180, 180)), "gameover text")
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("MISSIONS", True, (255, 255, 255)), "log text")
+Images.register_image(Fonts.get_font("Body").render("[F TO DOCK]", True, (255, 255, 255)), "dock prompt")
+Images.register_image(Fonts.get_font("Body").render("[F TO UNDOCK]", True, (255, 255, 255)), "undock prompt")
 Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
 Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
-Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
+Images.register_image(Fonts.get_font("Small").render("NO MISSIONS IN LOG\nSELECT A MISSION\nFROM THE MENU", True, (255, 0, 0)), "empty log + planet view")
 image = pygame.Surface((400, 284))
 image.fill((50, 50, 50))
 

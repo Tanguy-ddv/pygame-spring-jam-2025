@@ -38,6 +38,12 @@ class HUD:
         self.waypoint_markers.update(entity_manager)
         self.waypoint_markers.set_waypoint_center(entity_manager.get_component(player_id, Position))
 
+        if self.planet_interface.planet != None:
+            self.log.state = "planet view"
+
+        else:
+            self.log.state = "space"
+
     def draw(self, surface: pygame.Surface, camera: CameraSystem):
         if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
@@ -182,6 +188,7 @@ class Log:
         self.position = 0
         self.duration = .5 # Num seconds to appear / reappear
         self.time_elapsed = self.duration
+        self.state = "space"
 
     def _render_mission(self, mission):
         font = Fonts.get_font("Small")
@@ -247,7 +254,12 @@ class Log:
         mission_list.sort(key=lambda x: 0 if x.type == "complete" else 1)
 
         if mission_list == []:
-            surface.blit(Images.get_image("empty log"), (self.position + 20, 300))
+            if self.state == "space":
+                surface.blit(Images.get_image("empty log"), (self.position + 20, 300))
+
+            elif self.state == "planet view":
+                surface.blit(Images.get_image("empty log + planet view"), (self.position + 20, 300))
+
             return
         
         for mission in mission_list:
