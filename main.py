@@ -67,4 +67,4 @@ if __name__ == "__main__":
         fps=0
     )
 
-    asyncio.run(game.start())  
+    asyncio.run(game.start())

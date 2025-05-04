@@ -390,6 +390,18 @@ class Space(scene.Scene):
             self.planet_handler.update(self.entity_manager, self.camera, delta_time, True)
             return
 
+        # Spawn pirate based on mission value:
+        for mission in self.hud.log.mission_dict:
+            if random.randint(0, 10_000_000) < 1 + mission.reward / 5 and mission.type != "kill" and self.time_elapsed % 120:
+                pos = self.entity_manager.get_component(self.player_id, Position).copy()
+                pos.x += random.choice([-1280, 1280])
+                pos.y += random.choice([-720, 720])
+
+                pirate_type = random.choice(["pirate", "pirate skull", "pirate smile", "pirate light", "pirate light smile"])
+                pirate_id = create_pirate(self.entity_manager, pos, Images.get_image(pirate_type), pirate_type)
+                self.pirate_handler.register_pirate(pirate_id)
+                break
+
         # Handle input
         self.handle_held_keys(delta_time)
     
