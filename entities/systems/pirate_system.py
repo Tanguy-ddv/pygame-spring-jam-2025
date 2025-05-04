@@ -10,8 +10,9 @@ from pygamelib.entities import *
 from entities import *
 from assets import *
 
-from ..systems.simulator import SimulationSystem
+from .simulator import SimulationSystem
 from ..templates.bullet_template import create_bullet
+from .bullet_system import BulletSystem
 
 MAX_RADIANS = math.pi * 2
 
@@ -31,7 +32,7 @@ class PirateHandler:
         if id in self.pirate_ids:
             self.pirate_ids.remove(id)
 
-    def update(self, entity_manager: EntityManager, player_id:int, simulator: SimulationSystem):
+    def update(self, entity_manager: EntityManager, bullet_system: BulletSystem, player_id:int, simulator: SimulationSystem):
         self.dead_pirates.clear()
 
         player_position:pygame.Vector2 = entity_manager.get_component(player_id, Position)

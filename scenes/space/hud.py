@@ -202,7 +202,7 @@ class Manual:
     def draw(self, surface:pygame.Surface):
         if self.enabled:
             image = Images.get_image("manual")
-            surface.blit(image, image.get_rect(centery = 578))
+            surface.blit(image, image.get_rect(centery = 586))
 
 class Log:
     def __init__(self):

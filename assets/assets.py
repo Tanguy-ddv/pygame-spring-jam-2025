@@ -39,7 +39,9 @@ Images.register_image(Fonts.get_font("Body").render("[F TO UNDOCK]", True, (255,
 Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nSELECT A MISSION\nFROM THE MENU", True, (255, 0, 0)), "empty log + planet view")
-image = pygame.Surface((400, 284), SRCALPHA)
+
+
+image = pygame.Surface((400, 268), SRCALPHA)
 # image.fill((50, 50, 50)) # made manual bg transparent feel free to change
 
 y = 40
@@ -47,7 +49,6 @@ image.blit(Fonts.get_font("Tiny").render("ESC to pause", True, (255, 255, 255)),
 image.blit(Fonts.get_font("Tiny").render("T to toggle this menu", True, (255, 255, 255)), (10, y)); y += 16; y += 8
 image.blit(Fonts.get_font("Tiny").render("W to engage the main drive", True, (255, 255, 255)), (10, y)); y += 16
 image.blit(Fonts.get_font("Tiny").render("A or D to rotate", True, (255, 255, 255)), (10, y)); y += 16
-image.blit(Fonts.get_font("Tiny").render("Hold S to activate your shield", True, (255, 255, 255)), (10, y)); y += 16
 image.blit(Fonts.get_font("Tiny").render("SPACE to shoot", True, (255, 255, 255)), (10, y)); y += 16; y += 8
 image.blit(Fonts.get_font("Tiny").render("M to show the map", True, (255, 255, 255)), (10, y)); y += 16
 image.blit(Fonts.get_font("Tiny").render("V to change map view", True, (255, 255, 255)), (10, y)); y += 16

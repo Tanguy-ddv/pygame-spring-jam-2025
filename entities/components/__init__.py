@@ -7,7 +7,6 @@ from .timer import Timer
 from .animator import Animator
 from .collided import Collided
 from .health import Health
-from .shield import Shield
 from .fuel import Fuel
 from .circle_collider import CircleCollider
 from .dying import Dying
