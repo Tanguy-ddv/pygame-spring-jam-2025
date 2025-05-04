@@ -29,7 +29,7 @@ def find_spawn_chunks_for_planet(entity_manager: EntityManager, planet_ids: list
 
     return planet_chunks
 
-def spawn_planet_siege(entity_manager: EntityManager, pirate_handler: PirateHandler, pirates: int, spawn_chunks: dict, planet: Planet, planet_orbits: Planet):
+def spawn_planet_siege(entity_manager: EntityManager, mission, pirate_handler: PirateHandler, pirates: int, spawn_chunks: dict, planet: Planet, planet_orbits: Planet):
     for i in range(pirates):
         spawn_chunk = 15
         while spawn_chunks[spawn_chunk] != False:
@@ -48,3 +48,4 @@ def spawn_planet_siege(entity_manager: EntityManager, pirate_handler: PirateHand
                                   image_name)
             
         pirate_handler.register_pirate(pirate_id)
+        mission.pirate_ids.add(pirate_id)

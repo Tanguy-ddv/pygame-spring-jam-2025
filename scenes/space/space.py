@@ -400,10 +400,17 @@ class Space(scene.Scene):
                 if mission.amount == mission.max_amount:
                     mission.set_type("complete")
 
-                elif math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False:
+                if math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False:
                     mission.active = True
                     spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict[planet.name], 30)
-                    spawn_planet_siege(self.entity_manager, self.pirate_handler, mission.max_amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
+                    spawn_planet_siege(self.entity_manager, mission, self.pirate_handler, mission.max_amount - mission.amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
+
+                elif math.hypot(planet.x - x, planet.y - y) > 5000:
+                    mission.active = True
+                    for pirate in mission.pirate_ids:
+                        self.pirate_handler.unregister_pirate(pirate)
+                        self.entity_manager.delete_entity(pirate)
+                        mission.pirate_ids.remove(pirate)
 
             elif mission.type == "complete":
                 if self.camera.selected_planet == None:
@@ -537,14 +544,10 @@ class Space(scene.Scene):
 
 """
 TODO:
-Make missions doable
-Add mission rewards
-Make dock text display what planet you're docking at
-Add recharging / refueling
-Add highscore display
-Change pirate quantity on missions but up reward 
-Add pirate spawning during missions based on value and time alive
-Add upgrades / use for money
-Bug testing
-Pirate spawn variants
+Display balance (1)
+Add recharging / refueling (1)
+Add highscore display (1)
+Link to database (3)
+Add upgrades / use for money (2)
+Bug testing (3)
 """

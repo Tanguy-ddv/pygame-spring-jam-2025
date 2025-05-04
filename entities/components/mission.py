@@ -13,6 +13,7 @@ class Mission:
         self.active = False
         self.last_amount = 0
         self.amount = 0
+        self.pirate_ids = set()
 
     def set_amount(self, new_amount):
         self.last_amount = self.amount
