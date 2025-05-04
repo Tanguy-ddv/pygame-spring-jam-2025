@@ -71,9 +71,12 @@ class Title(Scene):
         prompt_image.fill(self.prompt_colour, special_flags=BLEND_RGB_SUB)
 
         title_image = Images.get_image("title text")
+        credit_image = Images.get_image("credit")
 
         surface.blit(prompt_image, (1280 / 2 - prompt_image.get_width() / 2, 650))
         surface.blit(title_image, (1280 / 2 - title_image.get_width() / 2, 50))
+        surface.blit(credit_image, (1280 / 2 - credit_image.get_width() / 2, 720 - credit_image.get_height() - 5))
     
     def stop(self):
         return super().stop()
+

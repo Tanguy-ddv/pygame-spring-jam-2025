@@ -94,7 +94,7 @@ class Planet:
             title = font.render(
                 f"Bounty hunting : ${mission.reward}",
                 True,
-                (0, 255, 0)
+                (150, 255, 150)
             )
 
             surface.blit(title), (0, 0)
@@ -110,7 +110,7 @@ class Planet:
             title = font.render(
                 f"Shipment Order : ${mission.reward}",
                 True,
-                (0, 255, 0)
+                (150, 255, 150)
             )
 
             surface.blit(title), (0, 0)

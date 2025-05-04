@@ -19,6 +19,7 @@ class HUD:
         self.planet_interface = PlanetInterface(self.log)
         self.manual = Manual()
         self.fuel_display = FuelDisplay()
+        self.balance = BalanceDisplay()
         self.waypoint_markers = WaypointMarkers(40, 10)
 
 
@@ -57,10 +58,13 @@ class HUD:
         else:
             self.log.state = "space"
 
+        self.balance.update(entity_manager.get_component(player_id, Balance).credits)
+
     def draw(self, surface: pygame.Surface, camera: CameraSystem):
         if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
             self.log.draw(surface)
+            self.balance.draw(surface, (0, 0))
 
         elif self.map.fullscreened and self.map.map_mode != 0:
             self.map.draw(surface)
@@ -70,6 +74,7 @@ class HUD:
             self.log.draw(surface)
             self.fuel_display.draw(surface)
             self.manual.draw(surface)
+            self.balance.draw(surface, (0, self.fuel_display.widget_size[1]))
 
         if self.planet_interface.enabled == False and self.map.fullscreened == False:
             self.waypoint_markers.draw(surface, camera)
@@ -132,6 +137,30 @@ class FuelDisplay:
         text_pos.x = self.widget_rect.x + self.widget_size[0] / 2 - self.text.width / 2
         text_pos.y = self.widget_rect.y + self.widget_size[1] / 2 - self.text.height / 2
         surface.blit(self.text, text_pos)
+
+class BalanceDisplay:
+    def __init__(self):
+        self.value = 0
+        self.last_value = 0
+        self.surface = None
+
+        self._render_text()
+
+    def _render_text(self):
+        self.surface = Fonts.get_font("Small").render(
+            f"BALANCE : ${self.value}",
+            True,
+            (150, 255, 150)
+        )
+    def update(self, new_value):
+        self.value = new_value
+
+        if self.last_value != self.value:
+            self.last_value = self.value
+            self._render_text()
+
+    def draw(self, surface, offset):
+        surface.blit(self.surface, offset)
 
 class PlanetInterface:
     def __init__(self, log):

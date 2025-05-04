@@ -39,7 +39,7 @@ Images.register_image(Fonts.get_font("Body").render("[F TO UNDOCK]", True, (255,
 Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nSELECT A MISSION\nFROM THE MENU", True, (255, 0, 0)), "empty log + planet view")
-
+Images.register_image(Fonts.get_font("Tiny").render("(Made by Tanguy, Jfffh, ImNottL & Yaroslav for the 2025 pygame spring jam)", True, (100, 100, 100)), "credit")
 
 image = pygame.Surface((400, 268), SRCALPHA)
 # image.fill((50, 50, 50)) # made manual bg transparent feel free to change

@@ -399,6 +399,10 @@ class Space(scene.Scene):
 
                 if mission.amount == mission.max_amount:
                     mission.set_type("complete")
+                    for pirate in mission.pirate_ids:
+                        self.pirate_handler.unregister_pirate(pirate)
+                        self.entity_manager.delete_entity(pirate)
+                        mission.pirate_ids.remove(pirate)
 
                 if math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False:
                     mission.active = True
@@ -418,7 +422,8 @@ class Space(scene.Scene):
                     
                 if self.camera.selected_planet.name == mission.destination:
                     mission_remove_list.append(mission)
-                    self.entity_manager.get_component(self.player_id, Balance).credits += mission.reward
+                    bal = self.entity_manager.get_component(self.player_id, Balance)
+                    bal.credits += mission.reward
 
         for mission in mission_remove_list:
             self.hud.log.mission_dict.pop(mission)
