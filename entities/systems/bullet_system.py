@@ -34,7 +34,7 @@ class BulletSystem:
                             except:
                                 pass # Still found an edge case so just skip it lol?
             
-            if timer.time > 500:
+            if timer.time > 1500:
                 if origin_id.origin_id in entity_manager.entity_ids:
                     try:
                         entity_manager.delete_entity(entity_id)

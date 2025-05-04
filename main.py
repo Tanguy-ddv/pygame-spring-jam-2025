@@ -41,7 +41,7 @@ class Game:
                 if event.type == QUIT:
                     self.is_running = False
 
-            self.scene_manager.handle_events(events)
+            self.scene_manager.handle_events(events, delta_time)
 
             # Update frame
             self.scene_manager.update(delta_time)

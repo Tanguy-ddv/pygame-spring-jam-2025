@@ -29,7 +29,7 @@ class Title(Scene):
     def start(self):
         return super().start()
     
-    def handle_events(self, events):
+    def handle_events(self, events, delta_time):
         for event in events:
             if event.type in [KEYDOWN, MOUSEBUTTONDOWN]:
                 if self.transition_timer == None:
