@@ -11,7 +11,7 @@ from entities import *
 
 class BulletSystem:
     def update(self, entity_manager: EntityManager):
-        entity_ids = entity_manager.get_from_components(Bullet, Timer, Position, CircleCollider, OriginId)
+        entity_ids = entity_manager.get_from_components(Bullet, Timer, Position, Position, CircleCollider, OriginId)
 
         for entity_id in entity_ids:
             bullet:Bullet = entity_manager.get_component(entity_id, Bullet)
@@ -19,14 +19,6 @@ class BulletSystem:
             position:Position = entity_manager.get_component(entity_id, Position)
             circle_collider:CircleCollider = entity_manager.get_component(entity_id, CircleCollider)
             origin_id:OriginId = entity_manager.get_component(entity_id, OriginId)
-
-            if timer.time > 3000:
-                if origin_id.origin_id in entity_manager.entity_ids:
-                    try:
-                        entity_manager.delete_entity(entity_id)
-                        entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
-                    except:
-                        pass #ANOTHER EDGE CASE ARE YOU JOKING
 
             circle_collider.x = position.x + 5 * math.cos(bullet.direction)
             circle_collider.y = position.y - 5 * math.sin(bullet.direction)
@@ -41,3 +33,11 @@ class BulletSystem:
                                 entity_manager.delete_entity(entity_id)
                             except:
                                 pass # Still found an edge case so just skip it lol?
+            
+            if timer.time > 3000:
+                if origin_id.origin_id in entity_manager.entity_ids:
+                    try:
+                        entity_manager.delete_entity(entity_id)
+                        entity_manager.get_component(origin_id.origin_id, OtherIds).remove_other_id(entity_id)
+                    except:
+                        pass #ANOTHER EDGE CASE ARE YOU JOKING

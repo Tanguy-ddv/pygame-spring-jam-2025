@@ -80,7 +80,6 @@ class Space(scene.Scene):
         self.collision_system = CollisionsSystem()
         self.simulator = SimulationSystem()
         self.bullet_system = BulletSystem()
-        self.shield_renderer = ShieldRenderer()
         self.pirate_handler = PirateHandler()
 
         # Planets
@@ -119,11 +118,10 @@ class Space(scene.Scene):
                                        Mass(20),
                                        CircleCollider((0, 0), 9),
                                        OtherIds(),
-                                       Shield(),
                                        Simulate() # This makes player affected by physics
                                        )
         
-        # spawn_planet_siege(self.entity_manager, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
+        spawn_planet_siege(self.entity_manager, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
 
         # Variables
         self.held_keys = set()
@@ -165,7 +163,6 @@ class Space(scene.Scene):
         velocity:Velocity = self.entity_manager.get_component(self.player_id, Velocity)
         force:Force = self.entity_manager.get_component(self.player_id, Force)
         rotation:Rotation = self.entity_manager.get_component(self.player_id, Rotation)
-        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
         fuel = self.entity_manager.get_component(self.player_id, Fuel)
 
@@ -205,7 +202,7 @@ class Space(scene.Scene):
                     animator.animation_stack.pop("spin aclockwise start")
 
             # Fire bullet
-            elif key == K_SPACE and not shield.activated and self.bullet_timer <= 0:
+            elif key == K_SPACE and self.bullet_timer <= 0:
                 final_direction = rotation.angle
                 for pirate_id in self.pirate_handler.pirate_ids:
                     pirate_position = self.entity_manager.get_component(pirate_id, Position)
@@ -225,7 +222,6 @@ class Space(scene.Scene):
         velocity = self.entity_manager.get_component(self.player_id, Velocity)
         rotation = self.entity_manager.get_component(self.player_id, Rotation)
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
-        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
         fuel = self.entity_manager.get_component(self.player_id, Fuel)
@@ -268,7 +264,7 @@ class Space(scene.Scene):
                     self.camera.changed = True
                     return
                 
-        elif event.key == K_SPACE and not shield.activated and self.bullet_timer <= 0:
+        elif event.key == K_SPACE and self.bullet_timer <= 0:
             final_direction = rotation.angle
             for pirate_id in self.pirate_handler.pirate_ids:
                 pirate_position = self.entity_manager.get_component(pirate_id, Position)
@@ -282,18 +278,12 @@ class Space(scene.Scene):
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
             self.bullet_timer = 0.25
             fuel.consume(BULLET_COST)
-        
-        elif event.key == K_s:
-            circle.radius = 32.5
-            shield.up()
-
 
         self.held_keys.add(event.key)
         self.hud.handle_event(event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
-        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
 
@@ -314,10 +304,6 @@ class Space(scene.Scene):
 
             Sounds.get_sound("thrusters").fadeout(300)
 
-        elif event.key == K_s:
-            circle.radius = 9
-            shield.down()
-
         if event.key in self.held_keys:
             self.held_keys.remove(event.key)
 
@@ -325,7 +311,6 @@ class Space(scene.Scene):
         self.time_elapsed += delta_time
         self.bullet_timer -= delta_time
 
-        
         # Update camera position
         self.camera.update(self.entity_manager, self.player_id, delta_time)
 
@@ -337,19 +322,22 @@ class Space(scene.Scene):
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
         other_ids:OtherIds = self.entity_manager.get_component(self.player_id, OtherIds)
-        shield:Shield = self.entity_manager.get_component(self.player_id, Shield)
-        fuel = self.entity_manager.get_component(self.player_id, Fuel)
+        fuel:Fuel = self.entity_manager.get_component(self.player_id, Fuel)
         
         if not self.entity_manager.has_component(self.player_id, Dying):
             if self.entity_manager.has_component(self.player_id, Collided):
                 for id in self.entity_manager.get_component(self.player_id, Collided).other:
-                    if id in self.planet_ids:
-                        health.health = -1000
+                    if id in self.planet_ids or id in self.pirate_handler.pirate_ids:
+                        health.health -= 1000
                     else:
-                        if not other_ids.check_for_other_id(id) and shield.activated == False:
-                            health.take_damage(1)
+                        if not other_ids.check_for_other_id(id) and health.invincability == 0:
+                            fuel.consume(250)
+                            health.invincability = health.invincability_window
 
                 self.entity_manager.remove_component(self.player_id, Collided)
+
+        if fuel.fuel <= 0:
+            health.health -= 1000
 
         if health.health <= 0:
             if not self.entity_manager.has_component(self.player_id, Dying) and not self.gameover:
@@ -393,12 +381,6 @@ class Space(scene.Scene):
             self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
             self.planet_handler.update(self.entity_manager, self.camera, delta_time, True)
             return
-        
-        if fuel.fuel <= 0:
-            shield.activated = False
-
-        if shield.activated:
-            fuel.consume(SHIELD_FUEL_RATE * delta_time)
 
         # Handle input
         self.handle_held_keys(delta_time)
@@ -427,7 +409,7 @@ class Space(scene.Scene):
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
-        self.pirate_handler.update(self.entity_manager, self.player_id, self.simulator)
+        self.pirate_handler.update(self.entity_manager, self.bullet_system, self.player_id, self.simulator)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         
@@ -447,7 +429,6 @@ class Space(scene.Scene):
             self.animation_system.draw(self.camera.get_surface(), self.entity_manager, self.camera)
             self.camera.draw(self.entity_manager)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
-            self.shield_renderer.draw(self.entity_manager, self.camera)
             if self.camera.zoom == 1:
                 surface.blit(self.camera.get_surface())
             else:
