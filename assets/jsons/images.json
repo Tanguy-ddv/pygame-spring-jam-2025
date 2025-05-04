@@ -12,8 +12,13 @@
     "resources/planet_textures/saturn.png":"saturn",
     "resources/planet_textures/uranus.png":"uranus",
     "resources/planet_textures/neptune.png":"neptune",
-    "resources/planet_textures/moon_like_1.png":"moon_like_1",
-    "resources/planet_textures/moon_like_2.png":"moon_like_2",
+    "resources/planet_textures/moon_like.png":"moon_like",
+    "resources/planet_textures/io.png":"io",
+    "resources/planet_textures/iapetus.png":"iapetus",
+    "resources/planet_textures/ganymede.png":"ganymede",
+    "resources/planet_textures/europa.png":"europa",
+    "resources/planet_textures/eris.png":"eris",
+    "resources/planet_textures/callisto.png":"callisto",
     "resources/player_shuttle/shuttle.png":"shuttle",
     "resources/projectiles/laser.png":"laser",
     "resources/shield/shield.png":"shield",
@@ -22,6 +27,6 @@
     "resources/pirates/pirate_with_side_drives.png": "pirate side drives",
     "resources/pirates/pirate_with_skull.png": "pirate skull",
     "resources/pirates/pirate_with_smile.png":"pirate smile",
-    "resources/pirates/pirate.png": "pirate"
+    "resources/pirates/pirate.png":"pirate"
 
 }
