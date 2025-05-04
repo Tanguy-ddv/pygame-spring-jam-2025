@@ -56,8 +56,6 @@ class PirateHandler:
 
                 direction = math.radians(rotation.angle)
 
-                direction_to_player = math.atan2((player_position.y - position.y), (player_position.x - position.x))
-
                 if simulated_data["crash"]:
                     pirate.avoid_crash = 20
                 if pirate.avoid_crash > 0:
@@ -80,12 +78,19 @@ class PirateHandler:
                 elif pirate.slow_down > 0:
                     direction = math.atan2(velocity.y, velocity.x) + math.radians(180)
                 else:
-                    direction = math.atan2((player_position.y - position.y), (player_position.x - position.x))
+
+                    distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
+                    
+                    bullet_distance = distance / 300000
+
+                    player_future_position = (player_position.x + (player_velocity.x * bullet_distance), player_position.y + (player_velocity.y * bullet_distance))
+
+                    direction = math.atan2((player_future_position[1] - position.y), (player_future_position[0] - position.x))
 
                     if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) <= 10:
                         distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
-                        if timer.time % 100 == 0 and distance <= 1280:
-                            angle = rotation.angle + random.randint(-4, 4)
+                        if timer.time % 50 == 0 and distance <= 1280:
+                            angle = rotation.angle + (random.randint(-10, 10) / 10)
                             radians_angle = math.radians(angle)
                             bullet_id = create_bullet(entity_manager, (position.x + 20 * math.cos(radians_angle), position.y - 20 * math.sin(radians_angle)), angle, id)
                             other_ids.add_other_id(bullet_id)
