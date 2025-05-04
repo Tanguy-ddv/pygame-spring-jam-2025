@@ -38,8 +38,13 @@ def spawn_planet_siege(entity_manager: EntityManager, pirate_handler: PirateHand
         dist = (planet.dist + planet.radius + planet_orbits.radius)
         spawn_position = (planet_orbits.x + dist * math.cos(math.radians(planet.theta))), planet_orbits.y + dist * math.sin(math.radians(planet.theta))
         spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * planet.diameter * 5)
+        
+        image_name = random.choice(["pirate", "pirate skull", "pirate smile", "pirate light", "pirate light smile"])
+        print(image_name)
+        pirate_image = Images.get_image(image_name)
         pirate_id = create_pirate(entity_manager,
                                   spawn_position,
-                                  Images.get_image("pirate"))
+                                  pirate_image,
+                                  image_name)
             
         pirate_handler.register_pirate(pirate_id)

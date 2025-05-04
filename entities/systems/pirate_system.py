@@ -97,7 +97,7 @@ class PirateHandler:
                 circle.x, circle.y = position.x, position.y
                 waypoint.position.xy = position.xy
 
-                entity_manager.add_component(id, pygame.transform.rotate(Images.get_image("pirate"), rotation.angle - 90))
+                entity_manager.add_component(id, pygame.transform.rotate(Images.get_image(pirate.type), rotation.angle - 90))
 
                 if entity_manager.has_component(id, Collided):
                     collided:Collided = entity_manager.get_component(id, Collided)
