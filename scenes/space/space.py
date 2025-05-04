@@ -146,11 +146,15 @@ class Space(scene.Scene):
             elif event.type == KEYUP:
                 self.key_unpressed(event)
 
-            elif not self.playing:
-                return
-
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
-                self.hud.handle_event(event)
+                if self.gameover:
+                    if self.transition_timer == None:
+                        Sounds.get_sound("select").play()
+                        self.transition_timer = Sounds.get_sound("select").get_length()
+                    
+                    return
+                
+                self.hud.handle_event(self.camera, event)
 
     def handle_held_keys(self, delta_time: float) -> None:
         if self.entity_manager.has_component(self.player_id, Dying):
@@ -286,7 +290,7 @@ class Space(scene.Scene):
             fuel.consume(BULLET_COST)
 
         self.held_keys.add(event.key)
-        self.hud.handle_event(event)
+        self.hud.handle_event(self.camera, event)
 
     def key_unpressed(self, event: pygame.Event) -> None:
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)

@@ -35,13 +35,13 @@ class HUD:
             )
         )
 
-    def handle_event(self, event):
+    def handle_event(self, camera, event):
         if self.planet_interface.planet == None:
             self.map.handle_event(event)
             self.manual.handle_event(event)
             self.log.handle_event(event)
 
-        self.planet_interface.handle_event(event)
+        self.planet_interface.handle_event(camera, event)
 
     def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], pirate_handler: PirateHandler, camera, delta_time) -> None:
         self.map.update(entity_manager, player_id, planet_ids, future_player_positions, pirate_handler)
@@ -176,11 +176,28 @@ class PlanetInterface:
         self.active_tab = "missions"
         self.log = log
 
-    def handle_event(self, event):
+    def handle_event(self, camera, event):
         if self.planet == None:
             return
         
         if event.type == MOUSEBUTTONDOWN:
+            tab1 = Images.get_image("mission tab text")
+            tab2 = Images.get_image("shop tab text")
+            tab3 = Images.get_image("leave tab text")
+
+            if pygame.Rect((self.board_x + 4, self.board_y + 8, tab1.get_width() + 10, tab1.get_height() + 25)).collidepoint(event.pos):
+                self.active_tab = "missions"
+                return
+            
+            elif pygame.Rect((self.board_x + 4+  5 + tab1.get_width() + 10 + 2, self.board_y + 8, tab2.get_width() + 10, tab2.get_height() + 25)).collidepoint(event.pos):
+                self.active_tab = "shop"
+                return
+
+            elif pygame.Rect((self.board_x + 4 + tab1.get_width() + 10 + 23 + 2 + tab2.get_width(), self.board_y + 8, tab3.get_width() + 16, tab3.get_height() + 25)).collidepoint(event.pos):
+                self.active_tab = "missions"
+                camera.selected_planet = None
+                return
+
             offsety = 0
 
             mission_list = list(self.planet.mission_dict.keys())
@@ -223,8 +240,14 @@ class PlanetInterface:
         pygame.draw.rect(surface, (40, 40, 40), (self.board_x , self.board_y + 4, self.width, 112), 0, 5)
 
         # Draw tab outline
-        tab1 = Images.get_image("mission tab text")
-        tab2 = Images.get_image("shop tab text")
+        if self.active_tab == "missions":
+            tab1 = Images.get_image("mission tab text")
+            tab2 = Images.get_image("shop tab text inactive")
+
+        else:
+            tab1 = Images.get_image("mission tab text inactive")
+            tab2 = Images.get_image("shop tab text")
+
         tab3 = Images.get_image("leave tab text")
 
         pygame.draw.rect(surface, (30, 30, 30), (self.board_x + 4, self.board_y + 8, tab1.get_width() + 10, tab1.get_height() + 25), 0, 5)
