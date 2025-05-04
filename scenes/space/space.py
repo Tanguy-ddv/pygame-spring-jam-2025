@@ -134,6 +134,8 @@ class Space(scene.Scene):
             self.entity_manager.get_component(self.player_id, Balance)
         )
 
+        # spawn_planet_siege(self.entity_manager, None, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
+
     def start(self) -> None:
         sound:pygame.mixer.Sound = Sounds.get_sound("bgm")
         sound.set_volume(0.5)
