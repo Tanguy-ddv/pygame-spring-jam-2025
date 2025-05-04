@@ -1,6 +1,6 @@
 {
-    "resources/music/Am I Alone.wav": "bgm",
-    "resources/music/select.wav": "select",
-    "resources/music/thrusters.wav": "thrusters",
-    "resources/music/lose.wav": "lose"
+    "resources/music/Am I Alone.ogg": "bgm",
+    "resources/music/select.ogg": "select",
+    "resources/music/thrusters.ogg": "thrusters",
+    "resources/music/lose.ogg": "lose"
 }
