@@ -108,7 +108,7 @@ class Planet:
             surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
             title = font.render(
-                f"Shipment Order : ${mission.reward}",
+                f"Shipment Order  : ${mission.reward}",
                 True,
                 (150, 255, 150)
             )

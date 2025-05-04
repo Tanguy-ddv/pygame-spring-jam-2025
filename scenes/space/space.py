@@ -549,10 +549,10 @@ class Space(scene.Scene):
 
 """
 TODO:
-Display balance (1)
 Add recharging / refueling (1)
 Add highscore display (1)
-Link to database (3)
 Add upgrades / use for money (2)
+Link to database (3)
+
 Bug testing (3)
 """

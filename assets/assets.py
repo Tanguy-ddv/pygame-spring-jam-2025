@@ -29,6 +29,9 @@ Images.register_image(Fonts.get_font("Title").render("PAUSED" , True, (180, 180,
 Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 180, 180)), "gameover text")
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("Mission", True, (255, 255, 255)), "log text")
+Images.register_image(Fonts.get_font("Body").render("Missions", True, (255, 255, 255)), "mission tab text")
+Images.register_image(Fonts.get_font("Body").render("Shop", True, (255, 255, 255)), "shop tab text")
+Images.register_image(Fonts.get_font("Body").render("Leave", True, (255, 255, 255)), "leave tab text")
 
 with open("data/celestial_bodies.json", "r") as file:
     planets = json.load(file)

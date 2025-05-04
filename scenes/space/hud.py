@@ -64,7 +64,8 @@ class HUD:
         if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
             self.log.draw(surface)
-            self.balance.draw(surface, (0, 0))
+            self.balance.draw(surface, (self.planet_interface.board_x + self.planet_interface.width / 2 - self.balance.surface.get_width() / 2,
+                                        self.planet_interface.board_y + 80))
 
         elif self.map.fullscreened and self.map.map_mode != 0:
             self.map.draw(surface)
@@ -169,8 +170,10 @@ class PlanetInterface:
         self.dist = 40
         self.width = 1280 / 3
         self.height = 720 - self.dist * 2
+        self.board_x = 1280 - self.dist - self.width
+        self.board_y = self.dist
         self.zoom = 1
-
+        self.active_tab = "missions"
         self.log = log
 
     def handle_event(self, event):
@@ -213,21 +216,42 @@ class PlanetInterface:
         text = Images.get_image(self.planet.name + " title")
         surface.blit(text, (1280 / 2 - text.get_width() / 2, 720 / 2 - self.planet.radius / self.zoom - 50))
         
-        # Draw Mission Board
-        board_x = 1280 - self.dist - self.width
-        board_y = self.dist
-        pygame.draw.rect(surface, (60, 60, 60), (board_x, board_y, self.width, self.height))
+        # Draw Planet Frame
+        pygame.draw.rect(surface, (60, 60, 60), (self.board_x - 4, self.board_y, self.width + 8, self.height), 0, 10)
 
-        # Render missions
-        offsety = 0
+        # Draw Tabs
+        pygame.draw.rect(surface, (40, 40, 40), (self.board_x , self.board_y + 4, self.width, 112), 0, 5)
 
-        mission_list = list(self.planet.mission_dict.keys())
-        mission_list.sort(key=lambda x: x.reward, reverse=False)
+        # Draw tab outline
+        tab1 = Images.get_image("mission tab text")
+        tab2 = Images.get_image("shop tab text")
+        tab3 = Images.get_image("leave tab text")
 
-        for mission in mission_list:
-            mission_image = self.planet.mission_dict[mission]
-            surface.blit(mission_image, (board_x, board_y + offsety + self.height - mission_image.get_height() - 4))
-            offsety -= mission_image.get_height() + 2
+        pygame.draw.rect(surface, (30, 30, 30), (self.board_x + 4, self.board_y + 8, tab1.get_width() + 10, tab1.get_height() + 25), 0, 5)
+        surface.blit(tab1, (self.board_x + 9, self.board_y + 4 + 12.5 + 4))
+
+        pygame.draw.rect(surface, (30, 30, 30), (self.board_x + 4+  5 + tab1.get_width() + 10 + 2, self.board_y + 8, tab2.get_width() + 10, tab2.get_height() + 25), 0, 5)
+        surface.blit(tab2, (self.board_x + 9 + 5 + tab1.get_width() + 10 + 2, self.board_y + 4 + 12.5 + 4))
+
+        pygame.draw.rect(surface, (30, 30, 30), (self.board_x + 4 + tab1.get_width() + 10 + 23 + 2 + tab2.get_width(), self.board_y + 8, tab3.get_width() + 16, tab3.get_height() + 25), 0, 5)
+        surface.blit(tab3, (self.board_x + 9 + 23 + tab1.get_width() + 10 + 2 + tab2.get_width(), self.board_y + 4 + 12.5 + 4))
+
+        pygame.draw.rect(surface, (30, 30, 30), (self.board_x + 4 , self.board_y + 4 + 70, self.width - 8, 38), 0, 5)
+
+        if self.active_tab == "missions":
+            # Draw mission bg
+            pygame.draw.rect(surface, (40, 40, 40), (self.board_x - 2, self.board_y + 118, self.width + 4, self.height - 118 - 1), 0, 10)
+
+            # Draw missions
+            offsety = 0
+
+            mission_list = list(self.planet.mission_dict.keys())
+            mission_list.sort(key=lambda x: x.reward, reverse=False)
+
+            for mission in mission_list:
+                mission_image = self.planet.mission_dict[mission]
+                surface.blit(mission_image, (self.board_x, self.board_y + offsety + self.height - mission_image.get_height() - 4))
+                offsety -= mission_image.get_height() + 2
 
 class Manual:
     def __init__(self):
