@@ -205,12 +205,16 @@ class Space(scene.Scene):
             elif key == K_SPACE and self.bullet_timer <= 0:
                 final_direction = rotation.angle
                 for pirate_id in self.pirate_handler.pirate_ids:
-                    pirate_position = self.entity_manager.get_component(pirate_id, Position)
+                    pirate_position:Position = self.entity_manager.get_component(pirate_id, Position)
+                    pirate_velocity:Velocity = self.entity_manager.get_component(pirate_id, Velocity)
                     direction = math.atan2((pirate_position.y - position.y), (pirate_position.x - position.x))
                     direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
                     if abs(direction_inaccuracy) <= 10:
-                        final_direction = rotation.angle + (direction_inaccuracy / 2)
-                
+                        distance = math.sqrt((pirate_position.x - position.x) ** 2 + (pirate_position.y - position.y) ** 2)
+                        bullet_distance = distance / 300000
+                        true_pirate_location = (pirate_position.x + (pirate_velocity.x * bullet_distance), pirate_position.y + (pirate_velocity.y * bullet_distance))
+                        final_direction = math.degrees(-math.atan2((true_pirate_location[1] - position.y), (true_pirate_location[0] - position.x)))
+                    
                 radians_final_direction = math.radians(final_direction)
                 id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
                 self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
@@ -268,10 +272,14 @@ class Space(scene.Scene):
             final_direction = rotation.angle
             for pirate_id in self.pirate_handler.pirate_ids:
                 pirate_position = self.entity_manager.get_component(pirate_id, Position)
+                pirate_velocity = self.entity_manager.get_component(pirate_id, Velocity)
                 direction = math.atan2((pirate_position.y - position.y), (pirate_position.x - position.x))
                 direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
                 if abs(direction_inaccuracy) <= 10:
-                    final_direction = rotation.angle + (direction_inaccuracy / 2)
+                    distance = math.sqrt((pirate_position.x - position.x) ** 2 + (pirate_position.y - position.y) ** 2)
+                    bullet_distance = distance / 300000
+                    true_pirate_location = (pirate_position.x + (pirate_velocity.x * bullet_distance), pirate_position.y + (pirate_velocity.y * bullet_distance))
+                    final_direction = math.degrees(-math.atan2((true_pirate_location[1] - position.y), (true_pirate_location[0] - position.x)))
             
             radians_final_direction = math.radians(final_direction)
             id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
