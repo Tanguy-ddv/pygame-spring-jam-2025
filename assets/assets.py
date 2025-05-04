@@ -29,7 +29,12 @@ Images.register_image(Fonts.get_font("Title").render("PAUSED" , True, (180, 180,
 Images.register_image(Fonts.get_font("Title").render("GAMEOVER" , True, (180, 180, 180)), "gameover text")
 Images.register_image(Fonts.get_font("Title").render("ISC-PIONEER", True, (180, 180, 180)), "title text")
 Images.register_image(Fonts.get_font("Body").render("Mission", True, (255, 255, 255)), "log text")
-Images.register_image(Fonts.get_font("Body").render("[F TO DOCK]", True, (255, 255, 255)), "dock prompt")
+
+with open("data/celestial_bodies.json", "r") as file:
+    planets = json.load(file)
+    for planet_name in planets:
+        Images.register_image(Fonts.get_font("Body").render(f"[F TO DOCK AT {planet_name}]", True, (255, 255, 255)), "dock prompt" + planet_name)
+
 Images.register_image(Fonts.get_font("Body").render("[F TO UNDOCK]", True, (255, 255, 255)), "undock prompt")
 Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")

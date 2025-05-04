@@ -460,7 +460,7 @@ class Space(scene.Scene):
 
                     if math.hypot(position.x - planet.x, position.y - planet.y) < 350:
                         if self.camera.selected_planet == None:
-                            dock_prompt = Images.get_image("dock prompt")
+                            dock_prompt = Images.get_image("dock prompt" + planet.name)
 
                         else:
                             dock_prompt = Images.get_image("undock prompt")
@@ -506,18 +506,14 @@ class Space(scene.Scene):
 
 """
 TODO:
-
-- Someone needs to add functionality for multiple animations playing simultaneously 
-e.g. main drive + spin
-
-- Missions
-
-- Pirates
-
-- Some feedback loop to encourage player
-
-- New assets for all planets + bodies (Yaroslav)
-
-- Visual update for the background as opposed to all black fill + stars
-
+Make missions doable
+Add mission rewards
+Make dock text display what planet you're docking at
+Add recharging / refueling
+Add highscore display
+Change pirate quantity on missions but up reward 
+Add pirate spawning during missions based on value and time alive
+Add upgrades / use for money
+Bug testing
+Pirate spawn variants
 """

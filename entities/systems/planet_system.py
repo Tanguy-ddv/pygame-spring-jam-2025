@@ -26,7 +26,7 @@ class Planet:
 
         self.kind = kind
 
-        if self.kind == "moon":
+        if "moon" in self.kind:
             self.dist = dist * 1.5
         else:
             self.dist = math.sqrt(dist) * math.sqrt(57909) / 5
@@ -108,14 +108,14 @@ class Planet:
             surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
             title = font.render(
-                f"Transportation : ${mission.reward}",
+                f"Shipment Order : ${mission.reward}",
                 True,
                 (0, 255, 0)
             )
 
             surface.blit(title), (0, 0)
             surface.blit(font.render(
-                f"Deliver {mission.max_amount}{mission.unit}\nof {mission.item} to {mission.destination}\n",
+                f"Deliver {mission.max_amount}{mission.unit} of\n{mission.item} to {mission.destination}\n",
                 True,
                 (255, 255, 255)
             ), (0, 5 + title.get_height()))

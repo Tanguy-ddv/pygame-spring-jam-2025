@@ -225,7 +225,7 @@ class Log:
 
         elif mission.type == "deliver":
             surface = font.render(
-                f"-Deliver {mission.max_amount}{mission.unit}\n of {mission.item} to {mission.destination}\n",
+                f"-Deliver {mission.max_amount}{mission.unit} of\n {mission.item} to {mission.destination}\n",
                 True,
                 (255, 255, 255)
             )
@@ -396,7 +396,7 @@ class Map:
             #pass one to draw orbit tracks
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
-                if planet.kind != "moon":
+                if "moon" not in planet.kind:
                     center = self.map_surface_center - offset
                     if planet.orbits == None:
                         pygame.draw.circle(self.map_surface, "#FFFF00", center, calculate_scale(self, planet.dist / 460) + max(calculate_scale(self, planet.radius / 460), 5), 2)
@@ -407,7 +407,7 @@ class Map:
             #pass two drawing moon orbit
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
-                if planet.kind == "moon":
+                if  "moon"in planet.kind:
                     orbit:Planet = entity_manager.get_component(planet.orbits, Planet)
                     center = calculate_on_map_position(self, pygame.Vector2(orbit.x, orbit.y)) - offset
                     pygame.draw.circle(self.map_surface, "#DDDDDD", center, calculate_scale(self, planet.dist / 460) + calculate_scale(self, planet.radius / 460) + calculate_scale(self, orbit.radius / 460), 2)
@@ -419,7 +419,7 @@ class Map:
 
                 on_map_position = calculate_on_map_position(self, pygame.Vector2(planet.x, planet.y))
 
-                if planet.kind == "moon":
+                if "moon" in planet.kind:
                     pygame.draw.circle(self.map_surface, (137, 35, 247), on_map_position - offset, max(calculate_scale(self, planet.radius / 460), 2))
 
                 elif planet.kind == "sun":
@@ -442,7 +442,7 @@ class Map:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
                 on_map_position = (self.map_surface_center[0] + calculate_scale(self, (planet.x - player_position.x) / 4), self.map_surface_center[1] + calculate_scale(self, (planet.y - player_position.y) / 4))
 
-                if planet.kind == "moon":
+                if  "moon" in planet.kind:
                     pygame.draw.circle(self.map_surface, "#8923f7", on_map_position, calculate_scale(self, planet.radius / 4))
 
                 elif planet.kind == "sun":

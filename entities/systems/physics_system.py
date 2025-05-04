@@ -23,7 +23,7 @@ class PhysicsSystem:
 
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
-                if planet.kind != "moon":
+                if "moon" not in planet.kind:
                     multiplier = 1
                     if planet.kind == "sun":
                         multiplier = 5
