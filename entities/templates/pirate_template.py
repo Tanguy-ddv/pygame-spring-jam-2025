@@ -3,7 +3,7 @@ from entities import *
 from pygamelib import *
 from .entity_template import create_entity
 
-def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame.Surface, type):
+def create_pirate(entity_manager: EntityManager, position:tuple, surface: pygame.surface.Surface, type):
     pirate = create_entity(entity_manager,
                          Position(position),
                          Velocity(0, 0),

@@ -30,7 +30,7 @@ class SceneManager(Singleton):
         self.scene_dict[scene_name].start()
         self.current_scene = scene_name
 
-    def handle_events(self, events: list[pygame.Event], delta_time: float) -> None:
+    def handle_events(self, events: list[pygame.event.Event], delta_time: float) -> None:
         if self.current_scene not in self.scene_dict:
             return
         
@@ -42,7 +42,7 @@ class SceneManager(Singleton):
         
         self.scene_dict[self.current_scene].update(delta_time)
 
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self, surface: pygame.surface.Surface) -> None:
         if self.current_scene not in self.scene_dict:
             return
         

@@ -10,7 +10,7 @@ class Scene(ABC):
         pass
 
     @abstractmethod
-    def handle_events(self, events: list[pygame.Event]) -> None:
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
         pass
 
     @abstractmethod
@@ -18,7 +18,7 @@ class Scene(ABC):
         pass
 
     @abstractmethod
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self, surface: pygame.surface.Surface) -> None:
         pass
 
     def stop(self) -> None:

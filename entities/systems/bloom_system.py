@@ -3,14 +3,14 @@ from entities import *
 from pygamelib import *
 from .camera_system import CameraSystem
 
-class Bloom(pygame.Surface):
+class Bloom(pygame.surface.Surface):
     pass
 
 class BloomSystem:
     def __init__(self):
         pass
         
-    def draw(self, camera:CameraSystem, display_surface:pygame.Surface, entity_manager:EntityManager):
+    def draw(self, camera:CameraSystem, display_surface:pygame.surface.Surface, entity_manager:EntityManager):
         entity_ids = entity_manager.get_from_components(Bloom, Position)
 
         for entity_id in entity_ids:

@@ -15,7 +15,7 @@ from assets import Fonts, Images
 from utils.constants import *
 
 class Planet:
-    def __init__(self, name: str, surface_image: pygame.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
+    def __init__(self, name: str, surface_image: pygame.surface.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
         self.name = name
 
         self.radius = math.floor(math.sqrt(radius))
@@ -52,7 +52,7 @@ class Planet:
 
         # self.revolution_time = revolution_time
 
-        self.circle_mask = pygame.Surface(self.surface_size)
+        self.circle_mask = pygame.surface.Surface(self.surface_size)
         self.circle_mask.fill((0, 0, 0))
         pygame.draw.circle(self.circle_mask, (1, 1, 1), self.surface_center, self.radius)
         self.circle_mask.set_colorkey((1, 1, 1))
@@ -75,7 +75,7 @@ class Planet:
         else:
             self.borders = (width, -width)
 
-        self.surface = pygame.Surface(self.surface_size)
+        self.surface = pygame.surface.Surface(self.surface_size)
 
         self.on_screen = False
 
@@ -89,7 +89,7 @@ class Planet:
     def _render_mission(self, mission):
         font = Fonts.get_font("Small")
         if mission.type == "kill":
-            surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+            surface = pygame.surface.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
             title = font.render(
                 f"Bounty hunting : ${mission.reward}",
@@ -97,7 +97,7 @@ class Planet:
                 (150, 255, 150)
             )
 
-            surface.blit(title), (0, 0)
+            surface.blit(title, (0, 0))
             surface.blit(font.render(
                 f"Eliminate {mission.max_amount} {mission.item}\nnear {mission.destination}\n",
                 True,
@@ -105,7 +105,7 @@ class Planet:
             ), (0, 5 + title.get_height()))
 
         elif mission.type == "deliver":
-            surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+            surface = pygame.surface.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
             title = font.render(
                 f"Shipment Order  : ${mission.reward}",
@@ -113,7 +113,7 @@ class Planet:
                 (150, 255, 150)
             )
 
-            surface.blit(title), (0, 0)
+            surface.blit(title, (0, 0))
             surface.blit(font.render(
                 f"Deliver {mission.max_amount}{mission.unit} of\n{mission.item} to {mission.destination}\n",
                 True,
@@ -121,7 +121,7 @@ class Planet:
             ), (0, 5 + title.get_height()))
 
         elif mission.type == "complete":
-            surface = pygame.Surface((1280 / 3, font.get_height() * 3))
+            surface = pygame.surface.Surface((1280 / 3, font.get_height() * 3))
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3), 0, 5)
             surface.blit(font.render(
                 f"${mission.reward} reward\n at {mission.destination}",
@@ -232,13 +232,13 @@ class PlanetHandler:
             else:
                 planet.on_screen = False
 
-    def draw(self, entity_manager: EntityManager, camera: CameraSystem, display_surface: pygame.Surface):
+    def draw(self, entity_manager: EntityManager, camera: CameraSystem, display_surface: pygame.surface.Surface):
         entity_ids = entity_manager.get_from_components(Planet)
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             if planet.on_screen:
                 if camera.selected_planet == planet:
-                    render_pos = (camera.internal_surface.size[0] / 2, camera.internal_surface.size[1] / 2)
+                    render_pos = (camera.internal_surface.get_size()[0] / 2, camera.internal_surface.get_size()[1] / 2)
                     pygame.draw.circle(display_surface, (255, 255, 255), render_pos, planet.radius + 2)
 
                 else:

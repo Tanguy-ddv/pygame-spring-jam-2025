@@ -40,7 +40,7 @@ class AnimationManager(Singleton):
         for animation_folder, animation_data in animations.items():
             self.load_animation(animation_folder, animation_data["name"], animation_data["duration"], colorkey)
 
-    def load_animation(self, animation_folder: PathLike, animation_name: str, duration: int, colorkey: tuple = (0, 0, 0)) -> pygame.Surface:
+    def load_animation(self, animation_folder: PathLike, animation_name: str, duration: int, colorkey: tuple = (0, 0, 0)) -> pygame.surface.Surface:
         images_in_folder = listdir(animation_folder)
 
         images_in_folder.sort()
@@ -50,12 +50,12 @@ class AnimationManager(Singleton):
 
         return images
     
-    def register_animation(self, images: list[pygame.Surface], animation_name: str, duration: int, colorkey: tuple = (0, 0, 0)):
+    def register_animation(self, images: list[pygame.surface.Surface], animation_name: str, duration: int, colorkey: tuple = (0, 0, 0)):
         for image in images:
             image.set_colorkey(colorkey)
 
-        self.animation_dict[animation_name] = {"data":(duration, math.floor(duration / len(images))), "images":deepcopy(images)}
+        self.animation_dict[animation_name] = {"data":(duration, math.floor(duration / len(images))), "images":images.copy()}
 
-    def get_animation(self, animation_name: str, frame: int) -> pygame.Surface:
+    def get_animation(self, animation_name: str, frame: int) -> pygame.surface.Surface:
         animation_data = self.animation_dict[animation_name]["data"]
         return self.animation_dict[animation_name]["images"][math.floor((frame % animation_data[0]) / animation_data[1])].copy()

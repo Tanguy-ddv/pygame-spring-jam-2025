@@ -49,7 +49,7 @@ Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nVISIT 
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nSELECT A MISSION\nFROM THE MENU", True, (255, 0, 0)), "empty log + planet view")
 Images.register_image(Fonts.get_font("Tiny").render("(Made by Tanguy, Jfffh, ImNottL & Yaroslav for the 2025 pygame spring jam)", True, (100, 100, 100)), "credit")
 
-image = pygame.Surface((400, 268), SRCALPHA)
+image = pygame.surface.Surface((400, 268), SRCALPHA)
 # image.fill((50, 50, 50)) # made manual bg transparent feel free to change
 
 y = 40

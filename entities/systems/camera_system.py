@@ -11,7 +11,7 @@ class CameraSystem:
     def __init__(self, screen_size: tuple, starting_position: tuple):
         self.screen_size = pygame.Vector2(screen_size)
         self.internal_surface = pygame.surface.Surface(self.screen_size)
-        self.relative_offset = (self.internal_surface.size[0] / 2, self.internal_surface.size[1] / 2)
+        self.relative_offset = (self.internal_surface.get_size()[0] / 2, self.internal_surface.get_size()[1] / 2)
         self.real_camera_x, self.real_camera_y = starting_position
         self.selected_planet = None
         self.changed = False
@@ -43,8 +43,8 @@ class CameraSystem:
             return
         
         self.zoom = new_zoom
-        self.internal_surface = pygame.Surface(self.screen_size * self.zoom)
-        self.relative_offset = (self.internal_surface.size[0] / 2, self.internal_surface.size[1] / 2)
+        self.internal_surface = pygame.surface.Surface(self.screen_size * self.zoom)
+        self.relative_offset = (self.internal_surface.get_size()[0] / 2, self.internal_surface.get_size()[1] / 2)
 
     def update(self, entity_manager, player_id, delta_time):
         self.internal_surface.fill((0, 0, 0))
@@ -68,12 +68,12 @@ class CameraSystem:
                 self.set_zoom(1.5)
 
     def draw(self, entity_manager):
-        entity_ids = entity_manager.get_from_components(pygame.Surface, Position)
+        entity_ids = entity_manager.get_from_components(pygame.surface.Surface, Position)
 
         for entity_id in entity_ids:
             if entity_manager.has_component(entity_id, Dying):
                 continue
             
-            surface = entity_manager.get_component(entity_id, pygame.Surface)
+            surface = entity_manager.get_component(entity_id, pygame.surface.Surface)
             position = entity_manager.get_component(entity_id, Position)
             self.get_surface().blit(surface, position - (self.camera_x, self.camera_y) + self.relative_offset - pygame.Vector2(surface.get_rect().size) / 2)

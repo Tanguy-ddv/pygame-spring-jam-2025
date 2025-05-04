@@ -135,11 +135,11 @@ class Space(scene.Scene):
         )
 
     def start(self) -> None:
-        sound:pygame.Sound = Sounds.get_sound("bgm")
+        sound:pygame.mixer.Sound = Sounds.get_sound("bgm")
         sound.set_volume(0.5)
         sound.play(-1)
 
-    def handle_events(self, events: list[pygame.Event], delta_time: float) -> None:
+    def handle_events(self, events: list[pygame.event.Event], delta_time: float) -> None:
         if self.entity_manager.has_component(self.player_id, Dying):
             return
         
@@ -227,7 +227,7 @@ class Space(scene.Scene):
                 self.bullet_timer = 0.25
                 fuel.consume(BULLET_COST)
 
-    def key_pressed(self, event: pygame.Event, delta_time: float) -> None:
+    def key_pressed(self, event: pygame.event.Event, delta_time: float) -> None:
         position = self.entity_manager.get_component(self.player_id, Position)
         velocity = self.entity_manager.get_component(self.player_id, Velocity)
         rotation = self.entity_manager.get_component(self.player_id, Rotation)
@@ -297,7 +297,7 @@ class Space(scene.Scene):
         self.held_keys.add(event.key)
         self.hud.handle_event(self.camera, event)
 
-    def key_unpressed(self, event: pygame.Event) -> None:
+    def key_unpressed(self, event: pygame.event.Event) -> None:
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
         health:Health = self.entity_manager.get_component(self.player_id, Health)
         circle:CircleCollider = self.entity_manager.get_component(self.player_id, CircleCollider)
@@ -458,7 +458,7 @@ class Space(scene.Scene):
                 self.transition_timer -= delta_time
 
             if self.gameover:
-                self.entity_manager.remove_component(self.player_id, pygame.Surface)
+                self.entity_manager.remove_component(self.player_id, pygame.surface.Surface)
 
             return
         
@@ -507,7 +507,7 @@ class Space(scene.Scene):
         simulated_player = self.simulator.get_simulated_entity(self.player_id)
         self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
                 
-    def draw(self, surface: pygame.Surface) -> None:
+    def draw(self, surface: pygame.surface.Surface) -> None:
         self.camera.get_surface().fill((0, 0, 0))
         
         if not self.hud.map.fullscreened or self.hud.map.map_mode == 0: # Render when not fullscreened or when toggled off
@@ -517,9 +517,9 @@ class Space(scene.Scene):
             self.camera.draw(self.entity_manager)
             self.bloom_system.draw(self.camera, self.camera.get_surface(), self.entity_manager)
             if self.camera.zoom == 1:
-                surface.blit(self.camera.get_surface())
+                surface.blit(self.camera.get_surface(), (0, 0))
             else:
-                surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size))
+                surface.blit(pygame.transform.scale(self.camera.get_surface(), self.camera.screen_size), (0, 0))
 
             if self.playing:
                 for planet_id in self.entity_manager.get_from_components(Planet):

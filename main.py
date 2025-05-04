@@ -1,3 +1,10 @@
+# /// script
+# requires-python = ">=3.12"
+# dependencies = [
+#   "pygame-ce"
+# ]
+# ///
+
 # Built-ins
 import sys
 import asyncio
@@ -9,6 +16,8 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 from scenes import *
+
+pygame.mixer.init()
 
 class Game:
     def __init__(self, screen_size, fps):

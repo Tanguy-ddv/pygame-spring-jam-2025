@@ -109,12 +109,12 @@ class PirateHandler:
                     for other_id in collided.other:
                         if not other_id in other_ids.other_ids:
                             animator.animation_stack = {"explosion2": 0}
-                            entity_manager.remove_component(id, pygame.Surface)
+                            entity_manager.remove_component(id, pygame.surface.Surface)
                             entity_manager.remove_component(id, Simulate)
                             entity_manager.add_component(id, Dying())
 
             if "explosion2" in animator.animation_stack:
-                entity_manager.remove_component(id, pygame.Surface)
+                entity_manager.remove_component(id, pygame.surface.Surface)
                 if animator.animation_stack["explosion2"] > 18:
                     entity_manager.delete_entity(id)
                     self.unregister_pirate(id)

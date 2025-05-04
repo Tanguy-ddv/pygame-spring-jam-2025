@@ -18,7 +18,7 @@ class AnimationSystem:
             for animation, frame in animator.animation_stack.items():
                 animator.animation_stack[animation] = frame + delta_time * 15
 
-    def draw(self, display_surface: pygame.Surface, entity_manager: EntityManager, camera) -> None:
+    def draw(self, display_surface: pygame.surface.Surface, entity_manager: EntityManager, camera) -> None:
         entity_ids = entity_manager.get_from_components(
             Animator,
             Position

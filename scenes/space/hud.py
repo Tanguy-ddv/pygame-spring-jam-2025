@@ -60,7 +60,7 @@ class HUD:
 
         self.balance.update(entity_manager.get_component(player_id, Balance).credits)
 
-    def draw(self, surface: pygame.Surface, camera: CameraSystem):
+    def draw(self, surface: pygame.surface.Surface, camera: CameraSystem):
         if self.planet_interface.enabled:
             self.planet_interface.draw(surface)
             self.log.draw(surface)
@@ -91,7 +91,7 @@ class FuelDisplay:
         self.time_elapsed = 0
         self.widget_center = (225, 25)
         self.widget_size = (500, 50)
-        self.widget_rect = pygame.rect.FRect(self.widget_center[0] - self.widget_size[0] / 2, self.widget_center[1] - self.widget_size[1] / 2, self.widget_size[0], self.widget_size[1])
+        self.widget_rect = pygame.rect.Rect(self.widget_center[0] - self.widget_size[0] / 2, self.widget_center[1] - self.widget_size[1] / 2, self.widget_size[0], self.widget_size[1])
         self.color_a = [240, 240, 40]
         self.color = self.color_a.copy()
         self.render_time = 0
@@ -137,8 +137,8 @@ class FuelDisplay:
         pygame.draw.rect(surface, color, shade_rect)
 
         text_pos = self.widget_rect.copy()
-        text_pos.x = self.widget_rect.x + self.widget_size[0] / 2 - self.text.width / 2
-        text_pos.y = self.widget_rect.y + self.widget_size[1] / 2 - self.text.height / 2
+        text_pos.x = self.widget_rect.x + self.widget_size[0] / 2 - self.text.get_width() / 2
+        text_pos.y = self.widget_rect.y + self.widget_size[1] / 2 - self.text.get_height() / 2
         surface.blit(self.text, text_pos)
 
 class BalanceDisplay:
@@ -191,7 +191,7 @@ class PlanetInterface:
         level = self.upgrade_dict[upgrade_name]["level"]
 
         # Create surface
-        surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+        surface = pygame.surface.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
 
         # Draw bg
         pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
@@ -406,7 +406,7 @@ class Manual:
     def update(self, delta_time):
         pass
 
-    def draw(self, surface:pygame.Surface):
+    def draw(self, surface:pygame.surface.Surface):
         if self.enabled:
             image = Images.get_image("manual")
             surface.blit(image, image.get_rect(centery = 586))
@@ -507,7 +507,7 @@ class Log:
 
 class Map:
     def __init__(self):
-        self.map_surface = pygame.Surface((1280, 720), pygame.SRCALPHA)
+        self.map_surface = pygame.surface.Surface((1280, 720), pygame.SRCALPHA)
         self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
         self.map_mode = 0
@@ -574,7 +574,7 @@ class Map:
 
     def set_zoom(self, new_zoom):
         self.zoom = max(new_zoom, 0.01)
-        # self.map_surface = pygame.Surface((1280 * self.zoom, 720 * self.zoom))
+        # self.map_surface = pygame.surface.Surface((1280 * self.zoom, 720 * self.zoom))
         # self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
     def set_mode(self, new_mode):
@@ -678,7 +678,7 @@ class Map:
                 position = (self.map_surface_center[0] + calculate_scale(self, (pirate_position.x - player_position.x) / 4), self.map_surface_center[1] + calculate_scale(self, (pirate_position.y - player_position.y) / 4))
                 pygame.draw.circle(self.map_surface, "#FF0000", position, min(max(calculate_scale(self, 5), 5), 10))
 
-    def draw(self, surface: pygame.Surface):
+    def draw(self, surface: pygame.surface.Surface):
         if self.map_mode == 0:
             return
         
@@ -700,11 +700,11 @@ class Map:
     def draw_planets(self): # Move from update into here (maybe cache new values of planets in update and render here)
         pass
 
-    def draw_overlay(self, surface: pygame.Surface):
+    def draw_overlay(self, surface: pygame.surface.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (400, 225))
         surface.blit(display_surface, (surface.get_width() - display_surface.get_width(), 0))
 
-    def draw_fullscreen(self, surface: pygame.Surface):
+    def draw_fullscreen(self, surface: pygame.surface.Surface):
         display_surface = pygame.transform.smoothscale(self.map_surface, (1280, 720))
         surface.blit(display_surface, display_surface.get_rect(center = (surface.get_width() - 1280 / 2, 720 / 2)))
 
@@ -725,7 +725,7 @@ class WaypointMarkers:
         for entity_id in entity_ids:
             self.waypoints.append(entity_manager.get_component(entity_id, Waypoint))
 
-    def draw(self, surface: pygame.Surface, camera: CameraSystem):
+    def draw(self, surface: pygame.surface.Surface, camera: CameraSystem):
         for waypoint in self.waypoints:
             direction = math.atan2((waypoint.position.y - self.waypoint_center.y), (waypoint.position.x - self.waypoint_center.x))
             starting_position = camera.get_relative_position(self.waypoint_center)

@@ -20,7 +20,7 @@ class SoundManager(Singleton):
             self.load_sound(path_to_sound, sound_name)
 
     def load_sound(self, path_to_sound: PathLike, sound_name: str) -> pygame.mixer.Sound:
-        sound = pygame.Sound(path_to_sound)
+        sound = pygame.mixer.Sound(path_to_sound)
         self.register_sound(sound, sound_name)
 
         return sound
