@@ -10,6 +10,7 @@ class Mission:
         self.reward = reward
         self.unit = unit
 
+        self.active = False
         self.last_amount = 0
         self.amount = 0
 

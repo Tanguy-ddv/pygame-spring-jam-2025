@@ -121,8 +121,6 @@ class Space(scene.Scene):
                                        Simulate() # This makes player affected by physics
                                        )
         
-        spawn_planet_siege(self.entity_manager, self.pirate_handler, 4, spawn_chunks, self.starting_planet, self.starting_planet_orbits)
-
         # Variables
         self.held_keys = set()
         self.prompt_colour = [0, 0, 0]
@@ -374,6 +372,50 @@ class Space(scene.Scene):
                 # Stop all active sounds
                 Sounds.get_sound("thrusters").stop()
 
+        # Spawn pirate based on mission value:
+        mission_remove_list = []
+        for mission in self.hud.log.mission_dict:
+            if random.randint(0, 10_000_000) < 1 + mission.reward / 5 and mission.type != "kill" and self.time_elapsed % 120 and self.playing:
+                pos = self.entity_manager.get_component(self.player_id, Position).copy()
+                pos.x += random.choice([-1280, 1280])
+                pos.y += random.choice([-720, 720])
+
+                pirate_type = random.choice(["pirate", "pirate skull", "pirate smile", "pirate light", "pirate light smile"])
+                pirate_id = create_pirate(self.entity_manager, pos, Images.get_image(pirate_type), pirate_type)
+                self.pirate_handler.register_pirate(pirate_id)
+            
+            if mission.type == "delivery":
+                if self.camera.selected_planet.name == mission.destination:
+                    mission.set_type("complete")
+
+            elif mission.type == "kill":
+                for dead_pirate in self.pirate_handler.dead_pirates:
+                    mission.set_amount(mission.amount + 1)
+
+                planet = self.entity_manager.get_component(self.planet_dict[mission.destination], Planet)
+                x , y= self.entity_manager.get_component(self.player_id, Position)
+                if "moon" in planet.kind:
+                    planet = self.entity_manager.get_component(planet.orbits, Planet)
+
+                if mission.amount == mission.max_amount:
+                    mission.set_type("complete")
+
+                elif math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False:
+                    mission.active = True
+                    spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict[planet.name], 30)
+                    spawn_planet_siege(self.entity_manager, self.pirate_handler, mission.max_amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
+
+            elif mission.type == "complete":
+                if self.camera.selected_planet == None:
+                    continue
+                    
+                if self.camera.selected_planet.name == mission.destination:
+                    mission_remove_list.append(mission)
+                    self.entity_manager.get_component(self.player_id, Balance).credits += mission.reward
+
+        for mission in mission_remove_list:
+            self.hud.log.mission_dict.pop(mission)
+
         if not self.playing:
             if self.transition_timer != None:
                 self.transition_timer -= delta_time
@@ -389,18 +431,6 @@ class Space(scene.Scene):
             self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
             self.planet_handler.update(self.entity_manager, self.camera, delta_time, True)
             return
-
-        # Spawn pirate based on mission value:
-        for mission in self.hud.log.mission_dict:
-            if random.randint(0, 10_000_000) < 1 + mission.reward / 5 and mission.type != "kill" and self.time_elapsed % 120:
-                pos = self.entity_manager.get_component(self.player_id, Position).copy()
-                pos.x += random.choice([-1280, 1280])
-                pos.y += random.choice([-720, 720])
-
-                pirate_type = random.choice(["pirate", "pirate skull", "pirate smile", "pirate light", "pirate light smile"])
-                pirate_id = create_pirate(self.entity_manager, pos, Images.get_image(pirate_type), pirate_type)
-                self.pirate_handler.register_pirate(pirate_id)
-                break
 
         # Handle input
         self.handle_held_keys(delta_time)

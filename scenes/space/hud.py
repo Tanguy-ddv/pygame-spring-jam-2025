@@ -21,6 +21,19 @@ class HUD:
         self.fuel_display = FuelDisplay()
         self.waypoint_markers = WaypointMarkers(40, 10)
 
+
+        self.log.add_mission(
+            Mission(
+                "complete",
+                0,
+                0,
+                "earth",
+                "earth",
+                5000,
+                "kg"
+            )
+        )
+
     def handle_event(self, event):
         if self.planet_interface.planet == None:
             self.map.handle_event(event)
