@@ -108,7 +108,7 @@ class Space(scene.Scene):
         self.player_id = create_entity(self.entity_manager,
                                        Images.get_image("shuttle"),
                                        Rotation(0),
-                                       Health(1, 5000),
+                                       Health(1, 1000),
                                        Fuel(1000, 1000),
                                        Balance(0),
                                        Animator(),
@@ -137,13 +137,13 @@ class Space(scene.Scene):
         sound.set_volume(0.5)
         sound.play(-1)
 
-    def handle_events(self, events: list[pygame.Event]) -> None:
+    def handle_events(self, events: list[pygame.Event], delta_time: float) -> None:
         if self.entity_manager.has_component(self.player_id, Dying):
             return
         
         for event in events:
             if event.type == KEYDOWN:
-                self.key_pressed(event)
+                self.key_pressed(event, delta_time)
 
             elif event.type == KEYUP:
                 self.key_unpressed(event)
@@ -211,17 +211,17 @@ class Space(scene.Scene):
                     direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
                     if abs(direction_inaccuracy) <= 10:
                         distance = math.sqrt((pirate_position.x - position.x) ** 2 + (pirate_position.y - position.y) ** 2)
-                        bullet_distance = distance / 300000
+                        bullet_distance = distance / (100000 * delta_time)
                         true_pirate_location = (pirate_position.x + (pirate_velocity.x * bullet_distance), pirate_position.y + (pirate_velocity.y * bullet_distance))
                         final_direction = math.degrees(-math.atan2((true_pirate_location[1] - position.y), (true_pirate_location[0] - position.x)))
-                    
+                        
                 radians_final_direction = math.radians(final_direction)
                 id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
                 self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
                 self.bullet_timer = 0.25
                 fuel.consume(BULLET_COST)
 
-    def key_pressed(self, event: pygame.Event) -> None:
+    def key_pressed(self, event: pygame.Event, delta_time: float) -> None:
         position = self.entity_manager.get_component(self.player_id, Position)
         velocity = self.entity_manager.get_component(self.player_id, Velocity)
         rotation = self.entity_manager.get_component(self.player_id, Rotation)
@@ -277,7 +277,7 @@ class Space(scene.Scene):
                 direction_inaccuracy = math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction))
                 if abs(direction_inaccuracy) <= 10:
                     distance = math.sqrt((pirate_position.x - position.x) ** 2 + (pirate_position.y - position.y) ** 2)
-                    bullet_distance = distance / 300000
+                    bullet_distance = distance / (100000 * delta_time)
                     true_pirate_location = (pirate_position.x + (pirate_velocity.x * bullet_distance), pirate_position.y + (pirate_velocity.y * bullet_distance))
                     final_direction = math.degrees(-math.atan2((true_pirate_location[1] - position.y), (true_pirate_location[0] - position.x)))
             
@@ -417,7 +417,7 @@ class Space(scene.Scene):
         # Update planets
         self.planet_handler.update(self.entity_manager, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
-        self.pirate_handler.update(self.entity_manager, self.bullet_system, self.player_id, self.simulator)
+        self.pirate_handler.update(self.entity_manager, self.player_id, self.simulator, delta_time)
 
         # self.entity_manager.get_component(self.player_id, Position).xy = self.entity_manager.get_component(self.planet_ids[3], Planet).x, self.entity_manager.get_component(self.planet_ids[3], Planet).y
         

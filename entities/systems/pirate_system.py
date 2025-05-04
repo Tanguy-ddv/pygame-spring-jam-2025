@@ -32,7 +32,7 @@ class PirateHandler:
         if id in self.pirate_ids:
             self.pirate_ids.remove(id)
 
-    def update(self, entity_manager: EntityManager, bullet_system: BulletSystem, player_id:int, simulator: SimulationSystem):
+    def update(self, entity_manager: EntityManager, player_id:int, simulator: SimulationSystem, delta_time: float):
         self.dead_pirates.clear()
 
         player_position:pygame.Vector2 = entity_manager.get_component(player_id, Position)
@@ -81,7 +81,7 @@ class PirateHandler:
 
                     distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
                     
-                    bullet_distance = distance / 300000
+                    bullet_distance = distance / (100000 * delta_time)
 
                     player_future_position = (player_position.x + (player_velocity.x * bullet_distance), player_position.y + (player_velocity.y * bullet_distance))
 
