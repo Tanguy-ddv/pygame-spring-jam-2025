@@ -30,7 +30,7 @@ def new_mission(source):
                 destination = random.choice(PLANETS)
 
         for _ in range(quantity):
-            reward += random.randint(1737, 3728)
+            reward += random.randint(9412, 16480)
 
         distance = math.sqrt(abs(PLANET_DICT[source]["dist"] - PLANET_DICT[destination]["dist"]))
 

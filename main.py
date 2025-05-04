@@ -29,6 +29,7 @@ class Game:
         while self.is_running:
             # Restart game
             if self.scene_manager.current_scene == "space" and  self.scene_manager.scene_dict[self.scene_manager.current_scene].restart:
+                pygame.mixer.stop()
                 self.scene_manager.register_scene(Space(), "space")
 
             # Get delta time

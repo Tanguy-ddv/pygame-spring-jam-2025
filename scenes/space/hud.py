@@ -12,11 +12,11 @@ from assets import *
 from utils.constants import GAMEH_PER_REALSEC
 
 class HUD:
-    def __init__(self):
+    def __init__(self, fuel, balance):
         # Elements
         self.map = Map()
         self.log = Log()
-        self.planet_interface = PlanetInterface(self.log)
+        self.planet_interface = PlanetInterface(fuel, balance, self.log)
         self.manual = Manual()
         self.fuel_display = FuelDisplay()
         self.balance = BalanceDisplay()
@@ -30,7 +30,7 @@ class HUD:
                 0,
                 "earth",
                 "earth",
-                5000,
+                5000000,
                 "kg"
             )
         )
@@ -38,10 +38,10 @@ class HUD:
     def handle_event(self, camera, event):
         if self.planet_interface.planet == None:
             self.map.handle_event(event)
-            self.manual.handle_event(event)
             self.log.handle_event(event)
 
         self.planet_interface.handle_event(camera, event)
+        self.manual.handle_event(event)
 
     def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], pirate_handler: PirateHandler, camera, delta_time) -> None:
         self.map.update(entity_manager, player_id, planet_ids, future_player_positions, pirate_handler)
@@ -66,6 +66,8 @@ class HUD:
             self.log.draw(surface)
             self.balance.draw(surface, (self.planet_interface.board_x + self.planet_interface.width / 2 - self.balance.surface.get_width() / 2,
                                         self.planet_interface.board_y + 80))
+
+            self.manual.draw(surface)
 
         elif self.map.fullscreened and self.map.map_mode != 0:
             self.map.draw(surface)
@@ -164,7 +166,7 @@ class BalanceDisplay:
         surface.blit(self.surface, offset)
 
 class PlanetInterface:
-    def __init__(self, log):
+    def __init__(self, fuel, balance, log):
         self.planet = None
         self.enabled = False
         self.dist = 40
@@ -175,6 +177,77 @@ class PlanetInterface:
         self.zoom = 1
         self.active_tab = "missions"
         self.log = log
+
+        self.fuel = fuel
+        self.balance = balance
+        
+        with open("data/upgrades.json", "r") as file:
+            self.upgrade_dict = json.load(file)
+
+        self.surfaces = {key: self._render_text(key) for key in self.upgrade_dict}
+
+    def _render_text(self, upgrade_name):
+        font = Fonts.get_font("Small")
+        level = self.upgrade_dict[upgrade_name]["level"]
+
+        # Create surface
+        surface = pygame.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
+
+        # Draw bg
+        pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
+
+        # if level + 1 >= len(self.upgrade_dict[upgrade_name]["prices"]):
+        #     max_text = Images.get_image("maxed")
+        #     surface.blit(max_text, (surface.get_width() / 2 - max_text.get_width() / 2, surface.get_height() / 2 - max_text.get_height() / 2))
+        #     return surface
+        
+        desc = self.upgrade_dict[upgrade_name]["description"]
+
+        # Upgrade title + cost
+        if level + 1 >= len(self.upgrade_dict[upgrade_name]["prices"]) or self.upgrade_dict[upgrade_name]["prices"][level + 1] == 0:
+            titletext = f"{upgrade_name} LV.{level + 1} : MAXED OUT" if upgrade_name != "recharge" else f"{upgrade_name} : ${0}"
+            colour = (150 * 0.65, 255 * 0.65, 150 * 0.65)
+
+        else:
+            cost = self.upgrade_dict[upgrade_name]["prices"][level + 1]
+            titletext = f"{upgrade_name} LV.{level + 1} : ${cost}" if upgrade_name != "recharge" else f"{upgrade_name} : ${cost}"
+            colour = (150, 255, 150)
+
+        title = font.render(
+            titletext,
+            True,
+            colour
+        )
+
+        surface.blit(title, (0, 0))
+
+        # Upgrade description
+        if level + 1 >= len(self.upgrade_dict[upgrade_name]["prices"]) or self.upgrade_dict[upgrade_name]["prices"][level + 1] == 0:
+            description = font.render(
+                desc,
+                True,
+                (255 * 0.65, 255 * 0.65, 255 * 0.65)
+            )
+
+        else:
+            description = font.render(
+                desc,
+                True,
+                (255, 255, 255)
+            )
+    
+        surface.blit(description, (0, title.get_height() + 5))
+
+        # buy prompt
+        if upgrade_name == "recharge" and self.upgrade_dict[upgrade_name]["prices"][level + 1] != 0:
+            text = Images.get_image("buy")
+            surface.blit(text, (1280 / 3 - text.get_width() - 8, font.get_height() * 3.5 - text.get_height() - 5))
+
+        elif level + 1 < len(self.upgrade_dict[upgrade_name]["prices"]) and upgrade_name != "recharge":
+            text = Images.get_image("upgrade")
+            surface.blit(text, (1280 / 3 - text.get_width() - 8, font.get_height() * 3.5 - text.get_height() - 5))
+
+        return surface
 
     def handle_event(self, camera, event):
         if self.planet == None:
@@ -197,33 +270,67 @@ class PlanetInterface:
                 self.active_tab = "missions"
                 camera.selected_planet = None
                 return
+            
+            elif self.active_tab == "missions":
+                offsety = 0
 
-            offsety = 0
+                mission_list = list(self.planet.mission_dict.keys())
+                mission_list.sort(key=lambda x: x.reward, reverse=False)
 
-            mission_list = list(self.planet.mission_dict.keys())
-            mission_list.sort(key=lambda x: x.reward, reverse=False)
+                for mission in mission_list:
+                    board_x = 1280 - self.dist - self.width
+                    board_y = self.dist
+                    topleft = (board_x, board_y + offsety + self.height - self.planet.mission_dict[mission].get_height() - 4)
+                    offsety -= self.planet.mission_dict[mission].get_height() + 2
 
-            for mission in mission_list:
-                board_x = 1280 - self.dist - self.width
-                board_y = self.dist
-                topleft = (board_x, board_y + offsety + self.height - self.planet.mission_dict[mission].get_height() - 4)
-                offsety -= self.planet.mission_dict[mission].get_height() + 2
+                    if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
+                        self.log.add_mission(mission)
+                        self.planet.mission_dict.pop(mission)
 
-                if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
-                    self.log.add_mission(mission)
-                    self.planet.mission_dict.pop(mission)
+                        mission = new_mission(self.planet.name)
+                        self.planet.mission_dict[mission] = self.planet._render_mission(mission)
+                        return
+                    
+            elif self.active_tab == "shop":
+                offsety = 0
 
-                    mission = new_mission(self.planet.name)
-                    self.planet.mission_dict[mission] = self.planet._render_mission(mission)
-                    return
+                for upgrade_name in list(self.upgrade_dict.keys())[::-1]:
+                    board_x = 1280 - self.dist - self.width
+                    board_y = self.dist
+                    topleft = (board_x, board_y + offsety + self.height - self.surfaces[upgrade_name].get_height() - 4)
+                    offsety -= self.surfaces[upgrade_name].get_height() + 2
+
+                    if self.surfaces[upgrade_name].get_rect(topleft=topleft).collidepoint(event.pos):
+                        # Attributes
+                        level = self.upgrade_dict[upgrade_name]["level"]
+                        if level + 1 >= len(self.upgrade_dict[upgrade_name]["prices"]):
+                            return
+                        
+                        cost = self.upgrade_dict[upgrade_name]["prices"][level + 1]
+
+                        # ON CLICK
+                        if self.balance.credits < cost:
+                            return # maybe play purchase failed sound
+                        
+                        # maybe play purchase success sound
+                        self.balance.credits -= cost
+                        if upgrade_name == "recharge":
+                            self.fuel.fuel = self.fuel.max_fuel
+
+                        else:
+                            self.upgrade_dict[upgrade_name]["level"] += 1
+
+                        self.surfaces[upgrade_name] = self._render_text(upgrade_name)
+
+                        return
 
     def update(self, camera, delta_time):
         self.planet = camera.selected_planet
         self.zoom = camera.zoom
         self.enabled = self.planet != None
 
-        if self.enabled:
-            self.log.enabled = True
+        self.upgrade_dict["recharge"]["prices"][0] = int((self.fuel.max_fuel - self.fuel.fuel) * 5)
+        self.surfaces["recharge"] = self._render_text("recharge")
 
     def draw(self, surface):
         if not self.enabled:
@@ -276,6 +383,17 @@ class PlanetInterface:
                 surface.blit(mission_image, (self.board_x, self.board_y + offsety + self.height - mission_image.get_height() - 4))
                 offsety -= mission_image.get_height() + 2
 
+        else:
+            # Draw shop bg
+            pygame.draw.rect(surface, (40, 40, 40), (self.board_x - 2, self.board_y + 118, self.width + 4, self.height - 118 - 1), 0, 10)
+
+            # Draw upgrades
+            offsety = 0
+
+            for upgrade_surface in list(self.surfaces.values())[::-1]:
+                surface.blit(upgrade_surface, (self.board_x, self.board_y + offsety + self.height - upgrade_surface.get_height() - 4))
+                offsety -= upgrade_surface.get_height() + 2
+
 class Manual:
     def __init__(self):
         self.enabled = True # Keybind T opens manual for tutorial
@@ -296,6 +414,7 @@ class Manual:
 class Log:
     def __init__(self):
         self.enabled = True
+        self.last_state = True
         self.mission_dict = {} # Keybind J toggles quest log sidebar (active missions) They should also include dist to objective
         self.distance = 400
         self.position = 0
@@ -343,6 +462,7 @@ class Log:
     def handle_event(self, event):
         if event.type == KEYDOWN:
             if event.key == K_j:
+                self.last_state = self.enabled
                 self.enabled = not self.enabled
 
     def update(self, delta_time):

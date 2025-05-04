@@ -42,6 +42,9 @@ with open("data/celestial_bodies.json", "r") as file:
 
 Images.register_image(Fonts.get_font("Body").render("[F TO UNDOCK]", True, (255, 255, 255)), "undock prompt")
 Images.register_image(Fonts.get_font("Small").render("ACCEPT", True, (0, 255, 0)), "accept")
+Images.register_image(Fonts.get_font("Small").render("buy", True, (0, 255, 0)), "buy")
+Images.register_image(Fonts.get_font("Small").render("upgrade", True, (0, 255, 0)), "upgrade")
+Images.register_image(Fonts.get_font("Small").render("[OUT OF STOCK]", True, (150, 255, 150)), "maxed")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nVISIT THE NEAREST\nPLANET TO GET STARTED.", True, (255, 0, 0)), "empty log")
 Images.register_image(Fonts.get_font("Small").render("NO ACTIVE MISSION:\nSELECT A MISSION\nFROM THE MENU", True, (255, 0, 0)), "empty log + planet view")
 Images.register_image(Fonts.get_font("Tiny").render("(Made by Tanguy, Jfffh, ImNottL & Yaroslav for the 2025 pygame spring jam)", True, (100, 100, 100)), "credit")
@@ -56,8 +59,8 @@ image.blit(Fonts.get_font("Tiny").render("W to engage the main drive", True, (25
 image.blit(Fonts.get_font("Tiny").render("A or D to rotate", True, (255, 255, 255)), (10, y)); y += 16
 image.blit(Fonts.get_font("Tiny").render("SPACE to shoot", True, (255, 255, 255)), (10, y)); y += 16; y += 8
 image.blit(Fonts.get_font("Tiny").render("M to show the map", True, (255, 255, 255)), (10, y)); y += 16
-image.blit(Fonts.get_font("Tiny").render("V to change map view", True, (255, 255, 255)), (10, y)); y += 16
-image.blit(Fonts.get_font("Tiny").render("TAB to change map mode", True, (255, 255, 255)), (10, y)); y += 16; y += 8
+image.blit(Fonts.get_font("Tiny").render("V to change map mode", True, (255, 255, 255)), (10, y)); y += 16
+image.blit(Fonts.get_font("Tiny").render("TAB to toggle map fullscreen", True, (255, 255, 255)), (10, y)); y += 16; y += 8
 image.blit(Fonts.get_font("Tiny").render("F to dock at a planet", True, (255, 255, 255)), (10, y)); y += 16
 image.blit(Fonts.get_font("Tiny").render("J to toggle mission log", True, (255, 255, 255)), (10, y)); y += 16; y += 8
 image.blit(Fonts.get_font("Tiny").render("Complete missions to earn cash, ", True, (255, 255, 255)), (10, y)); y += 16

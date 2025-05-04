@@ -94,6 +94,7 @@ class Space(scene.Scene):
         self.restart = False
         self.transition_timer = None
         self.bullet_timer = 0
+        self.spawn_time = 0
 
         spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict["earth"], 30)
         spawn_chunk = 15
@@ -125,10 +126,13 @@ class Space(scene.Scene):
         self.held_keys = set()
         self.prompt_colour = [0, 0, 0]
         self.time_elapsed = 0
-        self.duration = 1.3
+        self.duration = .5
 
         # HUD
-        self.hud = HUD()
+        self.hud = HUD(
+            self.entity_manager.get_component(self.player_id, Fuel),
+            self.entity_manager.get_component(self.player_id, Balance)
+        )
 
     def start(self) -> None:
         sound:pygame.Sound = Sounds.get_sound("bgm")
@@ -259,6 +263,7 @@ class Space(scene.Scene):
             # Check if docked then undock
             if self.camera.selected_planet != None:
                 self.camera.selected_planet = None
+                self.camera.changed = True
                 return
             
             # Dock at planet
@@ -320,6 +325,7 @@ class Space(scene.Scene):
     def update(self, delta_time: float) -> None:
         self.time_elapsed += delta_time
         self.bullet_timer -= delta_time
+        self.spawn_time += delta_time
 
         # Update camera position
         self.camera.update(self.entity_manager, self.player_id, delta_time)
@@ -327,6 +333,14 @@ class Space(scene.Scene):
         if self.camera.selected_planet != None and self.camera.changed:
             self.background_system.reset_stars(self.camera)
             self.camera.changed = False
+            self.hud.log.last_state = self.hud.log.enabled
+            self.hud.log.enabled = True
+
+        elif self.camera.changed:
+            self.camera.changed = False
+            last = self.hud.log.enabled
+            self.hud.log.enabled = self.hud.log.last_state
+            self.hud.log.last_state = last
             
         # Simulate death
         health:Health = self.entity_manager.get_component(self.player_id, Health)
@@ -376,10 +390,17 @@ class Space(scene.Scene):
                 # Stop all active sounds
                 Sounds.get_sound("thrusters").stop()
 
+                # Play gameover sounds
+                Sounds.get_sound("lose").play()
+
         # Spawn pirate based on mission value:
         mission_remove_list = []
+        if self.hud.log.mission_dict == {}:
+            self.spawn_time = 0
+
         for mission in self.hud.log.mission_dict:
-            if random.randint(0, 10_000_000) < 1 + mission.reward / 5 and mission.type != "kill" and self.time_elapsed % 120 and self.playing:
+            if random.randint(0, 1000) < 1 + math.sqrt(mission.reward) and mission.type != "kill" and self.spawn_time >= 50 and self.playing:
+                self.spawn_time -= 50
                 pos = self.entity_manager.get_component(self.player_id, Position).copy()
                 pos.x += random.choice([-1280, 1280])
                 pos.y += random.choice([-720, 720])
@@ -557,6 +578,5 @@ Add recharging / refueling (1)
 Add highscore display (1)
 Add upgrades / use for money (2)
 Link to database (3)
-
 Bug testing (3)
 """
