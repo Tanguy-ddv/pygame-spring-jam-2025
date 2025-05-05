@@ -419,8 +419,8 @@ class Space(scene.Scene):
             self.spawn_time = 0
 
         for mission in self.hud.log.mission_dict:
-            if random.randint(0, 1000) < 1 + math.sqrt(mission.reward) and mission.type != "kill" and self.spawn_time >= 50 and self.playing:
-                self.spawn_time -= 50
+            if random.randint(0, 1000) < 333 + math.sqrt(mission.reward) * 2 and not mission.active and self.spawn_time >= 30 and self.playing:
+                self.spawn_time -= 30
                 pos = self.entity_manager.get_component(self.player_id, Position).copy()
                 pos.x += random.choice([-1280, 1280])
                 pos.y += random.choice([-720, 720])
@@ -429,6 +429,9 @@ class Space(scene.Scene):
                 pirate_id = create_pirate(self.entity_manager, pos, Images.get_image(pirate_type), pirate_type)
                 self.pirate_handler.register_pirate(pirate_id)
             
+            elif self.spawn_time >= 30:
+                self.spawn_time -= 30
+
             if mission.type == "delivery":
                 if self.camera.selected_planet == None:
                     continue
