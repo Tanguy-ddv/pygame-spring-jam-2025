@@ -25,13 +25,15 @@ class Game:
         self.screen_size = screen_size
         self.fps = fps
 
-        self.screen = pygame.display.set_mode(screen_size)
+        self.screen = pygame.display.set_mode(screen_size, FULLSCREEN | SCALED)
         self.clock = pygame.time.Clock()
 
         self.scene_manager = SceneManager()
         self.scene_manager.register_scene(Title(), "title")
         self.scene_manager.register_scene(Space(), "space")
         self.scene_manager.set_scene("title")
+
+        pygame.display.set_caption("ICS Pioneer")
 
     async def start(self):
         self.is_running = True
@@ -64,7 +66,6 @@ class Game:
 
             # Flip display
             pygame.display.flip()
-            pygame.display.set_caption("fps: " + str(round(self.clock.get_fps())))
 
         self.stop()
 

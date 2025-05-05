@@ -87,13 +87,13 @@ class Space(scene.Scene):
                                        Images.get_image("shuttle"),
                                        Rotation(0),
                                        Health(1, 1000),
-                                       Fuel(1000, 1000),
-                                       Balance(99999999999),
+                                       Fuel(1500, 1500),
+                                       Balance(0),
                                        Animator(),
                                        Position(),
                                        Velocity(0, 0),
                                        Force(0, 0),
-                                       Mass(20),
+                                       Mass(15),
                                        CircleCollider((0, 0), 9),
                                        OtherIds(),
                                        Simulate(), # This makes player affected by physics
@@ -464,7 +464,6 @@ class Space(scene.Scene):
                         mission.pirate_ids.remove(pirate)
 
                 elif math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False and self.playing:
-                    print("SPAWN SIEGE")
                     mission.active = True
                     spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict[planet.name], 30)
                     spawn_planet_siege(self.entity_manager, mission, self.pirate_handler, mission.max_amount - mission.amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
@@ -615,12 +614,3 @@ class Space(scene.Scene):
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()
-
-"""
-TODO:
-Add recharging / refueling (1)
-Add highscore display (1)
-Add upgrades / use for money (2)
-Link to database (3)
-Bug testing (3)
-"""

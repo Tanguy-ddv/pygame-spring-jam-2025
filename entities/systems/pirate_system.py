@@ -95,8 +95,8 @@ class PirateHandler:
                             Sounds.get_sound("pirate_weapon_fire").play()
                 
                 rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) / 10
-                force.x += 1500 * math.cos(math.radians(rotation.angle))
-                force.y -= 1500 * math.sin(math.radians(rotation.angle))
+                force.x += 1800 * math.cos(math.radians(rotation.angle))
+                force.y -= 1800 * math.sin(math.radians(rotation.angle))
 
                 circle.x, circle.y = position.x, position.y
                 waypoint.position.xy = position.xy
