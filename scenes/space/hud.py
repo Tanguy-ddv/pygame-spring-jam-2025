@@ -274,7 +274,7 @@ class PlanetInterface:
                         self.log.add_mission(mission)
                         self.planet.mission_dict.pop(mission)
 
-                        mission = new_mission(self.planet.name)
+                        mission = new_mission(self.planet.reputation, self.planet.name)
                         self.planet.mission_dict[mission] = self.planet._render_mission(mission)
                         Sounds.get_sound("accept_mission").play(fade_ms=500)
 
