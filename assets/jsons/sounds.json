@@ -8,5 +8,6 @@
     "resources/music/player_hit.ogg": "player_hit",
     "resources/music/player_weapon_fire.ogg": "player_weapon_fire",
     "resources/music/purchase.ogg": "purchase",
-    "resources/music/side_drive.ogg": "side_drive"
+    "resources/music/side_drive.ogg": "side_drive",
+    "resources/music/select.ogg": "select"
 }

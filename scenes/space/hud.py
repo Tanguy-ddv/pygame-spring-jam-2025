@@ -461,7 +461,7 @@ class Log:
         surface.blit(text, (0, 0))
         if mission.type in ["kill", "deliver"]:
             new_surface = font.render(
-                f"  [${mission.reward} REWARD]",
+                f" [${mission.reward} REWARD]",
                 True,
                 (150, 255, 150)
             )

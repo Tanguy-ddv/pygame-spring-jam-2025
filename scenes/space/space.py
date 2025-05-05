@@ -162,8 +162,8 @@ class Space(scene.Scene):
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 if self.gameover:
                     if self.transition_timer == None:
-                        Sounds.get_sound("accept_mission").play()
-                        self.transition_timer = Sounds.get_sound("accept_mission").get_length()
+                        Sounds.get_sound("select").play() # THIS IS THE RESTART CODE
+                        self.transition_timer = Sounds.get_sound("select").get_length()
                     
                     return
                 
@@ -263,12 +263,14 @@ class Space(scene.Scene):
             animator.animation_stack["spin aclockwise start"] = 0
 
             sound:pygame.mixer.Sound = Sounds.get_sound("side_drive")
+            sound.set_volume(0.2)
             sound.play(loops=-1, fade_ms=500)
 
         elif event.key == K_d:
             animator.animation_stack["spin clockwise start"] = 0
 
             sound:pygame.mixer.Sound = Sounds.get_sound("side_drive")
+            sound.set_volume(0.2)
             sound.play(loops=-1, fade_ms=500)
 
         elif event.key == K_w:
