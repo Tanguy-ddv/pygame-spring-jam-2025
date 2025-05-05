@@ -89,11 +89,12 @@ class PirateHandler:
 
                     if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) <= 10:
                         distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
-                        if timer.time % 50 == 0 and distance <= 1280:
+                        if timer.time % 100 == 0 and distance <= 1280:
                             angle = rotation.angle + (random.randint(-10, 10) / 10)
                             radians_angle = math.radians(angle)
                             bullet_id = create_bullet(entity_manager, (position.x + 20 * math.cos(radians_angle), position.y - 20 * math.sin(radians_angle)), angle, id)
                             other_ids.add_other_id(bullet_id)
+                            Sounds.get_sound("pirate_weapon_fire").play()
                 
                 rotation.angle += math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) / 10
                 force.x += 1500 * math.cos(math.radians(rotation.angle))
@@ -112,6 +113,7 @@ class PirateHandler:
                             entity_manager.remove_component(id, pygame.surface.Surface)
                             entity_manager.remove_component(id, Simulate)
                             entity_manager.add_component(id, Dying())
+                            Sounds.get_sound("explosion").play(fade_ms=500)
 
             if "explosion2" in animator.animation_stack:
                 entity_manager.remove_component(id, pygame.surface.Surface)

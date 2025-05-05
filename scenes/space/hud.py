@@ -271,10 +271,12 @@ class PlanetInterface:
                     offsety -= self.planet.mission_dict[mission].get_height() + 2
 
                     if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
-                        if self.log.add_mission(mission):
-                            self.planet.mission_dict.pop(mission)
-                            mission = new_mission(self.planet.reputation, self.planet.name)
-                            self.planet.mission_dict[mission] = self.planet._render_mission(mission)
+                        self.log.add_mission(mission)
+                        self.planet.mission_dict.pop(mission)
+
+                        mission = new_mission(self.planet.name)
+                        self.planet.mission_dict[mission] = self.planet._render_mission(mission)
+                        Sounds.get_sound("accept_mission").play(fade_ms=500)
 
                         return
                     
@@ -300,10 +302,13 @@ class PlanetInterface:
                             return # maybe play purchase failed sound
                         
                         # maybe play purchase success sound
+                        Sounds.get_sound("purchase").play(fade_ms=500)
+
                         self.balance.credits -= cost
                         if upgrade_name == "recharge":
                             self.fuel.fuel = self.fuel.max_fuel
                             self.surfaces[upgrade_name] = self._render_text(upgrade_name)
+                            
                             return
 
                         elif upgrade_name == "reputation":
@@ -324,6 +329,7 @@ class PlanetInterface:
 
                         self.upgrade_dict[upgrade_name]["level"] += 1
                         self.surfaces[upgrade_name] = self._render_text(upgrade_name)
+
                         return
 
     def update(self, camera, delta_time):
