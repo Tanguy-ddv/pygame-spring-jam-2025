@@ -12,7 +12,6 @@ from assets import *
 
 from .simulator import SimulationSystem
 from ..templates.bullet_template import create_bullet
-from .bullet_system import BulletSystem
 
 MAX_RADIANS = math.pi * 2
 
