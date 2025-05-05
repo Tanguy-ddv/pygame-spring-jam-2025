@@ -14,7 +14,7 @@ with open("data/material_data.json", "r") as file:
 
 def new_mission(reputation, source):
     modifier = reputation.reward_modifier
-    mission_type = random.choice(["kill", "deliver"])
+    mission_type = random.choice(["kill", "delivery"])
 
     if mission_type == "kill":
         quantity = random.randint(3, 4)
@@ -45,7 +45,7 @@ def new_mission(reputation, source):
             None
         )
     
-    elif mission_type == "deliver":
+    elif mission_type == "delivery":
         item = random.choice(list(ITEMS.keys()))
         while source not in ITEMS[item]["exporters"]:
             item = random.choice(list(ITEMS.keys()))
