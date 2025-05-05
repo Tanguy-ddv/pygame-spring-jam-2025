@@ -437,7 +437,10 @@ class Space(scene.Scene):
                 self.pirate_handler.register_pirate(pirate_id)
             
             if mission.type == "delivery":
-                if self.camera.selected_planet.name == mission.destination:
+                if self.camera.selected_planet.name == None:
+                    continue
+
+                elif self.camera.selected_planet.name == mission.destination:
                     mission.set_type("complete")
 
             elif mission.type == "kill":
