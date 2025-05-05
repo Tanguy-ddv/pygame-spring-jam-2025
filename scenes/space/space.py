@@ -437,27 +437,29 @@ class Space(scene.Scene):
                 self.pirate_handler.register_pirate(pirate_id)
             
             if mission.type == "delivery":
-                print(self.camera.selected_planet.name, mission.destination)
                 if self.camera.selected_planet.name == mission.destination:
                     mission.set_type("complete")
 
             elif mission.type == "kill":
                 for dead_pirate in self.pirate_handler.dead_pirates:
-                    mission.set_amount(mission.amount + 1)
+                    if dead_pirate in mission.pirate_ids:
+                        mission.set_amount(mission.amount + 1)
+                        mission.pirate_ids.remove(dead_pirate)
 
                 planet = self.entity_manager.get_component(self.planet_dict[mission.destination], Planet)
                 x , y= self.entity_manager.get_component(self.player_id, Position)
                 if "moon" in planet.kind:
                     planet = self.entity_manager.get_component(planet.orbits, Planet)
 
-                if mission.amount == mission.max_amount:
+                if mission.amount >= mission.max_amount:
                     mission.set_type("complete")
                     for pirate in mission.pirate_ids:
                         self.pirate_handler.unregister_pirate(pirate)
                         self.entity_manager.delete_entity(pirate)
                         mission.pirate_ids.remove(pirate)
 
-                if math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False:
+                elif math.hypot(planet.x - x, planet.y - y) < 800 and mission.active == False and self.playing:
+                    print("SPAWN SIEGE")
                     mission.active = True
                     spawn_chunks = find_spawn_chunks_for_planet(self.entity_manager, self.planet_ids, self.planet_dict[planet.name], 30)
                     spawn_planet_siege(self.entity_manager, mission, self.pirate_handler, mission.max_amount - mission.amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
