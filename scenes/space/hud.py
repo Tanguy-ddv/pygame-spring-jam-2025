@@ -14,8 +14,8 @@ from utils.constants import GAMEH_PER_REALSEC
 class HUD:
     def __init__(self, fuel, balance):
         # Elements
-        self.map = Map()
         self.log = Log()
+        self.map = Map(self.log)
         self.planet_interface = PlanetInterface(fuel, balance, self.log)
         self.manual = Manual()
         self.fuel_display = FuelDisplay()
@@ -528,7 +528,7 @@ class Log:
             offsety += self.mission_dict[mission].get_height() + 12
 
 class Map:
-    def __init__(self):
+    def __init__(self, log):
         self.map_surface = pygame.surface.Surface((1280, 720), pygame.SRCALPHA)
         self.map_surface_center = pygame.Vector2(self.map_surface.get_rect().size) / 2
 
@@ -540,6 +540,7 @@ class Map:
         self.zoom = 1.0
         self.lastpos = (0, 0)
         self.offset = pygame.Vector2(0, 0)
+        self.log = log
 
     def handle_event(self, event):
         if event.type == MOUSEWHEEL:
@@ -638,6 +639,7 @@ class Map:
             #pass two drawing moon orbit
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
+
                 if  "moon"in planet.kind:
                     orbit:Planet = entity_manager.get_component(planet.orbits, Planet)
                     center = calculate_on_map_position(self, pygame.Vector2(orbit.x, orbit.y)) - offset
@@ -647,17 +649,29 @@ class Map:
 
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
+                colour = None
+
+                for mission in self.log.mission_dict:
+                    if mission.destination == planet.name:
+                        colour = (0, 255, 0)
+                        break
 
                 on_map_position = calculate_on_map_position(self, pygame.Vector2(planet.x, planet.y))
 
                 if "moon" in planet.kind:
-                    pygame.draw.circle(self.map_surface, (137, 35, 247), on_map_position - offset, max(calculate_scale(self, planet.radius / 880), 2))
+                    if colour is None:
+                        colour = (137, 35, 247)
+
+                    pygame.draw.circle(self.map_surface, colour, on_map_position - offset, max(calculate_scale(self, planet.radius / 880), 2))
 
                 elif planet.kind == "sun":
                     pygame.draw.circle(self.map_surface, (255, 227, 84), on_map_position - offset, max(calculate_scale(self, planet.radius / 50), 3))
 
                 else:
-                    pygame.draw.circle(self.map_surface, (44, 95, 176), on_map_position - offset, max(calculate_scale(self, planet.radius / 880), 5))
+                    if colour is None:
+                        colour = (44, 95, 176)
+
+                    pygame.draw.circle(self.map_surface, colour, on_map_position - offset, max(calculate_scale(self, planet.radius / 880), 5))
 
             position:Position = entity_manager.get_component(player_id, Position)
 
@@ -671,16 +685,28 @@ class Map:
             # Draw bodies
             for planet_id in planet_ids:
                 planet:Planet = entity_manager.get_component(planet_id, Planet)
+                colour = None
+
+                for mission in self.log.mission_dict:
+                    if mission.destination == planet.name:
+                        colour = (0, 255, 0)
+                        break
+
                 on_map_position = (self.map_surface_center[0] + calculate_scale(self, (planet.x - player_position.x) / 4), self.map_surface_center[1] + calculate_scale(self, (planet.y - player_position.y) / 4))
 
                 if  "moon" in planet.kind:
-                    pygame.draw.circle(self.map_surface, "#8923f7", on_map_position, calculate_scale(self, planet.radius / 4))
+                    if colour is None:
+                        colour ="#8923f7"
+                    pygame.draw.circle(self.map_surface, colour, on_map_position, calculate_scale(self, planet.radius / 4))
 
                 elif planet.kind == "sun":
                     pygame.draw.circle(self.map_surface, "#ffe354", on_map_position, calculate_scale(self, planet.radius / 4))
 
                 else:
-                    pygame.draw.circle(self.map_surface, "#2c5fb0", on_map_position, calculate_scale(self, planet.radius / 4))
+                    if colour is None:
+                        colour = "#2c5fb0"
+
+                    pygame.draw.circle(self.map_surface, colour, on_map_position, calculate_scale(self, planet.radius / 4))
 
             # Draw predicted path
             for i in range(len(future_player_positions) - 2):
