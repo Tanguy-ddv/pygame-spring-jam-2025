@@ -2,7 +2,7 @@
   "gold": {
     "exporters": ["mercury", "earth", "ganymede", "titan"],
     "importers": ["pluto", "ceres", "europa", "venus", "mars"],
-    "price": 25,
+    "price": 13.5,
     "unit": "kg",
     "lower bound": 100,
     "upper bound": 150
@@ -11,7 +11,7 @@
   "iron": {
     "exporters": ["mars", "earth", "callisto", "rhea", "enceladus", "neptune", "ceres"],
     "importers": ["the moon", "uranus", "io", "pluto"],
-    "price": 4.75,
+    "price": 4.5,
     "unit": "kg",
     "lower bound": 250,
     "upper bound": 400

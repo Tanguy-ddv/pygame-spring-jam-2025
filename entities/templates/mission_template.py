@@ -34,6 +34,7 @@ def new_mission(reputation, source):
             reward += random.randint(100, 175)
 
         distance = math.sqrt(abs(PLANET_DICT[source]["dist"] - PLANET_DICT[destination]["dist"]))
+        distance = 1 + math.log10(distance) / 100
 
         return Mission(
             mission_type,
@@ -41,7 +42,7 @@ def new_mission(reputation, source):
             "pirates",
             destination,
             source,
-            reward * modifier,
+            int(reward * distance) * modifier,
             None
         )
     
@@ -64,7 +65,7 @@ def new_mission(reputation, source):
 
             distance = abs((PLANET_DICT[source]["dist"] + PLANET_DICT[PLANET_DICT[source]["orbits"]]["dist"]) - PLANET_DICT[destination]["dist"])
 
-        distance = 1 + math.log10(distance) / 10
+        distance = 1 + math.log10(distance) / 100
         quantity = random.randint(ITEMS[item]["lower bound"], ITEMS[item]["upper bound"])
         reward = int(distance * quantity * ITEMS[item]["price"])
         unit = ITEMS[item]["unit"]
@@ -77,6 +78,6 @@ def new_mission(reputation, source):
             item,
             destination,
             source,
-            reward,
+            reward * modifier,
             unit
         )

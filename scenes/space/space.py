@@ -81,7 +81,7 @@ class Space(scene.Scene):
                                        Rotation(0),
                                        Health(1, 1000),
                                        Fuel(1000, 1000),
-                                       Balance(0),
+                                       Balance(99999999999),
                                        Animator(),
                                        Position(),
                                        Velocity(0, 0),

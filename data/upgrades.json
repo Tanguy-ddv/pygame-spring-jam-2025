@@ -7,36 +7,36 @@
     },
 
     "reputation": {
-        "prices": [0, 12500, 25000, 50000, 100000, 150000],
-        "values": [5, 20, 40, 80, 150, 200],
+        "prices": [0, 10000, 25000, 60000, 100000, 150000],
+        "values": [5, 10, 20, 35, 45, 60],
         "description": "Increases the money earned\nfrom missions.",
         "level": 0
     },
 
     "efficiency": {
-       "prices": [0, 10000, 20000, 40000, 150000, 250000],
-        "values": [0.5, 0.75, 1, 1.2, 1.6, 2],
+       "prices": [0, 7500, 20000, 60000, 150000, 250000],
+        "values": [0.5, 0.75, 1, 1.2, 1.6, 3],
         "description": "Reduces power consumption\nfrom all sources.",
         "level": 0
     },
 
     "battery": {
-        "prices": [0, 5000, 15000, 40000, 150000, 250000],
-        "values": [1000, 1200, 1400, 2000, 3500, 5000],
+        "prices": [0, 7500, 20000, 60000, 150000, 250000],
+        "values": [1000, 1200, 1400, 2000, 3500, 10000],
         "description": "Increases the total capacity\nof the battery.",
         "level": 0
     },
 
     "fire-rate": {
-        "prices": [0, 2500, 10000, 35000, 150000, 250000],
-        "values": [1, 1.25, 1.5, 2, 2.25, 2.5],
+        "prices": [0, 5000, 15000, 45000, 135000, 225000],
+        "values": [1, 1.25, 1.5, 2, 2.5, 300],
         "description": "Increases the rate at which\nbullets are fired.",
         "level": 0
     },
 
     "scanner": {
         "prices": [0, 2500, 10000, 35000, 75000, 150000],
-        "values": [1, 1.25, 1.5, 2, 2.5, 4],
+        "values": [1, 1.25, 1.5, 2, 2.5, 20],
         "description": "Increases the range of\nall waypoints.",
         "level": 0
     }
