@@ -79,18 +79,15 @@ class PirateHandler:
                 elif pirate.slow_down > 0:
                     direction = math.atan2(velocity.y, velocity.x) + math.radians(180)
                 else:
-
-                    distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
                     
-                    bullet_distance = distance / (100000 * delta_time)
+                    bullet_distance = distance_to_player / (100000 * delta_time)
 
                     player_future_position = (player_position.x + (player_velocity.x * bullet_distance), player_position.y + (player_velocity.y * bullet_distance))
 
                     direction = math.atan2((player_future_position[1] - position.y), (player_future_position[0] - position.x))
 
                     if math.degrees(get_shortest_distance_in_radians(math.radians(rotation.angle), -direction)) <= 10:
-                        distance = math.sqrt((player_position.x - position.x) ** 2 + (player_position.y - position.y) ** 2)
-                        if timer.time % 100 == 0 and distance <= 1280:
+                        if timer.time % 100 == 0 and distance_to_player <= 1280:
                             angle = rotation.angle + (random.randint(-10, 10) / 10)
                             radians_angle = math.radians(angle)
                             bullet_id = create_bullet(entity_manager, (position.x + 20 * math.cos(radians_angle), position.y - 20 * math.sin(radians_angle)), angle, id)

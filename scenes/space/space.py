@@ -157,7 +157,6 @@ class Space(scene.Scene):
                     if self.transition_timer == None:
                         Sounds.get_sound("select").play() # THIS IS THE RESTART CODE
                         self.transition_timer = Sounds.get_sound("select").get_length()
-                    
                     return
                 
                 self.hud.handle_event(self.entity_manager, self.player_id, self.camera, event)
