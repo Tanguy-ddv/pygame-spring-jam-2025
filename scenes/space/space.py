@@ -575,11 +575,18 @@ class Space(scene.Scene):
             self.hud.draw(surface, self.camera)
             return
         
+        score_text = Fonts.get_font("Body").render(
+                f"SCORE : {self.entity_manager.get_component(self.player_id, Balance).credits // 200}",
+                True,
+                (150, 255, 150)
+        )
+
+
         if not self.gameover:
             surface.fill("#555555", surface.get_rect(), special_flags=BLEND_RGB_MULT)
             image = Images.get_image("pause text")
             prompt_image = Images.get_image("unpause prompt").copy()
-
+            
         else:
             surface.fill((85, 85, 85, min(self.time_elapsed / self.duration * 255, 255)), surface.get_rect(), special_flags=BLEND_RGBA_MULT)
             image = Images.get_image("gameover text")
@@ -587,6 +594,7 @@ class Space(scene.Scene):
 
             image.set_alpha(self.time_elapsed / self.duration * 255)
             prompt_image.set_alpha(self.time_elapsed / self.duration * 255)
+            score_text.set_alpha(self.time_elapsed / self.duration * 255)
 
         if self.transition_timer != None:
             if self.transition_timer <= 0:
@@ -603,6 +611,7 @@ class Space(scene.Scene):
         surface.blit(image, (surface.get_width() / 2 - image.get_width() / 2, 50))
         pygame.draw.rect(surface, (180, 180, 180), (surface.get_width() / 2 - image.get_width() / 2 - 20, 50 + image.get_height(), image.get_width() + 40, 10))
         surface.blit(prompt_image, (surface.get_width() / 2 - prompt_image.get_width() / 2, 650))
+        surface.blit(score_text, (surface.get_width() / 2 - score_text.get_width() / 2, 180))
 
     def stop(self) -> None:
         Sounds.get_sound("bgm").stop()
