@@ -54,13 +54,6 @@ def open_planets(entity_manager: EntityManager, player_id):
         planet_ids.append(id)
         planets.append(planet)
 
-        if kind == "sun":
-            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 5000, (255, 227, 84)))
-        elif kind == "moon":
-            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 2560, (137, 35, 247)))
-        else:
-            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 2560, (44, 95, 176)))
-
     return planet_ids
         
 class Space(scene.Scene):
@@ -491,7 +484,7 @@ class Space(scene.Scene):
             self.background_system.update(self.camera, delta_time)
             simulated_player = self.simulator.get_simulated_entity(self.player_id)
             self.hud.update(self.entity_manager, self.player_id, self.planet_ids, simulated_player["future_positions"], self.pirate_handler, self.camera, delta_time)
-            self.planet_handler.update(self.entity_manager, self.camera, delta_time, True)
+            self.planet_handler.update(self.entity_manager, self.hud, self.camera, delta_time, True)
             return
 
         # Handle input
@@ -519,7 +512,7 @@ class Space(scene.Scene):
         self.background_system.update(self.camera, delta_time)
 
         # Update planets
-        self.planet_handler.update(self.entity_manager, self.camera, delta_time)
+        self.planet_handler.update(self.entity_manager, self.hud, self.camera, delta_time)
         self.bullet_system.update(self.entity_manager)
         self.pirate_handler.update(self.entity_manager, self.player_id, self.simulator, delta_time)
 

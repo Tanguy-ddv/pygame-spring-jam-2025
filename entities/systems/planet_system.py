@@ -163,13 +163,12 @@ def from_planet_to_imprint(planet:Planet) -> PlanetImprint:
     return PlanetImprint(planet.radius, planet.day, planet.year, planet.kind, planet.dist, planet.mass, planet.orbits, planet.theta)
 
 class PlanetHandler:
-    def update(self, entity_manager: EntityManager, camera: CameraSystem, delta_time: float, paused=False):
-        entity_ids = entity_manager.get_from_components(Planet, CircleCollider, Waypoint)
+    def update(self, entity_manager: EntityManager, hud, camera: CameraSystem, delta_time: float, paused=False):
+        entity_ids = entity_manager.get_from_components(Planet, CircleCollider)
 
         for entity_id in entity_ids:
             planet:Planet = entity_manager.get_component(entity_id, Planet)
             circle:CircleCollider = entity_manager.get_component(entity_id, CircleCollider)
-            waypoint:Waypoint = entity_manager.get_component(entity_id, Waypoint)
 
             if paused:
                 if planet.on_screen:
@@ -204,7 +203,22 @@ class PlanetHandler:
                 planet.x, planet.y = orbit.x + (planet.dist + orbit.radius + planet.radius)*math.cos(planet.theta*math.pi/180), orbit.y + (planet.dist + orbit.radius + planet.radius)*math.sin(planet.theta*math.pi/180)
             
             circle.x, circle.y = planet.x, planet.y
-            waypoint.position.xy = planet.x, planet.y
+
+            show_waypoint = False
+
+            for mission in hud.log.mission_dict:
+                if planet.name in mission.destination:
+                    show_waypoint = True
+            
+            if show_waypoint:
+                if entity_manager.has_component(entity_id, Waypoint):
+                    waypoint:Waypoint = entity_manager.get_component(entity_id, Waypoint)
+                    waypoint.position.xy = planet.x, planet.y
+                    waypoint.max_viewable_distance = None
+                else:
+                    entity_manager.add_component(entity_id, Waypoint(pygame.Vector2(planet.x, planet.y), None, (0, 255, 0)))
+            else:
+                entity_manager.remove_component(entity_id, Waypoint)
 
             if math.sqrt(((planet.x - camera.camera_x) ** 2) + ((planet.y - camera.camera_y) ** 2)) < 1280 + planet.radius:
                 planet.surface.fill((0, 0, 0))

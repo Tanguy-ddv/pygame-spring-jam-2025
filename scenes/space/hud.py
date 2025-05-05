@@ -38,6 +38,7 @@ class HUD:
         self.fuel_display.update(entity_manager, player_id, delta_time)
         self.waypoint_markers.update(entity_manager)
         self.waypoint_markers.set_waypoint_center(entity_manager.get_component(player_id, Position))
+        self.waypoint_markers.set_max_distance_modifier(entity_manager.get_component(player_id, Scanner).view_distance_modifier)
 
         if self.planet_interface.planet != None:
             self.log.state = "planet view"
@@ -735,9 +736,13 @@ class WaypointMarkers:
         self.waypoint_distance = waypoint_distance
         self.waypoint_length = waypoint_length
         self.waypoints = []
+        self.max_distance_modifier = 1
 
     def set_waypoint_center(self, waypoint_center:pygame.Vector2):
         self.waypoint_center = waypoint_center
+
+    def set_max_distance_modifier(self, max_distance_modifier:int):
+        self.max_distance_modifier = max_distance_modifier
 
     def update(self, entity_manager: EntityManager):
         self.waypoints.clear()
@@ -753,8 +758,11 @@ class WaypointMarkers:
             starting_position = (starting_position[0] + math.cos(direction) * self.waypoint_distance, starting_position[1] + math.sin(direction) * self.waypoint_distance)
             ending_position = (starting_position[0] + math.cos(direction) * self.waypoint_length, starting_position[1] + math.sin(direction) * self.waypoint_length)
             distance = math.sqrt((waypoint.position.x - self.waypoint_center.x) ** 2 + (waypoint.position.y - self.waypoint_center.y) ** 2)
-            fade = (1 - (distance / waypoint.max_viewable_distance))
-            fade = min(max(fade, 0), 1)
+            if waypoint.max_viewable_distance == None:
+                fade = 1
+            else:
+                fade = (1 - (distance / waypoint.max_viewable_distance * self.max_distance_modifier))
+                fade = min(max(fade, 0), 1)
             if fade != 0:
                 color = (waypoint.color[0] * fade, waypoint.color[1] * fade, waypoint.color[2] * fade)
                 pygame.draw.line(surface, color, starting_position, ending_position, 2)
