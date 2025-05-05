@@ -442,7 +442,7 @@ class Log:
                 (255, 255, 255)
             )
 
-        elif mission.type == "deliver":
+        elif mission.type == "delivery":
             text = font.render(
                 f"-Deliver {mission.max_amount}{mission.unit} of\n {mission.item} to {mission.destination}\n",
                 True,
@@ -460,9 +460,9 @@ class Log:
             surface = self.mission_dict[mission]
 
         surface.blit(text, (0, 0))
-        if mission.type in ["kill", "deliver"]:
+        if mission.type in ["kill", "delivery"]:
             new_surface = font.render(
-                f"  [${mission.reward} REWARD]",
+                f" [${mission.reward} REWARD]",
                 True,
                 (150, 255, 150)
             )

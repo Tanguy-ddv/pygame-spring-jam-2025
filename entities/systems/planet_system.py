@@ -105,7 +105,7 @@ class Planet:
                 (255, 255, 255)
             ), (0, 5 + title.get_height()))
 
-        elif mission.type == "deliver":
+        elif mission.type == "delivery":
             surface = pygame.surface.Surface((1280 / 3, font.get_height() * 3.5), SRCALPHA)
             pygame.draw.rect(surface, (30, 30, 30), (0, 0, 1280 / 3, font.get_height() * 3.5), 0, 5)
             title = font.render(

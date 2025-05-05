@@ -33,8 +33,8 @@ class Title(Scene):
         for event in events:
             if event.type in [KEYDOWN, MOUSEBUTTONDOWN]:
                 if self.transition_timer == None:
-                    Sounds.get_sound("accept_mission").play()
-                    self.transition_timer = Sounds.get_sound("accept_mission").get_length()
+                    Sounds.get_sound("select").play()
+                    self.transition_timer = Sounds.get_sound("select").get_length()
 
             elif event.type == MOUSEMOTION:
                  self.original = self.target
