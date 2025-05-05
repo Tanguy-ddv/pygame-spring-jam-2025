@@ -465,7 +465,7 @@ class Space(scene.Scene):
                     spawn_planet_siege(self.entity_manager, mission, self.pirate_handler, mission.max_amount - mission.amount, spawn_chunks, planet, self.entity_manager.get_component(planet.orbits, Planet))
 
                 elif math.hypot(planet.x - x, planet.y - y) > 5000:
-                    mission.active = True
+                    mission.active = False
                     for pirate in mission.pirate_ids:
                         self.pirate_handler.unregister_pirate(pirate)
                         self.entity_manager.delete_entity(pirate)
