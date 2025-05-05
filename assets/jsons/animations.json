@@ -1,0 +1,81 @@
+{
+    "resources/player_shuttle/left_thrusters_hold": {
+        "name": "left thrusters hold",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/left_thrusters_start": {
+        "name": "left thrusters start",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/main_drive_hold": {
+        "name": "main drive hold",
+        "duration": 2
+    },
+
+    "resources/player_shuttle/main_drive_start": {
+        "name": "main drive start",
+        "duration": 5
+    },
+
+    "resources/player_shuttle/right_thruster_hold": {
+        "name": "right thrusters hold",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/right_thrusters_start": {
+        "name": "right thrusters start",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/spin_aclockwise_hold": {
+        "name": "spin aclockwise hold",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/spin_aclockwise_start": {
+        "name": "spin aclockwise start",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/spin_clockwise_hold": {
+        "name": "spin clockwise hold",
+        "duration": 4
+    },
+
+    "resources/player_shuttle/spin_clockwise_start": {
+        "name": "spin clockwise start",
+        "duration": 4
+    },
+
+    "resources/explosions/explosion1": {
+        "name": "explosion1",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion1.5": {
+        "name": "explosion1.5",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion2": {
+        "name": "explosion2",
+        "duration": 22
+    },
+
+    "resources/explosions/explosion3": {
+        "name": "explosion3",
+        "duration": 22
+    },
+
+    "resources/pirates/main_drive_hold": {
+        "name": "pirate main drive hold",
+        "duration": 4
+    },
+
+    "resources/pirates/main_drive_start": {
+        "name": "pirate main drive start",
+        "duration": 9
+    }
+}

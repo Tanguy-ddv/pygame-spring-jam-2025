@@ -5,7 +5,7 @@ from typing import Any
 import pygame
 
 class QuadTree:
-    def __init__(self, rect: pygame.rect.FRect, capacity=4) -> None:
+    def __init__(self, rect: pygame.rect.Rect, capacity=4) -> None:
         self.rect = rect
         self.capacity = capacity
 
@@ -40,7 +40,7 @@ class QuadTree:
             QuadTree(rect=pygame.rect.FRect(self.rect.x + child_width, self.rect.y + child_height, child_width, child_height), capacity=self.capacity)
         ]
 
-    def query_range(self, rect: pygame.rect.FRect) -> list:
+    def query_range(self, rect: pygame.rect.Rect) -> list:
         if not self.rect.colliderect(rect):
             return []
         

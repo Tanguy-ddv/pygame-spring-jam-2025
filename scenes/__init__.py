@@ -1,1 +1,2 @@
-from .space import Space
+from .title_screen import *
+from .space import *

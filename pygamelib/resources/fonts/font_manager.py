@@ -18,8 +18,8 @@ class FontManager(Singleton):
         with open(path_to_json, "r") as json_file:
             fonts = json.load(json_file)
 
-        for path_to_font, font_name in fonts.items():
-            self.load_font(path_to_font, font_name)
+        for font_name, font_data in fonts.items():
+            self.load_font(font_data["path"], font_data["size"], font_name)
 
     def load_font(self, filename: PathLike, size: int, font_name: str) -> pygame.font.Font:
         font = pygame.font.Font(filename, size)

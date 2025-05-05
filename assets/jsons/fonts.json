@@ -1,0 +1,21 @@
+{
+    "Title": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 100
+    },
+
+    "Body": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 32
+    },
+
+    "Small": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 24
+    },
+
+    "Tiny": {
+        "path": "resources/Silkscreen/slkscr.ttf",
+        "size": 16
+    }
+}

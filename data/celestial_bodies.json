@@ -4,215 +4,241 @@
         "year" : 0,
         "mass" : 30,
         "radius" : 696342,
-        "path" : "sun.png",
+        "image_name" : "sun",
         "orbits" : null,
-        "kind" : "sun"
+        "kind" : "sun",
+        "day" : 648 ,
+        "rotation_direction" : "clockwise"
     },
     "mercury" : {
         "dist" : 57909,
         "mass" : 23,
         "radius" : 2439,
         "year" : 88,
-        "path" : "mercury.png",
+        "image_name" : "mercury",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : 1407 ,
+        "rotation_direction" : "clockwise"
     },
     "venus" : {
         "dist" : 108209,
         "mass" : 24,
         "radius" : 6051,
         "year" : 224,
-        "path" : "venus.png",
+        "image_name" : "venus",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : 5832 ,
+        "rotation_direction" : "clockwise"
     },
     "earth" : {
         "mass" : 24,
         "dist" : 149000,
-        "earth" : 6378,
+        "radius" : 6378,
         "year" : 365,
-        "path" : "earth.png",
+        "image_name" : "earth",
         "orbits" : "sun",
-        "kind" : "rocky planet"
+        "kind" : "rocky planet",
+        "day" : 24 ,
+        "rotation_direction" : "clockwise"
     },
-    "moon" : {
+    "the moon" : {
         "mass" : 22,
         "dist" : 384,
         "radius" : 1737,
         "year" : 27,
-        "path" : "moon.png",
+        "image_name" : "moon",
         "orbits" : "earth",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 648 ,
+        "rotation_direction" : "clockwise"
     },
     "mars" : {
         "dist" : 227944,
         "mass" : 23,
         "radius" : 3396,
         "year" : 780,
-        "path" : "mars.png",
+        "image_name" : "mars",
         "orbits" : "sun",
-        "kind" : "rocky planet"
-    },
-    "deimos" : {
-        "dist" : 23,
-        "mass" : 15,
-        "radius" : 8,
-        "year" : 1.25,
-        "path" : null,
-        "orbits" : "mars",
-        "kind" : "moon"
-    },
-    "phobos" : {
-        "dist" : 9,
-        "year" : 0.4,
-        "radius" : 10,
-        "mass" : 16,
-        "path" : null,
-        "orbits" : "mars",
-        "kind" : "moon"
+        "kind" : "rocky planet",
+        "day" : 24.6 ,
+        "rotation_direction" : "clockwise"
     },
     "ceres" : {
         "dist" : 414103,
         "year" : 1679,
         "radius" : 487,
         "mass" : 20,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : 9 ,
+        "rotation_direction" : "clockwise"
     },
     "jupiter" : {
         "dist" : 778340,
         "year" : 4332,
         "radius" : 71492,
         "mass" : 27,
-        "path" : "jupiter.png",
+        "image_name" : "jupiter",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 10 ,
+        "rotation_direction" : "clockwise"
     },
     "io" : {
         "dist" : 421,
         "mass" : 22,
         "radius" : 1821,
         "year" : 1.7,
-        "path" : "moon_like.png",
+        "image_name" : "io",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 42 ,
+        "rotation_direction" : "clockwise"
     },
-    "europe" : {
+    "europa" : {
         "dist" : 671,
         "mass" : 22,
         "radius" : 1561,
         "year" : 3.55,
-        "path" : "moon_like.png",
+        "image_name" : "europa",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 85 ,
+        "rotation_direction" : "clockwise"
     },
     "ganymede" : {
         "dist" : 1069,
         "mass" : 23,
         "radius" : 2634,
         "year" : 3.55,
-        "path" : "moon_like.png",
+        "image_name" : "ganymede",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 171 ,
+        "rotation_direction" : "clockwise"
     },
     "callisto" : {
         "dist" : 1882,
         "mass" : 23,
         "radius" : 2410,
         "year" : 16,
-        "path" : "moon_like.png",
+        "image_name" : "callisto",
         "orbits" : "jupiter",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 400 ,
+        "rotation_direction" : "clockwise"
     },
     "saturn" : {
         "dist" : 1433000,
         "year" : 10754,
         "radius" : 58232,
         "mass" : 26,
-        "path" : "saturn.png",
+        "image_name" : "saturn",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 10.5 ,
+        "rotation_direction" : "clockwise"
     },
     "titan" : {
         "dist" : 1221,
         "year" : 16, 
         "mass" : 23,
         "radius" : 2570,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 384 ,
+        "rotation_direction" : "clockwise"
     },
-    "encelade" : {
+    "enceladus" : {
         "dist" : 238,
         "year" : 1.3, 
         "mass" : 19,
         "radius" : 250,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 33 ,
+        "rotation_direction" : "clockwise"
     },
-    "Rhea" : {
+    "rhea" : {
         "dist" : 527,
         "year" : 4.5, 
         "mass" : 21,
         "radius" : 765,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 108 ,
+        "rotation_direction" : "clockwise"
     },
-    "Iapetus" : {
+    "iapetus" : {
         "dist" : 3560,
         "year" : 79, 
         "mass" : 21,
         "radius" : 730,
-        "path" : "moon_like.png",
+        "image_name" : "iapetus",
         "orbits" : "saturn",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 1903 ,
+        "rotation_direction" : "clockwise"
     },
     "uranus" : {
         "dist" : 2870700,
         "year" : 30688,
         "radius" : 25559,
         "mass" : 26,
-        "path" : "uranus.png",
+        "image_name" : "uranus",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 17.2 ,
+        "rotation_direction" : "anticlockwise"
     },
-    "neptun" : {
+    "neptune" : {
         "dist" : 4498400,
         "year" : 60216,
         "radius" : 24764,
         "mass" : 26,
-        "path" : "neptun.png",
+        "image_name" : "neptune",
         "orbits" : "sun",
-        "kind" : "gas planet"
+        "kind" : "gas planet",
+        "day" : 16 ,
+        "rotation_direction" : "clockwise"
     },
     "triton" : {
         "dist" : 354,
         "radius" : 1350,
-        "year" : 5.8,
+        "year" : -5.8,
         "mass" : 22,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "neptune",
-        "kind" : "moon"
+        "kind" : "moon",
+        "day" : 141 ,
+        "rotation_direction" : "clockwise"
     },
     "pluto" : {
         "dist" : 5900898,
         "year" : 90487,
         "radius" : 1185,
         "mass" : 22,
-        "path" : "moon_like.png",
+        "image_name" : "moon_like",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : 152 ,
+        "rotation_direction" : "anticlockwise"
     },
     "eris" : {
         "dist" : 10.152e6,
         "year" : 203228,
         "radius" : 1161,
         "mass" : 22,
-        "path" : "moon_like.png",
+        "image_name" : "eris",
         "orbits" : "sun",
-        "kind" : "dwarf"
+        "kind" : "dwarf",
+        "day" : 379.2 ,
+        "rotation_direction" : "clockwise"
     }
 }
