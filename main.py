@@ -16,6 +16,7 @@ from pygame.locals import *
 # Internal
 from pygamelib import *
 from scenes import *
+from assets import Sounds
 
 pygame.mixer.init()
 
@@ -40,6 +41,7 @@ class Game:
             if self.scene_manager.current_scene == "space" and  self.scene_manager.scene_dict[self.scene_manager.current_scene].restart:
                 pygame.mixer.stop()
                 self.scene_manager.register_scene(Space(), "space")
+                self.scene_manager.set_scene("space")
 
             # Get delta time
             delta_time = self.clock.tick(self.fps) / 1000

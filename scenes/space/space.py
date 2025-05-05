@@ -247,8 +247,9 @@ class Space(scene.Scene):
 
         if self.gameover:
             if self.transition_timer == None:
-                Sounds.get_sound("accept_mission").play()
-                self.transition_timer = Sounds.get_sound("accept_mission").get_length()
+                Sounds.get_sound("select").play()
+                self.transition_timer = Sounds.get_sound("select").get_length()
+            
             return
         
         if event.key == K_ESCAPE:
