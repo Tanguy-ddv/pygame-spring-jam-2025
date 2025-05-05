@@ -272,7 +272,7 @@ class PlanetInterface:
                     offsety -= self.planet.mission_dict[mission].get_height() + 2
 
                     if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
-                        if self.log.add_mission(mission) or 1:
+                        if self.log.add_mission(mission):
                             self.planet.mission_dict.pop(mission)
 
                             mission = new_mission(self.planet.reputation, self.planet.name)
@@ -314,6 +314,13 @@ class PlanetInterface:
 
                         elif upgrade_name == "reputation":
                             entity_manager.get_component(player_id, Reputation).reward_modifier = self.upgrade_dict[upgrade_name]["values"][level + 1]
+                            for planet_id in entity_manager.get_from_components(Planet):
+                                planet = entity_manager.get_component(planet_id, Planet)
+                                planet.mission_dict = {}
+                                if planet.kind != "sun":
+                                    for _ in range(6):
+                                        mission = new_mission(planet.reputation, planet.name)
+                                        planet.mission_dict[mission] = planet._render_mission(mission)
 
                         elif upgrade_name == "battery":
                             entity_manager.get_component(player_id, Fuel).max_fuel = self.upgrade_dict[upgrade_name]["values"][level + 1]
