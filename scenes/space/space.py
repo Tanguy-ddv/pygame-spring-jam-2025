@@ -243,7 +243,9 @@ class Space(scene.Scene):
             if self.transition_timer == None:
                 Sounds.get_sound("accept_mission").play()
                 self.transition_timer = Sounds.get_sound("accept_mission").get_length()
-                
+                sound:pygame.mixer.Sound = Sounds.get_sound("bgm")
+                sound.set_volume(0.5)
+                sound.play(-1)
             return
         
         if event.key == K_ESCAPE:
@@ -514,7 +516,7 @@ class Space(scene.Scene):
         # updated the simulator
         ids_list = [self.player_id]
         ids_list.extend(list(self.pirate_handler.pirate_ids))
-        self.simulator.simulate(self.entity_manager, ids_list, self.planet_handler.get_planet_imprints(self.entity_manager), 50)
+        self.simulator.simulate(self.entity_manager, ids_list, self.planet_handler.get_planet_imprints(self.entity_manager), 40)
 
         # Process physics
         self.physics_system.update(self.entity_manager, self.planet_ids, delta_time)

@@ -27,7 +27,9 @@ class Title(Scene):
         self.original = self.target
 
     def start(self):
-        return super().start()
+        sound:pygame.mixer.Sound = Sounds.get_sound("bgm")
+        sound.set_volume(0.5)
+        sound.play(-1)
     
     def handle_events(self, events, delta_time):
         for event in events:
@@ -35,6 +37,7 @@ class Title(Scene):
                 if self.transition_timer == None:
                     Sounds.get_sound("select").play()
                     self.transition_timer = Sounds.get_sound("select").get_length()
+                    Sounds.get_sound("bgm").fadeout(500)
 
             elif event.type == MOUSEMOTION:
                  self.original = self.target
