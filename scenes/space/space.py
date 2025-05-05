@@ -157,7 +157,6 @@ class Space(scene.Scene):
                     if self.transition_timer == None:
                         Sounds.get_sound("select").play() # THIS IS THE RESTART CODE
                         self.transition_timer = Sounds.get_sound("select").get_length()
-                    
                     return
                 
                 self.hud.handle_event(self.entity_manager, self.player_id, self.camera, event)
@@ -243,9 +242,6 @@ class Space(scene.Scene):
             if self.transition_timer == None:
                 Sounds.get_sound("accept_mission").play()
                 self.transition_timer = Sounds.get_sound("accept_mission").get_length()
-                sound:pygame.mixer.Sound = Sounds.get_sound("bgm")
-                sound.set_volume(0.5)
-                sound.play(-1)
             return
         
         if event.key == K_ESCAPE:
