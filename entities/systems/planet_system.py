@@ -28,9 +28,9 @@ class Planet:
         self.kind = kind
 
         if "moon" in self.kind:
-            self.dist = dist * 1.5
+            self.dist = dist * 1.5 * 2
         else:
-            self.dist = math.sqrt(dist) * math.sqrt(57909) / 5
+            self.dist = math.sqrt(dist) * math.sqrt(57909) / 5 * 2
 
         self.mass = mass * 150
 

@@ -282,7 +282,7 @@ class Space(scene.Scene):
             for planet_id in self.entity_manager.get_from_components(Planet):
                 planet: Planet = self.entity_manager.get_component(planet_id, Planet)
 
-                if math.hypot(position.x - planet.x, position.y - planet.y) < 350:
+                if math.hypot(position.x - planet.x, position.y - planet.y) < 300 + planet.radius:
                     self.camera.selected_planet = planet
                     self.camera.changed = True
                     return
@@ -552,7 +552,7 @@ class Space(scene.Scene):
                     planet: Planet = self.entity_manager.get_component(planet_id, Planet)
                     position = self.entity_manager.get_component(self.player_id, Position)
 
-                    if math.hypot(position.x - planet.x, position.y - planet.y) < 350:
+                    if math.hypot(position.x - planet.x, position.y - planet.y) < 300 + planet.radius:
                         if self.camera.selected_planet == None:
                             dock_prompt = Images.get_image("dock prompt" + planet.name)
 
