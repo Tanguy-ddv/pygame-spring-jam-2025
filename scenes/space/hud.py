@@ -289,6 +289,7 @@ class PlanetInterface:
 
                         mission = new_mission(self.planet.name)
                         self.planet.mission_dict[mission] = self.planet._render_mission(mission)
+                        Sounds.get_sound("accept_mission").play(fade_ms=500)
                         return
                     
             elif self.active_tab == "shop":
@@ -321,6 +322,8 @@ class PlanetInterface:
                             self.upgrade_dict[upgrade_name]["level"] += 1
 
                         self.surfaces[upgrade_name] = self._render_text(upgrade_name)
+
+                        Sounds.get_sound("purchase").play(fade_ms=500)
 
                         return
 

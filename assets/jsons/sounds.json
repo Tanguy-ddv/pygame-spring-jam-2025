@@ -1,6 +1,12 @@
 {
     "resources/music/Am I Alone.ogg": "bgm",
-    "resources/music/select.ogg": "select",
-    "resources/music/thrusters.ogg": "thrusters",
-    "resources/music/lose.ogg": "lose"
+    "resources/music/lose.ogg": "lose",
+    "resources/music/accept_mission.ogg": "accept_mission",
+    "resources/music/engine_drive.ogg": "engine_drive",
+    "resources/music/explosion.ogg": "explosion",
+    "resources/music/pirate_weapon_fire.ogg": "pirate_weapon_fire",
+    "resources/music/player_hit.ogg": "player_hit",
+    "resources/music/player_weapon_fire.ogg": "player_weapon_fire",
+    "resources/music/purchase.ogg": "purchase",
+    "resources/music/side_drive.ogg": "side_drive"
 }

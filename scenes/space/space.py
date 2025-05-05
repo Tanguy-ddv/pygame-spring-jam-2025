@@ -155,8 +155,8 @@ class Space(scene.Scene):
             elif event.type in [MOUSEWHEEL, MOUSEBUTTONDOWN, MOUSEBUTTONUP]:
                 if self.gameover:
                     if self.transition_timer == None:
-                        Sounds.get_sound("select").play()
-                        self.transition_timer = Sounds.get_sound("select").get_length()
+                        Sounds.get_sound("accept_mission").play()
+                        self.transition_timer = Sounds.get_sound("accept_mission").get_length()
                     
                     return
                 
@@ -182,7 +182,7 @@ class Space(scene.Scene):
                         if anim in animator.animation_stack:
                             animator.animation_stack.pop(anim)
                     
-                    Sounds.get_sound("thrusters").fadeout(100)
+                    Sounds.get_sound("engine_drive").fadeout(100)
                     continue
 
                 fuel.consume(THRUSTER_FUEL_RATE * delta_time)
@@ -228,6 +228,7 @@ class Space(scene.Scene):
                 self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
                 self.bullet_timer = 0.25
                 fuel.consume(BULLET_COST)
+                Sounds.get_sound("player_weapon_fire").play()
 
     def key_pressed(self, event: pygame.event.Event, delta_time: float) -> None:
         position = self.entity_manager.get_component(self.player_id, Position)
@@ -240,8 +241,8 @@ class Space(scene.Scene):
 
         if self.gameover:
             if self.transition_timer == None:
-                Sounds.get_sound("select").play()
-                self.transition_timer = Sounds.get_sound("select").get_length()
+                Sounds.get_sound("accept_mission").play()
+                self.transition_timer = Sounds.get_sound("accept_mission").get_length()
                 
             return
         
@@ -254,12 +255,19 @@ class Space(scene.Scene):
         elif event.key == K_a:
             animator.animation_stack["spin aclockwise start"] = 0
 
+            sound:pygame.mixer.Sound = Sounds.get_sound("side_drive")
+            sound.play(loops=-1, fade_ms=500)
+
         elif event.key == K_d:
             animator.animation_stack["spin clockwise start"] = 0
 
+            sound:pygame.mixer.Sound = Sounds.get_sound("side_drive")
+            sound.play(loops=-1, fade_ms=500)
+
         elif event.key == K_w:
             animator.animation_stack["main drive start"] = 0
-            Sounds.get_sound("thrusters").play(loops=-1, fade_ms=500)
+            sound:pygame.mixer.Sound = Sounds.get_sound("engine_drive")
+            sound.play(loops=-1, fade_ms=500)
 
         elif event.key == K_f:
             # Check if docked then undock
@@ -295,6 +303,7 @@ class Space(scene.Scene):
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
             self.bullet_timer = 0.25
             fuel.consume(BULLET_COST)
+            Sounds.get_sound("player_weapon_fire").play()
 
         self.held_keys.add(event.key)
         self.hud.handle_event(self.camera, event)
@@ -309,17 +318,21 @@ class Space(scene.Scene):
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
 
+            Sounds.get_sound("side_drive").fadeout(300)
+
         elif event.key == K_d:
             for animation in ["spin clockwise start", "spin clockwise hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
+            
+            Sounds.get_sound("side_drive").fadeout(300)
 
         elif event.key == K_w:
             for animation in ["main drive start", "main drive hold"]:
                 if animation in animator.animation_stack:
                     animator.animation_stack.pop(animation)
 
-            Sounds.get_sound("thrusters").fadeout(300)
+            Sounds.get_sound("engine_drive").fadeout(300)
 
         if event.key in self.held_keys:
             self.held_keys.remove(event.key)
@@ -359,6 +372,7 @@ class Space(scene.Scene):
                         if not other_ids.check_for_other_id(id) and health.invincability == 0:
                             fuel.consume(250)
                             health.invincability = health.invincability_window
+                            Sounds.get_sound("player_hit").play(fade_ms=500)
 
                 self.entity_manager.remove_component(self.player_id, Collided)
 
@@ -370,6 +384,8 @@ class Space(scene.Scene):
                 self.entity_manager.add_component(self.player_id, Dying())
                 animator.animation_stack = {"explosion1": 0}
                 self.entity_manager.remove_component(self.player_id, Simulate)
+                Sounds.get_sound("engine_drive").stop()
+                Sounds.get_sound("explosion").play(fade_ms=500)
         
         if self.entity_manager.has_component(self.player_id, Dying):
             self.entity_manager.remove_component(self.player_id, Simulate)
@@ -390,7 +406,7 @@ class Space(scene.Scene):
                 # self.held_keys.clear()
 
                 # Stop all active sounds
-                Sounds.get_sound("thrusters").stop()
+                pygame.mixer.stop()
 
                 # Play gameover sounds
                 Sounds.get_sound("lose").play()
