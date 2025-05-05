@@ -22,25 +22,12 @@ class HUD:
         self.balance = BalanceDisplay()
         self.waypoint_markers = WaypointMarkers(40, 10)
 
-
-        self.log.add_mission(
-            Mission(
-                "complete",
-                0,
-                0,
-                "earth",
-                "earth",
-                5000000,
-                "kg"
-            )
-        )
-
-    def handle_event(self, camera, event):
+    def handle_event(self, entity_manager, player_id, camera, event):
         if self.planet_interface.planet == None:
             self.map.handle_event(event)
             self.log.handle_event(event)
 
-        self.planet_interface.handle_event(camera, event)
+        self.planet_interface.handle_event(entity_manager, player_id, camera, event)
         self.manual.handle_event(event)
 
     def update(self, entity_manager: EntityManager, player_id: int, planet_ids: list[int], future_player_positions: list[tuple], pirate_handler: PirateHandler, camera, delta_time) -> None:
@@ -249,7 +236,7 @@ class PlanetInterface:
 
         return surface
 
-    def handle_event(self, camera, event):
+    def handle_event(self, entity_manager, player_id, camera, event):
         if self.planet == None:
             return
         
@@ -284,11 +271,11 @@ class PlanetInterface:
                     offsety -= self.planet.mission_dict[mission].get_height() + 2
 
                     if self.planet.mission_dict[mission].get_rect(topleft=topleft).collidepoint(event.pos):
-                        self.log.add_mission(mission)
-                        self.planet.mission_dict.pop(mission)
+                        if self.log.add_mission(mission):
+                            self.planet.mission_dict.pop(mission)
+                            mission = new_mission(self.planet.reputation, self.planet.name)
+                            self.planet.mission_dict[mission] = self.planet._render_mission(mission)
 
-                        mission = new_mission(self.planet.name)
-                        self.planet.mission_dict[mission] = self.planet._render_mission(mission)
                         return
                     
             elif self.active_tab == "shop":
@@ -316,12 +303,27 @@ class PlanetInterface:
                         self.balance.credits -= cost
                         if upgrade_name == "recharge":
                             self.fuel.fuel = self.fuel.max_fuel
+                            self.surfaces[upgrade_name] = self._render_text(upgrade_name)
+                            return
 
-                        else:
-                            self.upgrade_dict[upgrade_name]["level"] += 1
+                        elif upgrade_name == "reputation":
+                            entity_manager.get_component(player_id, Reputation).reward_modifier = self.upgrade_dict[upgrade_name]["values"][level + 1]
 
+                        elif upgrade_name == "battery":
+                            entity_manager.get_component(player_id, Fuel).max_fuel = self.upgrade_dict[upgrade_name]["values"][level + 1]
+                            entity_manager.get_component(player_id, Fuel).fuel = self.upgrade_dict[upgrade_name]["values"][level + 1]
+
+                        elif upgrade_name == "efficiency":
+                            entity_manager.get_component(player_id, Fuel).efficiency = self.upgrade_dict[upgrade_name]["values"][level + 1]
+
+                        elif upgrade_name == "fire-rate":
+                            entity_manager.get_component(player_id, FireRate).fire_rate_modifier = self.upgrade_dict[upgrade_name]["values"][level + 1]
+
+                        elif upgrade_name == "scanner":
+                            entity_manager.get_component(player_id, Scanner).view_distance_modifier = self.upgrade_dict[upgrade_name]["values"][level + 1]
+
+                        self.upgrade_dict[upgrade_name]["level"] += 1
                         self.surfaces[upgrade_name] = self._render_text(upgrade_name)
-
                         return
 
     def update(self, camera, delta_time):
@@ -424,22 +426,24 @@ class Log:
 
     def _render_mission(self, mission):
         font = Fonts.get_font("Small")
+        surface = pygame.surface.Surface((400, font.get_height() * 5), SRCALPHA)
+
         if mission.type == "kill":
-            surface = font.render(
-                f"-Eliminate {mission.max_amount} {mission.item}\n near {mission.destination}\n ({mission.max_amount - mission.amount} remaining)\n",
+            text = font.render(
+                f"-Eliminate {mission.max_amount} {mission.item}\n near {mission.destination} ({mission.amount}/{mission.max_amount})",
                 True,
                 (255, 255, 255)
             )
 
         elif mission.type == "deliver":
-            surface = font.render(
+            text = font.render(
                 f"-Deliver {mission.max_amount}{mission.unit} of\n {mission.item} to {mission.destination}\n",
                 True,
                 (255, 255, 255)
             )
 
         elif mission.type == "complete":
-            surface = font.render(
+            text = font.render(
                 f"-${mission.reward} reward\n at {mission.destination}",
                 True,
                 (150, 255, 150)
@@ -448,13 +452,24 @@ class Log:
         else:
             surface = self.mission_dict[mission]
 
+        surface.blit(text, (0, 0))
+        if mission.type in ["kill", "deliver"]:
+            new_surface = font.render(
+                f"  [${mission.reward} REWARD]",
+                True,
+                (150, 255, 150)
+            )
+
+            surface.blit(new_surface, (0, text.get_height() + 4))
+
         return surface
 
     def add_mission(self, mission):
         if len(self.mission_dict) >= 1:
-            return
+            return False
         
         self.mission_dict[mission] = self._render_mission(mission)
+        return True
     
     def get_missions(self):
         return self.mission_dict.keys()

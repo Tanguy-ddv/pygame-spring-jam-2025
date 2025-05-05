@@ -18,3 +18,6 @@ from .simulate import Simulate
 from .balance import Balance
 from .mission import Mission
 from .waypoint_marker import Waypoint
+from .fire_rate import FireRate
+from .reputation import Reputation
+from .scanner import Scanner

@@ -15,7 +15,8 @@ from assets import Fonts, Images
 from utils.constants import *
 
 class Planet:
-    def __init__(self, name: str, surface_image: pygame.surface.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
+    def __init__(self, reputation, name: str, surface_image: pygame.surface.Surface, radius: int, day: float, year: float, kind:str, dist: int, mass: int, orbits: object | None, rotation_direction: str) -> None:
+        self.reputation = reputation
         self.name = name
 
         self.radius = math.floor(math.sqrt(radius))
@@ -83,7 +84,7 @@ class Planet:
         self.mission_dict = {}
         if self.kind != "sun":
             for _ in range(6):
-                mission = new_mission(self.name)
+                mission = new_mission(self.reputation, self.name)
                 self.mission_dict[mission] = self._render_mission(mission)
 
     def _render_mission(self, mission):

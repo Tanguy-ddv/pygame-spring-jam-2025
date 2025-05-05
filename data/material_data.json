@@ -2,37 +2,37 @@
   "gold": {
     "exporters": ["mercury", "earth", "ganymede", "titan"],
     "importers": ["pluto", "ceres", "europa", "venus", "mars"],
-    "price": 40.29,
+    "price": 25,
     "unit": "kg",
-    "lower bound": 140,
-    "upper bound": 220
+    "lower bound": 100,
+    "upper bound": 150
   },
 
   "iron": {
     "exporters": ["mars", "earth", "callisto", "rhea", "enceladus", "neptune", "ceres"],
     "importers": ["the moon", "uranus", "io", "pluto"],
-    "price": 3,
+    "price": 4.75,
     "unit": "kg",
     "lower bound": 250,
-    "upper bound": 1000
+    "upper bound": 400
   },
 
   "helium-3": {
     "exporters": ["jupiter", "saturn", "neptune", "venus"],
     "importers": ["eris", "earth", "europa", "mercury", "ganymede"],
-    "price": 2290,
+    "price": 750,
     "unit": "g",
     "lower bound": 1,
-    "upper bound": 5
+    "upper bound": 7
   },
 
   "carbon": {
     "exporters": ["triton", "pluto", "venus", "saturn", "eris"],
     "importers": ["mars", "titan", "iapetus", "ceres", "rhea"],
-    "price": 4.6,
+    "price": 3.5,
     "unit": "kg",
-    "lower bound": 540,
-    "upper bound": 670
+    "lower bound": 250,
+    "upper bound": 400
   },
 
   "silicon": {
@@ -40,16 +40,16 @@
     "importers": ["mercury", "ganymede", "callisto", "triton", "titan"],
     "price": 2,
     "unit": "kg",
-    "lower bound": 302,
-    "upper bound": 1409
+    "lower bound": 275,
+    "upper bound": 700
   },
 
   "water": {
     "exporters": ["neptune", "europa", "earth", "enceladus", "iapetus"],
     "importers": ["mars", "the moon", "triton", "io", "ganymede", "saturn", "eris"],
-    "price": 0.8,
+    "price": 1.4,
     "unit": "kg",
-    "lower bound": 300,
-    "upper bound": 1200
+    "lower bound": 600,
+    "upper bound": 900
   }
 }

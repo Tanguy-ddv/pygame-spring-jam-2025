@@ -1,7 +1,7 @@
 import random
 import json
 import math
-from entities import Mission
+from entities import *
 
 with open("data/celestial_bodies.json", "r") as file:
     planet_json = json.load(file)
@@ -12,7 +12,8 @@ with open("data/celestial_bodies.json", "r") as file:
 with open("data/material_data.json", "r") as file:
     ITEMS = json.load(file)
 
-def new_mission(source):
+def new_mission(reputation, source):
+    modifier = reputation.reward_modifier
     mission_type = random.choice(["kill", "deliver"])
 
     if mission_type == "kill":
@@ -30,7 +31,7 @@ def new_mission(source):
                 destination = random.choice(PLANETS)
 
         for _ in range(quantity):
-            reward += random.randint(9412, 16480)
+            reward += random.randint(100, 175)
 
         distance = math.sqrt(abs(PLANET_DICT[source]["dist"] - PLANET_DICT[destination]["dist"]))
 
@@ -40,7 +41,7 @@ def new_mission(source):
             "pirates",
             destination,
             source,
-            reward,
+            reward * modifier,
             None
         )
     
@@ -63,10 +64,12 @@ def new_mission(source):
 
             distance = abs((PLANET_DICT[source]["dist"] + PLANET_DICT[PLANET_DICT[source]["orbits"]]["dist"]) - PLANET_DICT[destination]["dist"])
 
-        distance = math.sqrt(distance)
+        distance = 1 + math.log10(distance) / 10
         quantity = random.randint(ITEMS[item]["lower bound"], ITEMS[item]["upper bound"])
-        reward = int(distance * quantity * ITEMS[item]["price"] / 100)
+        reward = int(distance * quantity * ITEMS[item]["price"])
         unit = ITEMS[item]["unit"]
+
+        # print(f"s={source}, d={distance}, q={quantity}, i={item}, r={reward}") #mission debug print
 
         return Mission(
             mission_type,

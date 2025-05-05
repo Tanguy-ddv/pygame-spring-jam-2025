@@ -23,7 +23,7 @@ def get_shortest_distance_in_radians(radians_1:int|float, radians_2:int|float):
     return 2 * difference % MAX_RADIANS - difference
 
 
-def open_planets(entity_manager: EntityManager):
+def open_planets(entity_manager: EntityManager, player_id):
     with open("data/celestial_bodies.json") as f:
         planet_dict: dict[str, dict[str, Any]] = json.load(f)
     planet_ids: list[int] = []
@@ -45,7 +45,7 @@ def open_planets(entity_manager: EntityManager):
                 if planets[i].name == orbits_str:
                     orbits = planet_ids[i]
 
-        planet = Planet(name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
+        planet = Planet(entity_manager.get_component(player_id, Reputation), name, Images.get_image(image_name), radius, day, year, kind, dist, mass, orbits, rotation_direction)
 
         id = create_entity(entity_manager,
                            planet,
@@ -82,8 +82,28 @@ class Space(scene.Scene):
         self.bullet_system = BulletSystem()
         self.pirate_handler = PirateHandler()
 
+        # Create player entity id
+        self.player_id = create_entity(self.entity_manager,
+                                       Images.get_image("shuttle"),
+                                       Rotation(0),
+                                       Health(1, 1000),
+                                       Fuel(1000, 1000),
+                                       Balance(0),
+                                       Animator(),
+                                       Position(),
+                                       Velocity(0, 0),
+                                       Force(0, 0),
+                                       Mass(20),
+                                       CircleCollider((0, 0), 9),
+                                       OtherIds(),
+                                       Simulate(), # This makes player affected by physics
+                                       Reputation(),
+                                       FireRate(),
+                                       Scanner()
+                                       )
+        
         # Planets
-        self.planet_ids = open_planets(self.entity_manager)
+        self.planet_ids = open_planets(self.entity_manager, self.player_id)
         self.planet_dict = {self.entity_manager.get_component(planet_id, Planet).name: planet_id for planet_id in self.planet_ids}
 
         # Player
@@ -105,23 +125,10 @@ class Space(scene.Scene):
         dist = (self.starting_planet.dist + self.starting_planet.radius + self.starting_planet_orbits.radius)
         spawn_position = (dist * math.cos(math.radians(self.starting_planet.theta))), dist * math.sin(math.radians(self.starting_planet.theta))
         spawn_position = (spawn_position[0] + math.cos(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5, spawn_position[1] + math.sin(math.radians(spawn_chunk)) * self.starting_planet.diameter * 5)
+        pos = self.entity_manager.get_component(self.player_id, Position)
+        pos.x = spawn_position[0]
+        pos.y = spawn_position[1]
 
-        self.player_id = create_entity(self.entity_manager,
-                                       Images.get_image("shuttle"),
-                                       Rotation(0),
-                                       Health(1, 1000),
-                                       Fuel(1000, 1000),
-                                       Balance(0),
-                                       Animator(),
-                                       Position(spawn_position),
-                                       Velocity(0, 0),
-                                       Force(0, 0),
-                                       Mass(20),
-                                       CircleCollider((0, 0), 9),
-                                       OtherIds(),
-                                       Simulate() # This makes player affected by physics
-                                       )
-        
         # Variables
         self.held_keys = set()
         self.prompt_colour = [0, 0, 0]
@@ -158,7 +165,7 @@ class Space(scene.Scene):
                     
                     return
                 
-                self.hud.handle_event(self.camera, event)
+                self.hud.handle_event(self.entity_manager, self.player_id, self.camera, event)
 
     def handle_held_keys(self, delta_time: float) -> None:
         if self.entity_manager.has_component(self.player_id, Dying):
@@ -224,7 +231,7 @@ class Space(scene.Scene):
                 radians_final_direction = math.radians(final_direction)
                 id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
                 self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
-                self.bullet_timer = 0.25
+                self.bullet_timer = 0.25 / self.entity_manager.get_component(self.player_id, FireRate).fire_rate_modifier
                 fuel.consume(BULLET_COST)
 
     def key_pressed(self, event: pygame.event.Event, delta_time: float) -> None:
@@ -291,11 +298,11 @@ class Space(scene.Scene):
             radians_final_direction = math.radians(final_direction)
             id = create_bullet(self.entity_manager, (position.x + 20 * math.cos(radians_final_direction), position.y - 20 * math.sin(radians_final_direction)), final_direction, self.player_id)
             self.entity_manager.get_component(self.player_id, OtherIds).add_other_id(id)
-            self.bullet_timer = 0.25
+            self.bullet_timer = 0.25 / self.entity_manager.get_component(self.player_id, FireRate).fire_rate_modifier
             fuel.consume(BULLET_COST)
 
         self.held_keys.add(event.key)
-        self.hud.handle_event(self.camera, event)
+        self.hud.handle_event(self.entity_manager, self.player_id, self.camera, event)
 
     def key_unpressed(self, event: pygame.event.Event) -> None:
         animator:Animator = self.entity_manager.get_component(self.player_id, Animator)
