@@ -51,6 +51,13 @@ def open_planets(entity_manager: EntityManager, player_id):
                            planet,
                            CircleCollider((0, 0), math.floor(math.sqrt(radius)), False),
                            )
+
+        if planet.kind == "moon":
+            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 1280, (137, 35, 247)))
+        elif planet.kind == "sun":
+            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 1280, (255, 227, 84)))
+        else:
+            entity_manager.add_component(id, Waypoint(pygame.Vector2(0, 0), 1280, (44, 95, 176)))
         planet_ids.append(id)
         planets.append(planet)
 
