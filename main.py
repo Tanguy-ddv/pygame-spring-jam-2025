@@ -34,6 +34,7 @@ class Game:
         self.scene_manager.set_scene("title")
 
         pygame.display.set_caption("ICS Pioneer")
+        pygame.display.set_icon(Images.get_image("shuttle"))
 
     async def start(self):
         self.is_running = True
