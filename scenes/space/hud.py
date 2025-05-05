@@ -67,7 +67,7 @@ class HUD:
             self.manual.draw(surface)
             self.balance.draw(surface, (0, self.fuel_display.widget_size[1]))
 
-        if self.planet_interface.enabled == False and self.map.fullscreened == False:
+        if self.planet_interface.enabled == False and (self.map.fullscreened == False or self.map.map_mode == 0):
             self.waypoint_markers.draw(surface, camera)
 
 class FuelDisplay:
